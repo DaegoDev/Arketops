@@ -1,7 +1,7 @@
 {
   "name": "Arketops",
   "description": "a Sails application",
-  "main": "app.js",
+  "main": "assets/js/main.js",
   "authors": [
     "Diego Alvarez",
     "Jonnatan Rios"
