@@ -1,0 +1,25 @@
+{
+  "name": "Arketops",
+  "description": "a Sails application",
+  "main": "app.js",
+  "authors": [
+    "Diego Alvarez",
+    "Jonnatan Rios"
+  ],
+  "license": "MIT",
+  "homepage": "https://github.com/daegodev/arketops.git",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "assets/bower_components",
+    "test",
+    "tests"
+  ],
+  "dependencies": {
+    "font-awesome": "^4.7.0",
+    "jquery": "^3.2.1",
+    "angular": "^1.6.5",
+    "materialize": "^0.99.0"
+  }
+}
