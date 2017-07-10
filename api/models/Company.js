@@ -1,5 +1,5 @@
 /**
- * User.js
+ * Company.js
  *
  * @description :: TODO: You might write a short summary of how this model works and what it represents here.
  * @docs        :: http://sailsjs.org/documentation/concepts/models-and-orm/models
@@ -7,7 +7,7 @@
 
 module.exports = {
   options: {
-    tableName: 'user',
+    tableName: 'company',
     classMethods: {},
     instanceMethods: {},
     hooks: {}
@@ -17,17 +17,18 @@ module.exports = {
       type: Sequelize.INTEGER,
       primaryKey: true
     },
-    email: {
+    name: {
       type: Sequelize.STRING,
-      allowNull: false
-    },
-    password: {
-      type: Sequelize.STRING,
-      allowNull: false
-    },
-    state: {
-      type: Sequelize.STRING,
-      allowNull: false
     }
+  },
+
+  associations: function() {
+    Company.belongsTo(User, {
+      as: 'user',
+      foreignKey: {
+        name: 'user_id',
+        allowNull: false
+      }
+    });
   }
 };
