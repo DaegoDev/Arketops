@@ -19,6 +19,10 @@ module.exports.models = {
   ***************************************************************************/
   connection: 'elephantArketops',
 
+  autoCreatedAt: true,
+
+  autoUpdatedAt: true,
+
   /***************************************************************************
   *                                                                          *
   * How and whether Sails will attempt to automatically rebuild the          *

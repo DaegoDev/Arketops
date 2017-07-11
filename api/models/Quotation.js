@@ -1,7 +1,7 @@
 /**
- * Headquarters.js
+ * Quotation.js
  *
- * @description :: Modelo que representa la tabla headquarters de la base de datos.
+ * @description :: Modelo que representa la tabla quotation de la base de datos.
  * @autors      :: Jonnatan Rios Vasquez- jrios328@gmail.com    Diego Alvarez-daegoudea@gmail.com
  * @docs        :: http://sailsjs.org/documentation/concepts/models-and-orm/models
  */
@@ -16,52 +16,43 @@ module.exports = {
       allowNull: false,
       unique: true
     },
-    country: {
-      type: Sequelize.STRING(64),
-      allowNull: false,
-    },
-    department: {
-      type: Sequelize.STRING(64),
-      allowNull: false,
-    },
-    city: {
-      type: Sequelize.STRING(64),
-      allowNull: false,
-    },
-    nomenclature: {
-      type: Sequelize.STRING(64),
-      allowNull: false
-    },
-    phonenumber: {
+    code: {
       type: Sequelize.STRING(32),
-      allowNull: false
+      allowNull: false,
+      unique: true
     },
-    contact: {
-      type: Sequelize.STRING(256),
-      allowNull: false
+    date: {
+      type: Sequelize.DATE,
+      allowNull: false,
+      validate: {
+        isDate: true,
+      }
     },
-    contactPhonenumber: {
+    fileURI: {
+      type: Sequelize.STRING(512),
+      allowNull: false,
+      validate: {
+        isUrl: true,
+      }
+    },
+    state: {
       type: Sequelize.STRING(32),
-      allowNull: true
-    },
-    main: {
-      type: Sequelize.BOOLEAN,
-      allowNull: false
+      allowNull: false,
     },
   },
   // Describe las asociones que tiene con los demás modelos.
-  associations: function() {
-    // Asociación uno a muchos con el modelo Company.
-    Headquarters.belongsTo(Company, {
+  associations: function () {
+    // Asociación uno a muchos con el modelo ClientSupplier.
+    Quotation.belongsTo(ClientSupplier, {
       foreignKey: {
-        name: 'companyId',
+        name: 'clientSupplierId',
         allowNull: false
       }
-    });
+    })
   },
   // Configuraciones y metodos del modelo.
   options: {
-    tableName: 'headquarters',
+    tableName: 'quotation',
     timestamps: false,
     classMethods: {},
     instanceMethods: {},

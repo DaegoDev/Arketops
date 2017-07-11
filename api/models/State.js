@@ -1,7 +1,7 @@
 /**
- * User.js
+ * State.js
  *
- * @description :: Modelo que representa la tabla user de la base de datos.
+ * @description :: Modelo que representa la tabla state de la base de datos.
  * @autors      :: Jonnatan Rios Vasquez- jrios328@gmail.com    Diego Alvarez-daegoudea@gmail.com
  * @docs        :: http://sailsjs.org/documentation/concepts/models-and-orm/models
  */
@@ -16,40 +16,24 @@ module.exports = {
       allowNull: false,
       unique: true
     },
-    email: {
-      type: Sequelize.STRING(64),
+    name: {
+      type: Sequelize.STRING(32),
       allowNull: false,
-      unique: true,
-      validate: {
-        isEmail: true
-      }
     },
-    password: {
-      type: Sequelize.STRING(256),
-      allowNull: false,
-      validate: {
-        len: [6, 20]
-      }
-    },
-    state: {
-      type: Sequelize.BOOLEAN,
-      allowNull: false,
-      defaultValue: true
-    }
   },
   // Describe las asociones que tiene con los demás modelos.
   associations: function () {
-    // Asociación uno a muchos con el modelo ElementData.
-    User.hasMany(ElementData, {
+    // Asociación uno a muchos con el modelo Product.
+    State.hasMany(Product, {
       foreignKey: {
-        name: 'userId',
+        name: 'stateId',
         allowNull: false
       }
     })
   },
   // Configuraciones y metodos del modelo.
   options: {
-    tableName: 'user',
+    tableName: 'state',
     timestamps: false,
     classMethods: {},
     instanceMethods: {},
