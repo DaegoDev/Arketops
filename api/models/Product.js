@@ -7,6 +7,7 @@
  */
 
 module.exports = {
+
   // Campos de la tabla con sus atributos.
   attributes: {
     id: {
@@ -23,10 +24,7 @@ module.exports = {
     },
     imageURI: {
       type: Sequelize.STRING(512),
-      allowNull: false,
-      validate: {
-        isUrl: true,
-      }
+      allowNull: true
     },
     name: {
       type: Sequelize.STRING(128),
@@ -40,7 +38,7 @@ module.exports = {
       type: Sequelize.FLOAT,
       allowNull: false
     },
-    available: {
+    enabled: {
       type: Sequelize.BOOLEAN,
       allowNull: false,
       defaultValue: true
@@ -64,10 +62,9 @@ module.exports = {
       }
     });
     // Asociación muchos a muchos con el modelo Company.
-    Product.belongsToMany(Company, {
-      through: Portfolio,
+    Product.belongsTo(Company, {
       foreignKey: {
-        name: 'productId',
+        name: 'companyId',
         allowNull: false
       }
     });

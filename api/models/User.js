@@ -28,7 +28,7 @@ module.exports = {
       type: Sequelize.STRING(256),
       allowNull: false,
       validate: {
-        len: [6, 20]
+        len: [6, 200]
       }
     },
     state: {
@@ -41,6 +41,12 @@ module.exports = {
   associations: function () {
     // Asociación uno a muchos con el modelo ElementData.
     User.hasMany(ElementData, {
+      foreignKey: {
+        name: 'userId',
+        allowNull: false
+      }
+    });
+    User.hasOne(Company, {
       foreignKey: {
         name: 'userId',
         allowNull: false

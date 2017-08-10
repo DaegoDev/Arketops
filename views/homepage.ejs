@@ -1,3 +1,12 @@
-<div class="arketops" ng-app="arketops">
-
+<div class="arketops" ng-app="arketops" ng-strict-di="true">
+  <topbar class="topbar"></topbar>
+  <!-- <content-main></content-main> -->
+  <div class="main" ui-view></div>
+  <footer class="page-footer purple lighten-1">
+    <div class="footer-copyright">
+      <div class="container">
+        <p>Copyright © Your website name</p>
+      </div>
+    </div>
+  </footer>
 </div>

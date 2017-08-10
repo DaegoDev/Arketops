@@ -18,7 +18,7 @@ module.exports = {
     },
     discount: {
       type: Sequelize.INTEGER,
-      allowNull: false,
+      // allowNull: false,
       validate: {
         isNumeric: true,
         min: 0,

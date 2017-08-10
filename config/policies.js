@@ -26,7 +26,14 @@ module.exports.policies = {
   *                                                                          *
   ***************************************************************************/
 
-  // '*': true,
+  '*': true,
+
+  CompanyController: {
+    // updateData: 'isAuthenticated',
+    // updatePassword: 'isAuthenticated',
+    // deactivateAccount: 'isAuthenticated',
+    // followCompany: 'isAuthenticated',
+  },
 
   /***************************************************************************
   *                                                                          *

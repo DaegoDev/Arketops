@@ -31,14 +31,15 @@ module.exports = {
     fileURI: {
       type: Sequelize.STRING(512),
       allowNull: false,
-      validate: {
-        isUrl: true,
-      }
     },
     state: {
       type: Sequelize.STRING(32),
       allowNull: false,
     },
+    quotationValidityPeriod: {
+      type: Sequelize.STRING(8),
+      allowNull: true
+    }
   },
   // Describe las asociones que tiene con los demás modelos.
   associations: function () {
@@ -48,7 +49,14 @@ module.exports = {
         name: 'clientSupplierId',
         allowNull: false
       }
-    })
+    });
+    // Asociación uno a muchos con el modelo PaymentForm.
+    Quotation.belongsTo(PaymentForm, {
+      foreignKey: {
+        name: 'paymentFormId',
+        allowNull: true
+      }
+    });
   },
   // Configuraciones y metodos del modelo.
   options: {

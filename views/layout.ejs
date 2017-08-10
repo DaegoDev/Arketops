@@ -1,10 +1,11 @@
 <!DOCTYPE html>
 <html>
   <head>
-    <title><%=typeof title == 'undefined' ? 'New Sails App' : title%></title>
+    <title>Arketops</title>
 
     <!-- Viewport mobile tag for sensible mobile support -->
-    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
 
 
     <!--
@@ -29,9 +30,12 @@
     -->
 
     <!--STYLES-->
-    <link rel="stylesheet" href="/styles/importer.css">
     <link rel="stylesheet" href="/bower_components/font-awesome/css/font-awesome.min.css">
     <link rel="stylesheet" href="/bower_components/materialize/dist/css/materialize.min.css">
+    <link rel="stylesheet" href="/bower_components/angular-materialize/css/style.css">
+    <link rel="stylesheet" href="/bower_components/angular-material-icons/angular-material-icons.css">
+    <link rel="stylesheet" href="/bower_components/angular-confirm/dist/angular-confirm.min.css">
+    <link rel="stylesheet" href="/styles/importer.css">
     <!--STYLES END-->
   </head>
 
@@ -62,7 +66,7 @@
     -->
 
     <!--TEMPLATES-->
-    
+    <script type="text/javascript" src="/jst.js"></script>
     <!--TEMPLATES END-->
 
 
@@ -92,10 +96,18 @@
     <!--SCRIPTS-->
     <script src="/js/dependencies/sails.io.js"></script>
     <script src="/bower_components/jquery/dist/jquery.min.js"></script>
-    <script src="/bower_components/materialize/dist/js/materialize.min.js"></script>
     <script src="/bower_components/angular/angular.min.js"></script>
+    <script src="/bower_components/angular-route/angular-route.js"></script>
+    <script src="/bower_components/angular-ui-router/release/angular-ui-router.js"></script>
+    <script src="/bower_components/materialize/dist/js/materialize.min.js"></script>
+    <script src="/bower_components/angular-cookies/angular-cookies.min.js"></script>
+    <script src="/bower_components/angular-materialize/src/angular-materialize.js"></script>
+    <script src="/bower_components/angular-material-icons/angular-material-icons.min.js"></script>
+    <script src="/bower_components/angular-confirm/dist/angular-confirm.min.js"></script>
     <script src="/js/main.js"></script>
     <script src="/js/routes.js"></script>
+    <script src="/js/components/controllers/HomeCtrl.js"></script>
+    <script src="/js/components/directives/topbarDir.js"></script>
     <!--SCRIPTS END-->
   </body>
 </html>

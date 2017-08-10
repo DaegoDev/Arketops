@@ -28,10 +28,7 @@ module.exports = {
     },
     imageURI: {
       type: Sequelize.STRING(512),
-      allowNull: false,
-      validate: {
-        isUrl: true,
-      }
+      // allowNull: false,
     },
     businessOverview: {
       type: Sequelize.TEXT,
@@ -43,17 +40,6 @@ module.exports = {
       validate: {
         isUrl: true
       }
-    },
-    quotationValidityPeriod: {
-      type: Sequelize.INTEGER,
-      allowNull: false,
-      validate: {
-        isNumeric: true,
-      }
-    },
-    paymentForm: {
-      type: Sequelize.STRING(32),
-      allowNull: false,
     },
   },
   // Describe las asociones que tiene con los demás modelos.
@@ -73,8 +59,7 @@ module.exports = {
       }
     });
     // Asociación muchos a muchos con el modelo Product.
-    Company.belongsToMany(Product, {
-      through: Portfolio,
+    Company.hasMany(Product, {
       foreignKey: {
         name: 'companyId',
         allowNull: false
@@ -82,7 +67,7 @@ module.exports = {
     });
     // Asociación muchos a muchos con el modelo Company.
     Company.belongsToMany(Company, {
-      as: 'clients',
+      as: 'Clients',
       through: ClientSupplier,
       foreignKey: {
         name: 'supplierId',
@@ -90,6 +75,19 @@ module.exports = {
       },
       otherKey: {
         name: 'clientId',
+        allowNull: false
+      }
+    });
+    // Asociación muchos a muchos con el modelo Company.
+    Company.belongsToMany(Company, {
+      as: 'Suppliers',
+      through: ClientSupplier,
+      foreignKey: {
+        name: 'clientId',
+        allowNull: false
+      },
+      otherKey: {
+        name: 'supplierId',
         allowNull: false
       }
     });

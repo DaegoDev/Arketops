@@ -1,0 +1,200 @@
+<div class="container section scrollspy" id="home">
+  <div class="section">
+    <div class="responsive-video">
+      <iframe width="1100" height="540" src="//www.youtube.com/embed/Q8TXgCzxEnw?rel=0" frameborder="0" allowfullscreen></iframe>
+    </div>
+  </div>
+</div>
+<div class="divider"></div>
+<div class="container section scrollspy" id="signup">
+  <div class="section ">
+    <br>
+    <br>
+    <h2>Registro</h2>
+    <div class="card">
+      <div class="card-content">
+        <form class="form">
+          <div class="row">
+            <div class="col s8">
+              <div class="card">
+                <div class="card-title">
+                  <h5>Información de la empresa</h5>
+                </div>
+                <div class="card-content">
+                  <div class="row">
+                    <div class="col s7">
+                      <div input-field>
+                        <i class="fa fa-building-o prefix"></i>
+                        <input type="text" ng-model="name" required placeholder="Nombre de su empresa">
+                        <label>Nombre</label>
+                      </div>
+                    </div>
+                    <div class="col s5">
+                      <div input-field>
+                        <i class="fa fa-id-card-o prefix"></i>
+                        <input type="number" ng-model="nit" required>
+                        <label>NIT</label>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="row">
+                    <div class="col s7">
+                      <div input-field>
+                        <i class="fa fa-info prefix"></i>
+                        <textarea ng-model="businessOverview" class="materialize-textarea"></textarea>
+                        <label>Descripción de la empresa</label>
+                      </div>
+                    </div>
+                    <div class="col s5">
+                      <div input-field>
+                        <i class="fa fa-external-link prefix"></i>
+                        <input type="url" ng-model="website" required>
+                        <label>Sitio web</label>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <!-- </div> -->
+              <!-- <div class="row"> -->
+              <!-- <div class="col s4"> -->
+              <div class="card">
+                <div class="card-title">
+                  <h5>Información de la cuenta</h5>
+                </div>
+                <div class="card-content">
+                  <div input-field>
+                    <i class="fa fa-envelope prefix"></i>
+                    <input type="email" ng-model="email" length="150">
+                    <label>Email</label>
+                  </div>
+                  <div input-field>
+                    <i class="fa fa-lock prefix"></i>
+                    <input type="password" ng-model="password" length="150">
+                    <label>Contraseña</label>
+                  </div>
+                </div>
+              </div>
+              <!-- </div> -->
+              <!-- <div class="col s8"> -->
+              <div class="card">
+                <div class="card-title">
+                  <h5>Información sede principal</h5>
+                </div>
+                <div class="card-content">
+                  <div class="row">
+                    <div class="col s4">
+                      <div input-field>
+                        <i class="fa fa-map-o prefix"></i>
+                        <input type="text" ng-model="country" length="150">
+                        <label>País</label>
+                      </div>
+                    </div>
+                    <div class="col s4">
+                      <div input-field>
+                        <i class="fa fa-map-signs prefix"></i>
+                        <input type="text" ng-model="department" length="150">
+                        <label>Departamento</label>
+                      </div>
+                    </div>
+                    <div class="col s4">
+                      <div input-field>
+                        <ng-md-icon icon="location_city" class="prefix" style="fill: black" size="30"></ng-md-icon>
+                        <input type="text" ng-model="city" length="150">
+                        <label>Ciudad</label>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="row">
+                    <div class="col s6">
+                      <div input-field>
+                        <i class="fa fa-map-marker prefix"></i>
+                        <input type="text" ng-model="nomenclature" length="150">
+                        <label>Dirección</label>
+                      </div>
+                    </div>
+                    <div class="col s6">
+                      <div input-field>
+                        <i class="fa fa-phone prefix"></i>
+                        <input type="text" ng-model="phonenumber" length="150">
+                        <label>Teléfono</label>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="row">
+                    <div class="col s6">
+                      <div input-field>
+                        <i class="fa fa-user-o prefix"></i>
+                        <input type="text" ng-model="contact" length="150">
+                        <label>Contacto</label>
+                      </div>
+                    </div>
+                    <div class="col s6">
+                      <div input-field>
+                        <i class="fa fa-mobile prefix"></i>
+                        <input type="number" ng-model="contactPhonenumber" length="150">
+                        <label>Teléfono contacto</label>
+                      </div>
+                    </div>
+
+                  </div>
+                </div>
+              </div>
+              <!-- </div> -->
+            </div>
+            <div class="col s4">
+              <img ng-src="../../images/avatar.png" height="300" width="300">
+            </div>
+          </div>
+          <div class="row container">
+            <input type="checkbox" class="filled-in" id="filled-in-box" checked="checked" />
+            <label for="filled-in-box">Aceptar terminos y condiciones.</label>
+          </div>
+          <div class="row center">
+            <button class="btn waves-effect waves-light" type="submit" name="action">Enviar
+              <i class="fa fa-send right"></i>
+          </div>
+        </button>
+        </form>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="divider"></div>
+  <div class="container section scrollspy" id="contactus">
+    <div class="section">
+      <br>
+      <br>
+      <h2>Contáctenos</h2>
+      <div class="row">
+        <form class="col s8">
+          <div class="row">
+            <div class="input-field col s6">
+              <input id="name" type="text" class="validate">
+              <label for="name">Tu Nombre</label>
+            </div>
+            <div class="input-field col s6">
+              <input id="email" type="email" class="validate">
+              <label for="email">Tu Correo</label>
+            </div>
+          </div>
+          <!--row-->
+          <div class="row">
+            <div class="input-field col s12">
+              <input id="message-sub" type="text" class="validate">
+              <label for="message-sub">Asunto del mensaje</label>
+            </div>
+          </div>
+          <div class="row">
+            <div class="input-field col s12">
+              <textarea id="text_area" class="materialize-textarea"></textarea>
+              <label for="text_area">Tu mensaje</label>
+            </div>
+          </div>
+          <div>
+            <a class="waves-effect waves-light btn purple lighten-1">Enviar mensaje<i class="mdi-content-send right"></i></a>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>

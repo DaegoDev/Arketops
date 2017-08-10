@@ -7,6 +7,7 @@
  */
 
 module.exports = {
+
   // Campos de la tabla con sus atributos.
   attributes: {
     id: {
@@ -18,7 +19,8 @@ module.exports = {
     },
     main: {
       type: Sequelize.BOOLEAN,
-      allowNull: false
+      allowNull: false,
+      defaultValue: false
     },
   },
   // Configuraciones y metodos del modelo.
