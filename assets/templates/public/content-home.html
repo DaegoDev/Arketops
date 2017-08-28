@@ -6,14 +6,14 @@
   </div>
 </div>
 <div class="divider"></div>
-<div class="container section scrollspy" id="signup">
+<div ng-if="!authenticated" class="container section scrollspy" id="signup">
   <div class="section ">
     <br>
     <br>
     <h2>Registro</h2>
     <div class="card">
       <div class="card-content">
-        <form class="form">
+        <form ng-submit="registerUser()" name="formSignup" ng-if="true" novalidate>
           <div class="row">
             <div class="col s8">
               <div class="card">
@@ -24,177 +24,277 @@
                   <div class="row">
                     <div class="col s7">
                       <div input-field>
-                        <i class="fa fa-building-o prefix"></i>
-                        <input type="text" ng-model="name" required placeholder="Nombre de su empresa">
-                        <label>Nombre</label>
+                        <div ng-class="{'has-error': formSignup.name.$invalid && (!formSignup.name.$pristine || formSignup.$submitted || formSignup.name.$touched),
+                        'has-success': formSignup.name.$valid}">
+                          <i class="fa fa-building-o prefix"></i>
+                          <input type="text" ng-model="user.name" name="name" required placeholder="Nombre de su empresa" required>
+                          <label>Nombre</label>
+                          <!-- VALIDACIONES DE NOMBRE DE EMPRESA -->
+                          <div ng-messages="formSignup.name.$error" ng-if="formSignup.name.$touched || formSignup.$submitted" ng-messages-multiple>
+                            <p ng-message="required" class="help-block"><b>Debe ingresar un nombre de empresa.</b></p>
+                          </div>
+                        </div>
                       </div>
                     </div>
                     <div class="col s5">
                       <div input-field>
-                        <i class="fa fa-id-card-o prefix"></i>
-                        <input type="number" ng-model="nit" required>
-                        <label>NIT</label>
+                        <div ng-class="{'has-error': formSignup.nit.$invalid && (!formSignup.nit.$pristine || formSignup.$submitted || formSignup.nit.$touched),
+                        'has-success': formSignup.nit.$valid}">
+                          <i class="fa fa-id-card-o prefix"></i>
+                          <input type="number" name="nit" ng-model="user.nit" placeholder="P. ej. 900443543-3" required>
+                          <label>NIT</label>
+                          <!-- VALIDACIONES DE NIT -->
+                          <div ng-messages="formSignup.nit.$error" ng-if="formSignup.nit.$touched || formSignup.$submitted" ng-messages-multiple>
+                            <p ng-message="required" class="help-block"><b>Debe ingresar un nit.</b></p>
+                          </div>
+                        </div>
                       </div>
                     </div>
                   </div>
                   <div class="row">
                     <div class="col s7">
                       <div input-field>
-                        <i class="fa fa-info prefix"></i>
-                        <textarea ng-model="businessOverview" class="materialize-textarea"></textarea>
-                        <label>Descripción de la empresa</label>
+                        <div ng-class="{'has-error': formSignup.businessOverview.$invalid && (!formSignup.businessOverview.$pristine || formSignup.$submitted || formSignup.businessOverview.$touched),
+                        'has-success': formSignup.businessOverview.$valid}">
+                          <i class="fa fa-info prefix"></i>
+                          <textarea ng-model="user.businessOverview" placeholder="Descripción empresarial" ng-minlength="100" ng-maxlength="200" name="businessOverview" class="materialize-textarea" required></textarea>
+                          <label>Descripción de la empresa</label>
+                          <!-- VALIDACIONES DE OVERVIEW -->
+                          <div ng-messages="formSignup.businessOverview.$error" ng-if="formSignup.businessOverview.$touched || formSignup.$submitted" ng-messages-multiple>
+                            <p ng-message="required" class="help-block"><b>Debe ingresar una descripción empresarial.</b></p>
+                            <p ng-message="minlength" class="help-block"><b>La descripción debe tener por lo menos 100 carácteres.</b></p>
+                            <p ng-message="maxlength" class="help-block"><b>La descripción no puede exceder los 200 carácteres.</b></p>
+                          </div>
+                        </div>
                       </div>
                     </div>
                     <div class="col s5">
                       <div input-field>
                         <i class="fa fa-external-link prefix"></i>
-                        <input type="url" ng-model="website" required>
+                        <input type="url" ng-model="user.website" required>
                         <label>Sitio web</label>
                       </div>
                     </div>
                   </div>
                 </div>
               </div>
-              <!-- </div> -->
-              <!-- <div class="row"> -->
-              <!-- <div class="col s4"> -->
-              <div class="card">
-                <div class="card-title">
-                  <h5>Información de la cuenta</h5>
-                </div>
-                <div class="card-content">
-                  <div input-field>
-                    <i class="fa fa-envelope prefix"></i>
-                    <input type="email" ng-model="email" length="150">
-                    <label>Email</label>
-                  </div>
-                  <div input-field>
-                    <i class="fa fa-lock prefix"></i>
-                    <input type="password" ng-model="password" length="150">
-                    <label>Contraseña</label>
-                  </div>
-                </div>
+            </div>
+            <div class="col s4 image-upload">
+              <input type="file" id="file-input" name="imageFile" ng-model="imageFile" base-sixty-four-input required onload="onLoad" accept="image/jpg, image/jpeg, image/png">
+              <img class="image-avatar" ng-style="imgAvatarStyle" id="image-avatar" ng-src="data:{{fileObject.filetype}};base64,{{fileObject.base64}}" height="300" width="300">
+              <div class="icon-upload">
+                <label for="file-input">
+                    <img class="add-image" id="add-image" ng-src="../../images/uploadIcon.png" >
+                  </label>
               </div>
-              <!-- </div> -->
-              <!-- <div class="col s8"> -->
-              <div class="card">
-                <div class="card-title">
-                  <h5>Información sede principal</h5>
-                </div>
-                <div class="card-content">
-                  <div class="row">
-                    <div class="col s4">
-                      <div input-field>
-                        <i class="fa fa-map-o prefix"></i>
-                        <input type="text" ng-model="country" length="150">
-                        <label>País</label>
-                      </div>
-                    </div>
-                    <div class="col s4">
-                      <div input-field>
-                        <i class="fa fa-map-signs prefix"></i>
-                        <input type="text" ng-model="department" length="150">
-                        <label>Departamento</label>
-                      </div>
-                    </div>
-                    <div class="col s4">
-                      <div input-field>
-                        <ng-md-icon icon="location_city" class="prefix" style="fill: black" size="30"></ng-md-icon>
-                        <input type="text" ng-model="city" length="150">
-                        <label>Ciudad</label>
-                      </div>
-                    </div>
-                  </div>
-                  <div class="row">
-                    <div class="col s6">
-                      <div input-field>
-                        <i class="fa fa-map-marker prefix"></i>
-                        <input type="text" ng-model="nomenclature" length="150">
-                        <label>Dirección</label>
-                      </div>
-                    </div>
-                    <div class="col s6">
-                      <div input-field>
-                        <i class="fa fa-phone prefix"></i>
-                        <input type="text" ng-model="phonenumber" length="150">
-                        <label>Teléfono</label>
-                      </div>
-                    </div>
-                  </div>
-                  <div class="row">
-                    <div class="col s6">
-                      <div input-field>
-                        <i class="fa fa-user-o prefix"></i>
-                        <input type="text" ng-model="contact" length="150">
-                        <label>Contacto</label>
-                      </div>
-                    </div>
-                    <div class="col s6">
-                      <div input-field>
-                        <i class="fa fa-mobile prefix"></i>
-                        <input type="number" ng-model="contactPhonenumber" length="150">
-                        <label>Teléfono contacto</label>
-                      </div>
-                    </div>
+            </div>
+          </div>
 
+          <div class="card">
+            <div class="card-title">
+              <h5>Información sede principal</h5>
+            </div>
+            <div class="card-content">
+              <div class="row">
+                <div class="col s4">
+                  <div input-field>
+                    <i class="fa fa-map-o prefix"></i>
+                    <select class="" ng-model="countries.selected" ng-options="country.name for country in countries.choices" ng-change="getDepartments(countries.selected.alpha2Code)" material-select watch>
+                          <!-- <option ng-repeat="country in countries.choices">{{country.name}}</option> -->
+                        </select>
+                    <!-- <input type="text" ng-model="user.country" length="150"> -->
+                    <label>País</label>
+                  </div>
+                </div>
+                <div class="col s4">
+                  <div input-field>
+                    <i class="fa fa-map-signs prefix"></i>
+                    <select class="" ng-model="departments.selected" ng-options="department.adminName1 for department in departments.choices" ng-change="getCities(departments.selected.adminCode1)" material-select watch></select>
+                    <!-- <input type="text" ng-model="user.department" length="150"> -->
+                    <label>Departamento</label>
+                  </div>
+                </div>
+                <div class="col s4">
+                  <div input-field>
+                    <ng-md-icon icon="location_city" class="prefix" style="fill: black" size="30"></ng-md-icon>
+                    <select class="" ng-model="cities.selected" ng-options="city.name for city in cities.choices" material-select watch>
+                        </select>
+                    <!-- <input type="text" ng-model="user.city" length="150"> -->
+                    <label>Ciudad</label>
                   </div>
                 </div>
               </div>
-              <!-- </div> -->
+              <div class="row">
+                <div class="col s6">
+                  <div input-field>
+                    <div ng-class="{'has-error': formSignup.nomenclature.$invalid && (!formSignup.nomenclature.$pristine || formSignup.$submitted || formSignup.nomenclature.$touched),
+                        'has-success': formSignup.nomenclature.$valid}">
+                      <i class="fa fa-map-marker prefix"></i>
+                      <input type="text" name="nomenclature" placeholder="P. ej. Calle 43 # 54-19" ng-model="user.nomenclature" required>
+                      <label>Dirección</label>
+                      <!-- VALIDACIONES DE DIRECCIÓN -->
+                      <div ng-messages="formSignup.nomenclature.$error" ng-if="formSignup.nomenclature.$touched || formSignup.$submitted" ng-messages-multiple>
+                        <p ng-message="required" class="help-block"><b>Debe ingresar una dirección.</b></p>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <div class="col s6">
+                  <div input-field>
+                    <div ng-class="{'has-error': formSignup.phonenumber.$invalid && (!formSignup.phonenumber.$pristine || formSignup.$submitted || formSignup.phonenumber.$touched),
+                        'has-success': formSignup.phonenumber.$valid}">
+                      <i class="fa fa-phone prefix"></i>
+                      <input type="text" name="phonenumber" placeholder="P. ej. 2232111" ng-model="user.phonenumber" required>
+                      <label>Teléfono</label>
+                      <!-- VALIDACIONES DE TELÉFONO -->
+                      <div ng-messages="formSignup.phonenumber.$error" ng-if="formSignup.phonenumber.$touched || formSignup.$submitted" ng-messages-multiple>
+                        <p ng-message="required" class="help-block"><b>Debe ingresar un teléfono.</b></p>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div class="row">
+                <div class="col s6">
+                  <div input-field>
+                    <div ng-class="{'has-error': formSignup.contact.$invalid && (!formSignup.contact.$pristine || formSignup.$submitted || formSignup.contact.$touched),
+                        'has-success': formSignup.contact.$valid}">
+                      <i class="fa fa-user-o prefix"></i>
+                      <input type="text" name="contact" placeholder="P. ej. Carlos Martinez" ng-model="user.contact" required>
+                      <label>Contacto</label>
+                      <!-- VALIDACIONES DE CONTACTO -->
+                      <div ng-messages="formSignup.contact.$error" ng-if="formSignup.contact.$touched || formSignup.$submitted" ng-messages-multiple>
+                        <p ng-message="required" class="help-block"><b>Debe ingresar un contacto.</b></p>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <div class="col s6">
+                  <div input-field>
+                    <div ng-class="{'has-error': formSignup.contactPhonenumber.$invalid && (!formSignup.contactPhonenumber.$pristine || formSignup.$submitted || formSignup.contactPhonenumber.$touched),
+                        'has-success': formSignup.contactPhonenumber.$valid}">
+                      <i class="fa fa-mobile prefix"></i>
+                      <input type="number" name="contactPhonenumber" placeholder="P. ej. 3214323456" ng-model="user.contactPhonenumber" required>
+                      <label>Teléfono contacto</label>
+                      <!-- VALIDACIONES DE NÚMERO DE TELÉFONO DE CONTACTO -->
+                      <div ng-messages="formSignup.contactPhonenumber.$error" ng-if="formSignup.contactPhonenumber.$touched || formSignup.$submitted" ng-messages-multiple>
+                        <p ng-message="required" class="help-block"><b>Debe ingresar un número de teléfono de contacto.</b></p>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
             </div>
-            <div class="col s4">
-              <img ng-src="../../images/avatar.png" height="300" width="300">
+          </div>
+
+          <div class="card">
+            <div class="card-title">
+              <h5>Información de la cuenta</h5>
+            </div>
+            <div class="card-content">
+              <div class="row">
+                <div input-field class="col s4">
+                  <div ng-class="{'has-error': formSignup.email.$invalid && (!formSignup.email.$pristine || formSignup.$submitted || formSignup.email.$touched),
+                  'has-success': formSignup.email.$valid}">
+                    <i class="fa fa-envelope prefix"></i>
+                    <input type="email" name="email" placeholder="P. ej. arketops@gmail.com" ng-model="user.email" required>
+                    <label>Email</label>
+                    <!-- VALIDACIONES DE CORREO -->
+                    <div ng-messages="formSignup.email.$error" ng-if="formSignup.email.$touched || formSignup.$submitted" ng-messages-multiple>
+                      <p ng-message="required" class="help-block"><b>Debe ingresar un correo electrónico.</b></p>
+                      <p ng-message="email" class="help-block"><b>Debe ingresar una dirección de correo electronico válido.</b></p>
+                    </div>
+                  </div>
+                </div>
+                <div input-field class="col s4">
+                  <div ng-class="{'has-error': formSignup.password.$invalid && (!formSignup.password.$pristine || formSignup.$submitted || formSignup.password.$touched),
+                'has-success': formSignup.password.$valid}">
+                    <i class="fa fa-lock prefix"></i>
+                    <input type="password" name="password" id="password" placeholder="P. ej. Ark3t03Cc$" ng-model="user.password" ng-minlength="6" length="20" required>
+                    <label>Contraseña</label>
+                    <!-- VALIDACIONES DE CONTRASEÑA -->
+                    <div ng-messages="formSignup.password.$error" ng-if="formSignup.password.$touched || formSignup.$submitted" ng-messages-multiple>
+                      <p ng-message="required" class="help-block"><b>Debe ingresar una contraseña.</b></p>
+                      <p ng-message="minlength" class="help-block"><b>La contraseña debe tener por lo menos 6 carácteres.</b></p>
+                    </div>
+                  </div>
+                </div>
+                <div input-field class="col s4">
+                  <div ng-class="{'has-error': formSignup.rePassword.$invalid && (!formSignup.rePassword.$pristine || formSignup.$submitted || formSignup.rePassword.$touched),
+              'has-success': formSignup.rePassword.$valid}">
+                    <i class="fa fa-unlock-alt prefix"></i>
+                    <input type="password" name="rePassword" id="rePassword" placeholder="P. ej. Ark3t03Cc$" match-password="password" ng-model="user.rePassword" length="20" required>
+                    <label>Confirmar contraseña</label>
+                    <!-- VALIDACIONES DE CONTRASEÑA -->
+                    <div ng-messages="formSignup.rePassword.$error" ng-if="formSignup.rePassword.$touched || formSignup.$submitted" ng-messages-multiple>
+                      <p ng-message="required" class="help-block"><b>El campo de confirmar contraseña es obligatorio.</b></p>
+                      <p ng-message="passwordMatch" class="help-block"><b>Las contraseñas deben ser iguales.</b></p>
+                    </div>
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
-          <div class="row container">
-            <input type="checkbox" class="filled-in" id="filled-in-box" checked="checked" />
-            <label for="filled-in-box">Aceptar terminos y condiciones.</label>
+
+          <div class="container">
+            <div class="row ">
+              <div ng-class="{'has-error': formSignup.termsAndConditions.$invalid && (!formSignup.termsAndConditions.$pristine || formSignup.$submitted),
+              'has-success': formSignup.termsAndConditions.$valid}">
+                <input type="checkbox" class="filled-in" id="filled-in-box" ng-model="termsAndConditions" ng-required="!termsAndConditions" ng-true-value="'YES'" ng-false-value="'NO'" />
+                <label for="filled-in-box">Aceptar terminos y condiciones.</label>
+                <!-- VALIDACIONES DE NÚMERO DE TELÉFONO DE CONTACTO -->
+                <div ng-messages="formSignup.termsAndConditions.$error" ng-if="formSignup.$submitted" ng-messages-multiple>
+                  <p ng-message="required" class="help-block"><b>Debe aceptar los terminos y condiciones.</b></p>
+                </div>
+              </div>
+              {{termsAndConditions}}
+            </div>
+            <div class="row center">
+              <button class="btn waves-effect waves-light" type="submit" name="action">Enviar
+                <i class="fa fa-send right"></i>
+              </button>
+            </div>
           </div>
-          <div class="row center">
-            <button class="btn waves-effect waves-light" type="submit" name="action">Enviar
-              <i class="fa fa-send right"></i>
-          </div>
-        </button>
         </form>
+      </div>
+    </div>
+  </div>
+</div>
+<div class="divider"></div>
+<div class="container section scrollspy" id="contactus">
+  <div class="section">
+    <br>
+    <br>
+    <h2>Contáctenos</h2>
+    <div class="row">
+      <form class="col s8">
+        <div class="row">
+          <div class="input-field col s6">
+            <input id="name" type="text" class="validate">
+            <label for="name">Tu Nombre</label>
+          </div>
+          <div class="input-field col s6">
+            <input id="email" type="email" class="validate">
+            <label for="email">Tu Correo</label>
+          </div>
         </div>
-      </div>
+        <!--row-->
+        <div class="row">
+          <div class="input-field col s12">
+            <input id="message-sub" type="text" class="validate">
+            <label for="message-sub">Asunto del mensaje</label>
+          </div>
+        </div>
+        <div class="row">
+          <div class="input-field col s12">
+            <textarea id="text_area" class="materialize-textarea"></textarea>
+            <label for="text_area">Tu mensaje</label>
+          </div>
+        </div>
+        <div>
+          <a class="waves-effect waves-light btn purple lighten-1">Enviar mensaje<i class="mdi-content-send right"></i></a>
+        </div>
+      </form>
     </div>
   </div>
-  <div class="divider"></div>
-  <div class="container section scrollspy" id="contactus">
-    <div class="section">
-      <br>
-      <br>
-      <h2>Contáctenos</h2>
-      <div class="row">
-        <form class="col s8">
-          <div class="row">
-            <div class="input-field col s6">
-              <input id="name" type="text" class="validate">
-              <label for="name">Tu Nombre</label>
-            </div>
-            <div class="input-field col s6">
-              <input id="email" type="email" class="validate">
-              <label for="email">Tu Correo</label>
-            </div>
-          </div>
-          <!--row-->
-          <div class="row">
-            <div class="input-field col s12">
-              <input id="message-sub" type="text" class="validate">
-              <label for="message-sub">Asunto del mensaje</label>
-            </div>
-          </div>
-          <div class="row">
-            <div class="input-field col s12">
-              <textarea id="text_area" class="materialize-textarea"></textarea>
-              <label for="text_area">Tu mensaje</label>
-            </div>
-          </div>
-          <div>
-            <a class="waves-effect waves-light btn purple lighten-1">Enviar mensaje<i class="mdi-content-send right"></i></a>
-          </div>
-        </form>
-      </div>
-    </div>
-  </div>
+</div>

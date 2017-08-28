@@ -10,5 +10,15 @@ arketops.config(['$stateProvider', '$urlRouterProvider',
         controller: 'HomeCtrl'
       })
 
+      .state('showResults', {
+        url: '/empresasProductos',
+        templateUrl: 'templates/shared/result-list.html',
+        controller: 'ResultListCtrl',
+        params: {
+          searchValue: null,
+          filter: null
+        },
+      })
+
 
   }]);

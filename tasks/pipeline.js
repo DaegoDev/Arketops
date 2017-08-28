@@ -44,7 +44,12 @@ var jsFilesToInject = [
   'bower_components/angular-materialize/src/angular-materialize.js',
   'bower_components/angular-material-icons/angular-material-icons.min.js',
   'bower_components/angular-confirm/dist/angular-confirm.min.js',
-
+  'bower_components/angular-messages/angular-messages.js',
+  'bower_components/angular-password/angular-password.js',
+  'bower_components/angular-permission/dist/angular-permission.js',
+  'bower_components/angular-permission/dist/angular-permission-ui.js',
+  'bower_components/angular-tooltips/dist/angular-tooltips.min.js',
+  'bower_components/angular-base64-upload/dist/angular-base64-upload.min.js',
   // All of the rest of your client-side js files
   // will be injected here in no particular order.
   'js/main.js',

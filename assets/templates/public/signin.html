@@ -1,19 +1,47 @@
 <div class="container">
-  <div class="row">
-    <form class="form">
+  <form ng-submit="signinUser()" name="signin" novalidate>
+    <div class="row">
       <div input-field>
-        <ng-md-icon icon="email" class="prefix" style="fill: black" size="30"></ng-md-icon>
-        <input type="email" ng-model="email" length="150">
-        <label>Email</label>
+        <div ng-class="{'has-error': signin.email.$invalid && (!signin.$pristine || signin.$submitted || signin.email.$touched),
+        'has-success': signin.email.$valid}">
+          <ng-md-icon icon="email" class="prefix" style="fill: black" size="30"></ng-md-icon>
+          <input type="email" name="email" placeholder="Email de la empresa" ng-model="user.email" length="150" required>
+          <label>Email</label>
+          <!-- VALIDACIONES DE NOMBRE DE USUARIO -->
+          <div ng-messages="signin.email.$error" ng-if="signin.email.$touched || signin.$submitted" ng-messages-multiple>
+            <p ng-message="required" class="help-block"><b>Debe ingresar un email.</b></p>
+            <p ng-message="email" class="help-block"><b>Debe ingresar una email válido.</b></p>
+          </div>
+        </div>
       </div>
       <div input-field>
-        <ng-md-icon icon="lock" class="prefix" style="fill: black" size="30"></ng-md-icon>
-        <input type="password" ng-model="password" length="150">
-        <label>Contraseña</label>
+        <div ng-class="{'has-error': signin.password.$invalid && (!signin.$pristine || signin.$submitted || signin.password.$touched),
+        'has-success': signin.password.$valid}">
+          <ng-md-icon icon="lock" class="prefix" style="fill: black" size="30"></ng-md-icon>
+          <input type="password" name="password" placeholder="Contraseña" ng-model="user.password" required>
+          <label>Contraseña</label>
+          <!-- VALIDACIONES DE CONTRASEÑA -->
+          <div ng-messages="signin.password.$error" ng-if="signin.password.$touched || signin.$submitted" ng-messages-multiple>
+            <p ng-message="required" class="help-block"><b>Debe ingresar una contraseña.</b></p>
+          </div>
+        </div>
       </div>
-    </form>
-    <p class="center">
-      <a ui-ref="">¿Olvidaste tu contraseña?</a>
-    </p>
-  </div>
+      <!-- INFORMACIÓN DE ERRORES -->
+      <div class="alert" ng-class="{'alert-success': !loginError, 'alert-danger': loginError}" ng-show="loginError">
+        <button type="button" class="close" ng-click="switchError('loginError')">×</button>
+        <strong> {{errorMessage}} </strong>
+      </div>
+      <p class="center">
+        <a ui-sref="home">¿Olvidaste tu contraseña?</a>
+      </p>
+      <div class="center">
+        <button class="btn waves-effect waves-light" type="submit" name="submit">Iniciar sesión
+        </button>
+      </div>
+      <!-- <div class="center">
+        <button ng-click="closeModalF()" class="btn waves-effect waves-light">Cerrar
+        </button>
+      </div> -->
+    </div>
+  </form>
 </div>

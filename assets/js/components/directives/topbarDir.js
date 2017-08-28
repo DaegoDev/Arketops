@@ -3,92 +3,94 @@ var arketops = angular.module('arketops');
 arketops.directive('topbar', function() {
   return {
     restric: 'E',
-    // transclude: true,
     templateUrl: 'templates/public/topbar.html',
-    // scope: {
-    //   toggle: '='
-    // },
     controller: 'topbarCtrl'
   }
 })
 
-arketops.controller('topbarCtrl', ['$scope', '$cookieStore', '$ngConfirm', function($scope, $cookieStore, $ngConfirm) {
+arketops.controller('topbarCtrl', ['$scope', '$cookieStore', '$ngConfirm', 'AuthSvc', '$interval', '$state', function($scope, $cookieStore, $ngConfirm, AuthSvc, $interval, $state) {
   $(document).ready(function() {
     $('.scrollspy').scrollSpy({
       scrollOffset:0
     });
   });
 
-  $scope.formSignin = function () {
-    $ngConfirm({
-      title: 'Inicio de sesión',
-      contentUrl: 'templates/public/signin.html',
-      scope: $scope,
-      theme: 'modern',
-      // columnClass: 'medium',
-      backgroundDismiss: true,
-      useBootstrap: false,
-      boxWidth: '40%',
-      buttons: {
-        signin: {
-          text: 'Iniciar sesión',
-          btnClass: 'btn-blue',
-          keys: ['enter'],
-          action: signin()
-        },
-        // Cancelar: function () {
-        //
-        // }
-      }
-    })
-  };
+  $scope.user = {};
 
-  function signin() {
+  // variable que guarda el estilo de la sección de busqueda.
+  $scope.searchNavStyle = {};
 
+  // Variable para verificar que el usuario esté autenticado.
+  $scope.authenticated = AuthSvc.isAuthenticated();
+
+  $scope.$on('renovateRole', function(evt) {
+    $scope.authenticated = AuthSvc.isAuthenticated();
+  });
+
+  // Opciones para el select de busqueda.
+  $scope.filters = {
+    choices: ['Todo', 'Empresa', 'Producto'],
+    selected: "Todo"
   }
-  // var viewport = 992;
-  // $scope.toggle = false;
-  //
-  // $scope.$watch($scope.getWidth, function(newValue, oldValue) {
-  //   if (angular.isDefined($cookieStore.get('toggle'))) {
-  //     $scope.toggle = !$cookieStore.get('toggle') ? false : true;
-  //   } else {
-  //     $scope.toggle = true;
-  //   }
-  // });
-  // $scope.toggleSidebar = function() {
-  //   $scope.toggle = !$scope.toggle;
-  //   $cookieStore.put('toggle', $scope.toggle);
+
+  // Función para cerrar cesión.
+  $scope.signout = function() {
+    AuthSvc.signout();
+  }
+
+  // Función que despliega la sección de busqueda.
+  $scope.openSearchNav = function () {
+    $scope.searchNavStyle.height == '20%' ? $scope.searchNavStyle.height = '0%' : $scope.searchNavStyle.height = '20%';
+  }
+
+  // Función que oculta la sección de busqueda.
+  $scope.closeSearchNav = function () {
+    $scope.searchNavStyle = {
+      height: '0%'
+    }
+  }
+
+  // Muestra la vista con los resultados de la busqueda.
+  $scope.showResults = function () {
+    var searchValue = $scope.searchValue;
+    var filter = $scope.filters.selected;
+    console.log($scope.filters.selected);
+    if (!searchValue) {
+      return;
+    }
+    $scope.closeSearchNav();
+    $state.go('showResults', {searchValue: searchValue, filter: filter});
+  }
+
+  $scope.openModal = false;
+
+  $scope.modalReady = function () {
+    $scope.openModal = true;
+    console.log("modalReady");
+    console.log($scope.openModal);
+  }
+
+  $scope.modalComplete = function () {
+    $scope.openModal = false;
+    console.log("modalComplete");
+    console.log($scope.openModal);
+  }
+
+  this.openModal = $scope.openModal;
+
+  // $scope.closeModal = function () {
+  //   $scope.openModal = false;
+  //   console.log("closeModal");
+  //   console.log($scope.openModal);
   // }
-  // this.toggleSidebar = $scope.toggleSidebar;
   //
-  // window.onresize = function() {
-  //   $scope.$apply();
-  // }
-  //
-  // $scope.role = AuthService.getRole();
-  //
-  // $scope.$on('renovateRole', function(evt) {
-  //   $scope.role = AuthService.getRole();
-  // });
-  //
-  // $scope.isClient = function() {
-  //   return $scope.role === "CLIENTE";
-  // };
-  //
-  // $scope.isAdmin = function() {
-  //   return $scope.role === "ADMINISTRADOR";
-  // };
-  //
-  // $scope.isEmployee = function() {
-  //   if ($scope.role === "DESPACHADOR" || $scope.role === "ADMINISTRADOR") {
-  //     return true;
-  //   } else {
-  //     return false;
-  //   }
-  // };
-  //
-  // $scope.isDespachador = function() {
-  //   return $scope.role === "DESPACHADOR";
-  // };
+  // this.closeModal = $scope.closeModal;
+
+
+  // $interval(function() {
+  //   console.log($scope.openModal);
+  //   $scope.openModal = false;
+  // } , 5000)
+
+
 }]);

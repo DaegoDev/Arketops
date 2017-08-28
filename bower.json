@@ -23,10 +23,16 @@
     "angular-route": "~1.6.x",
     "angular-ui-router": "~0.4.x",
     "materialize": "^0.99.0",
+    "angular-messages": "~1.6.3",
     "angular-cookies": "^1.6.x",
+    "angular-permission": "~5.2.2",
+    "angular-password": "~1.0.3",
+    "angular-tooltips": "~1.1.10",
     "angular-materialize": "^0.2.2",
     "angular-material-icons": "^0.7.1",
-    "angular-confirm": "angular1-confirm#^1.1.0"
+    "angular-confirm": "angular1-confirm#^1.1.0",
+    "angular-base64-upload": "^0.1.22",
+    "ng-materialize": "^0.1.2"
   },
   "resolutions": {
     "angular": "1.6.4"

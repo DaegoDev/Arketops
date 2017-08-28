@@ -9,6 +9,7 @@
 var promise = require('bluebird');
 var fs = require('fs');
 var sizeOf = require('image-size');
+var imageDataURIModule = require('image-data-uri');
 
 module.exports = {
   /**
@@ -26,7 +27,7 @@ module.exports = {
     var website = null;
     var imageURI = null;
     // variables necesarias para cargar la imagen.
-    var imageFile = null;
+    var imageDataURI = null;
     var tempLocation = null;
 
     var country = null;
@@ -40,6 +41,7 @@ module.exports = {
     var email = null;
     var password = null;
 
+
     // Definición de variables apartir de los parametros de la solicitud y validaciones.
     name = req.param('name');
     if (!name) {
@@ -49,7 +51,7 @@ module.exports = {
       });
     }
 
-    nit = req.param('nit');
+    nit = req.param('nit').toString();
     if (!nit) {
       return res.badRequest({
         code: 1,
@@ -138,83 +140,97 @@ module.exports = {
     }
 
     website = req.param('website');
-    imageFile = req.file('imageFile');
+    imageDataURI = req.param('imageDataURI');
 
-    var pathAvatars = sails.config.appPath + "/assets/images/avatars/";
+
+    var pathAvatars = sails.config.appPath + "/assets/images/avatars/" + nit;
     var tmpPathAvatars = sails.config.appPath + '/.tmp/public/images/uploads/';
-    // Cargar la imagen en el directorio images/avatars
-    imageFile.upload({
-      dirname: pathAvatars
-    }, function onUploadComplete(err, uploadedImage) {
-      if (err) return res.serverError(err);
-      imageURI = uploadedImage[0].fd;
-      // tempLocation = tmpPathAvatars + filename;
 
-      //Copy the file to the temp folder so that it becomes available immediately
-      // fs.createReadStream(imageURI).pipe(fs.createWriteStream(tempLocation));
-
-      // Organización de credenciales y cifrado de la contraseña del usuario.
-      var userCredentials = createUserCredentials(email, password);
-
-      var companyCredentials = createCompanyCredentials(name, nit, businessOverview, website, imageURI);
-
-      var headquartersCredentials = createHeadquartersCredentials(country, department, city, nomenclature, phonenumber, contact, contactPhonenumber);
-
-      // Se valida que el archivo tenga el formato y la resolución deseada.
-      var dimensions = sizeOf(imageURI);
-      sails.log.debug(dimensions);
-      if (dimensions.width > 800 || dimensions.height > 800 || (dimensions.type != "png" && dimensions.type != "jpeg" && dimensions.type != "jpg")) {
-        fs.unlink(imageURI, (err) => {
-          if (err) throw err;
-          sails.log.debug('Se borró la imagen');
+    User.findOne({
+        where: {
+          email: email
+        }
+      })
+      .then(function(user) {
+        if (user) {
+          throw new Error("El usuario ya existe");
+        }
+        return Company.findOne({
+          where: {
+            $or: [{
+              nit: nit
+            }, {
+              name: name
+            }]
+          }
         });
-        return res.badRequest("La configuración del archivo no es valida");
-      }
+      })
+      .then(function(company) {
+        if (company) {
+          throw new Error("La compañia ya existe");
+        }
+        if (imageDataURI) {
+          // return imageDataURIModule.outputFile(imageDataURI, pathAvatars)
+          return ImageDataURIService.decodeAndSave(imageDataURI, pathAvatars)
+        }
+        return null;
+      })
+      .then(function(resUpload) {
+        sails.log.debug(resUpload)
+        if (resUpload) {
+          imageURI = resUpload;
+          // Se valida que el archivo tenga el formato y la resolución deseada.
+          var dimensions = sizeOf(imageURI);
+          if (dimensions.type != "png" && dimensions.type != "jpeg" && dimensions.type != "jpg") {
+            fs.unlink(imageURI, (err) => {
+              sails.log.debug('Se borró la imagen');
+            });
+            throw new Error("La configuración del archivo no es valida");
+          }
+        }
 
-      // Se verifica que el usuario no exista antes de su creación, en caso de que exista
-      // se retorna un error de conflicto con codigo de error 409. En caso de que no exista
-      // se crea el regitro del usuario.
-      return sequelize.transaction(function(t) {
-        return User.findOne({
-            where: {
-              email: email
-            }
-          }, {
-            transaction: t
-          })
-          .then(function(user) {
-            if (!user) {
-              return User.create(userCredentials, {
+        // Organización de credenciales y cifrado de la contraseña del usuario.
+        var userCredentials = createUserCredentials(email, password);
+
+        var companyCredentials = createCompanyCredentials(name, nit, businessOverview, website, imageURI);
+
+        var headquartersCredentials = createHeadquartersCredentials(country, department, city, nomenclature, phonenumber, contact, contactPhonenumber);
+
+        // Se verifica que el usuario no exista antes de su creación, en caso de que exista
+        // se retorna un error de conflicto con codigo de error 409. En caso de que no exista
+        // se crea el regitro del usuario.
+        return sequelize.transaction(function(t) {
+          return User.create(userCredentials, {
+              transaction: t
+            })
+            .then(function(user) {
+              return user.setCompany(Company.build(companyCredentials), {
                 transaction: t
-              })
-            } else {
-              throw "err";
-            }
-          })
-          .then(function(user) {
-            // sails.log.debug(user);
-            return user.setCompany(Company.build(companyCredentials), {
-              transaction: t
-            });
-          })
-          .then(function(company) {
-            headquartersCredentials.companyId = company.id;
-            return Headquarters.create(headquartersCredentials, {
-              transaction: t
-            });
-          })
-      }).then(function(result) {
-        // Transaction has been committed
-        res.ok(result);
-      }).catch(function(err) {
-        fs.unlink(imageURI, (err) => {
-          if (err) throw err;
-          sails.log.debug('Se borró la imagen');
-        });
+              });
+            })
+            .then(function(company) {
+              headquartersCredentials.companyId = company.id;
+              return Headquarters.create(headquartersCredentials, {
+                transaction: t
+              });
+            })
+        }).then(function(result) {
+          // Transaction has been committed
+          sails.log.debug(result);
+          res.ok(result);
+        })
+      })
+      .catch(function(err) {
+        if (imageURI) {
+          fs.unlink(imageURI, (err) => {
+            if (err) throw err;
+            sails.log.debug('Se borró la imagen');
+          });
+        }
         // Transaction has been rolled back
         res.serverError(err);
-      });
-    });
+      })
+
   },
   /**
    * Función para actulizar los datos de una empresa.
@@ -597,7 +613,21 @@ module.exports = {
         }
       })
       .then(function(companies) {
-        res.ok(companies);
+        var numberCompanies = companies.length;
+        companies.forEach(function (company, index, companiesList) {
+          company.dataValues.type = 1;
+            ImageDataURIService.encode(company.imageURI)
+            .then((imageDataURI) => {
+              company.imageURI = imageDataURI;
+            })
+            .catch((err) => {
+              sails.log.debug(err)
+            })
+        })
+        setTimeout(function() {
+          res.ok(companies);
+        }, 10);
+
       })
       .catch(function(err) {
         sails.log.debug(err);
@@ -613,6 +643,7 @@ module.exports = {
     // Declaración de variables.
     var keyword = null;
     var result = {};
+    var products = [];
 
     // Definición de variables y validaciones.
     keyword = req.param('keyword');
@@ -645,8 +676,18 @@ module.exports = {
           attributes: ['name', 'id']
         }]
       })
-      .then(function(products) {
-        result.products = products
+      .then(function(productsQuery) {
+        products = productsQuery;
+        products.forEach(function (product, index, productsList) {
+          product.dataValues.type = 2;
+            ImageDataURIService.encode(product.imageURI)
+            .then((imageDataURI) => {
+              product.imageURI = imageDataURI;
+            })
+            .catch((err) => {
+              sails.log.debug(err)
+            })
+        })
         return Company.findAll({
           where: {
             $or: [{
@@ -662,8 +703,21 @@ module.exports = {
         })
       })
       .then(function(companies) {
-        result.companies = companies;
-        res.ok(result);
+        companies.forEach(function (company, index, companiesList) {
+          company.dataValues.type = 1;
+            ImageDataURIService.encode(company.imageURI)
+            .then((imageDataURI) => {
+              company.imageURI = imageDataURI;
+            })
+            .catch((err) => {
+              sails.log.debug(err)
+            })
+        })
+        setTimeout(function() {
+          result.products = products;
+          result.companies = companies;
+          res.ok(result);
+        }, 10);
       })
       .catch(function(err) {
         sails.log.debug(err);
@@ -770,7 +824,12 @@ module.exports = {
       })
       .then(function(clientSupplier) {
         if (clientSupplier) {
-          return Promise.all = [clientSupplier, ElementData.findOne({where: {id: elementDataId, userId: user.id}})];
+          return Promise.all = [clientSupplier, ElementData.findOne({
+            where: {
+              id: elementDataId,
+              userId: user.id
+            }
+          })];
         }
         throw "No es cliente";
       })

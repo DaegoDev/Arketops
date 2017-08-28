@@ -57,7 +57,7 @@ function _onLocalUser(email, password, next) {
       if (!registro) {
         return next(null, false, {
           code: 'E_USERNAME_NOT_FOUND',
-          message: username + ' not found'
+          message: email + ' not found'
         });
       } else if (!registro.state) {
         return next(null, false, {
@@ -72,7 +72,7 @@ function _onLocalUser(email, password, next) {
       }
       return next(null, registro, {});
     })
-    .catch(function (err) {
+    .catch(function (error) {
       return next(error, false, {});
     })
 };

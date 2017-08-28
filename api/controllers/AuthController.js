@@ -24,10 +24,12 @@
      return res.serverError(err);
    }
    if (!user) {
-     return res.serverError(null, info && info.code, info && info.message);
+     sails.log.debug({code: info.code, msg: info.message})
+     return res.serverError(info.code);
    }
    return res.ok({
      token: CriptoService.crearToken(user),
+     role: "COMPANY"
    });
  }
 

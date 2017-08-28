@@ -22,6 +22,7 @@
     "grunt-sails-linker": "~0.10.1",
     "grunt-sync": "0.5.2",
     "hummus": "^1.0.78",
+    "image-data-uri": "^1.0.0",
     "image-size": "^0.6.1",
     "image-watermark": "0.0.7",
     "include-all": "^1.0.0",

@@ -5,10 +5,10 @@
  * @help        :: See http://sailsjs.org/#!/documentation/concepts/Controllers
  */
 
- // Modulos requeridos.
- var promise = require('bluebird');
- var fs = require('fs');
- var sizeOf = require('image-size');
+// Modulos requeridos.
+var promise = require('bluebird');
+var fs = require('fs');
+var sizeOf = require('image-size');
 
 module.exports = {
   /**
@@ -401,82 +401,96 @@ module.exports = {
    * @param  {Object} req Request object
    * @param  {Object} res Response object
    */
-   getByName: function (req, res) {
-     // Declaración de variables.
-     var name = null;
+  getByName: function(req, res) {
+    // Declaración de variables.
+    var name = null;
 
-     // Definición de variables y validaciones.
-     name = req.param('name');
-     if (!name) {
-       return res.badRequest({
-         code: 1,
-         msg: 'Se debe ingresar un nombre.'
-       });
-     }
+    // Definición de variables y validaciones.
+    name = req.param('name');
+    if (!name) {
+      return res.badRequest({
+        code: 1,
+        msg: 'Se debe ingresar un nombre.'
+      });
+    }
 
-     Product.findAll({
-       where: {
-         name: {
-           $iLike: '%' + name + '%'
-         }
-       },
-       include: [{
-         model: ElementData,
-         include: [{
-           model: Element,
-         }]
-       },{
-         model: Company,
-         attributes: ['name']
-       }]
-     })
-     .then(function (products) {
-       res.ok(products);
-     })
-     .catch(function (err) {
-       sails.log.debug(err);
-       res.serverError(err);
-     })
-   },
-   /**
-    * Función para obtener los productos o servicios de una empresa.
-    * @param  {Object} req Request object
-    * @param  {Object} res Response object
-    */
-    getByCompany: function (req, res){
-      // Declaración de variables.
-      var companyId = null;
-
-      // Definición de variables y validaciones.
-      companyId = parseInt(req.param('companyId'));
-      if (!companyId) {
-        return res.badRequest({
-          code: 1,
-          msg: 'Se debe ingresar el id de una empresa.'
-        });
-      }
-
-      Company.findAll({
-          include: [{
-            model: Product,
-            include: [{
-              model: ElementData,
-              include: [{
-                model: Element,
-              }]
-            }]
-          }],
-          where: {
-            id: companyId
+    Product.findAll({
+        where: {
+          name: {
+            $iLike: '%' + name + '%'
           }
+        },
+        include: [{
+          model: ElementData,
+          include: [{
+            model: Element,
+          }]
+        }, {
+          model: Company,
+          attributes: ['name']
+        }]
+      })
+      .then(function(products) {
+        var numberProducts = products.length;
+        products.forEach(function(product, index, productsList) {
+          product.dataValues.type= 2;
+          ImageDataURIService.encode(product.imageURI)
+            .then((imageDataURI) => {
+              product.imageURI = imageDataURI;
+            })
+            .catch((err) => {
+              sails.log.debug(err)
+            })
         })
-        .then(function(company) {
-          sails.log.debug(company[0]);
-          res.ok(company[0]);
-        })
-        .catch(function(err) {
-          res.serverError(err);
-        })
-    },
+        setTimeout(function() {
+          // sails.log.debug(products);
+          res.ok(products);
+        }, 10);
+      })
+      .catch(function(err) {
+        sails.log.debug(err);
+        res.serverError(err);
+      })
+  },
+  /**
+   * Función para obtener los productos o servicios de una empresa.
+   * @param  {Object} req Request object
+   * @param  {Object} res Response object
+   */
+  getByCompany: function(req, res) {
+    // Declaración de variables.
+    var companyId = null;
+
+    // Definición de variables y validaciones.
+    companyId = parseInt(req.param('companyId'));
+    if (!companyId) {
+      return res.badRequest({
+        code: 1,
+        msg: 'Se debe ingresar el id de una empresa.'
+      });
+    }
+
+    Company.findAll({
+        include: [{
+          model: Product,
+          include: [{
+            model: ElementData,
+            include: [{
+              model: Element,
+            }]
+          }]
+        }],
+        where: {
+          id: companyId
+        }
+      })
+      .then(function(company) {
+        sails.log.debug(company[0]);
+        res.ok(company[0]);
+      })
+      .catch(function(err) {
+        res.serverError(err);
+      })
+  },
 
 };
