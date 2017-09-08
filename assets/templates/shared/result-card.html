@@ -1,11 +1,14 @@
 <div class="card sticky-action">
   <div class="card-image">
-    <img materialboxed class="materialboxed" src="{{compProd.imageURI ? compProd.imageURI: '../../images/no-image.jpg'}}" >
+    <img materialboxed class="materialboxed" src="{{compProd.imageURI ? compProd.imageURI: '../../images/no-image.jpg'}}">
   </div>
   <div class="card-content">
     <span class="card-title grey-text text-darken-4">{{compProd.name | capitalize}}</span>
     <a class="right activator">Ver mas</a>
     <p ng-if="compProd.website"><a href="{{compProd.website}}" target="_blank">Ver sitio web</a></p>
+    <div ng-if="!compProd.website && isCompany">
+      <br>
+    </div>
   </div>
   <div class="card-action">
     <span ng-if="isCompany"><a href="#">Ver productos</a></span>
@@ -14,7 +17,28 @@
   </div>
   <div class="card-reveal">
     <span class="card-title grey-text text-darken-4">{{compProd.name | capitalize}}<i class="fa fa-close right"></i></span>
-    <p>{{compProd.businessOverview | capitalize}}</p>
-    <p>{{compProd.phonenumber}}</p>
+    <label for="">Descripción:</label>
+    <p ng-if="isCompany">{{compProd.businessOverview | capitalize}}</p>
+    <p ng-if="isProduct">{{compProd.description | capitalize}}</p>
+    <div ng-if="isCompany">
+      <label for="">Teléfono: </label>
+      <span class="data-value">
+        {{compProd.Headquarters[0].phonenumber}}
+      </span><br>
+      <label for="">Dirección: </label>
+      <span class="data-value">
+        {{compProd.Headquarters[0].nomenclature}} {{compProd.Headquarters[0].city}}, {{compProd.Headquarters[0].department}}
+      </span><br>
+      <label for="">Correo: </label>
+      <span class="data-value">
+        {{compProd.User.email}}
+      </span>
+    </div>
+    <div ng-if="isProduct">
+      <label for="">Precio: </label>
+      <span class="data-value">
+        {{compProd.price}}
+      </span><br>
+    </div>
   </div>
 </div>

@@ -29,10 +29,13 @@ module.exports.policies = {
   '*': true,
 
   CompanyController: {
-    // updateData: 'isAuthenticated',
-    // updatePassword: 'isAuthenticated',
-    // deactivateAccount: 'isAuthenticated',
-    // followCompany: 'isAuthenticated',
+    getProfile: 'isAuthenticated',
+    updateData: 'isAuthenticated',
+    updatePassword: 'isAuthenticated',
+    updateImageProfile: 'isAuthenticated',
+    deactivateAccount: 'isAuthenticated',
+    followCompany: 'isAuthenticated',
+    recoverPassword: 'isAuthenticated',
   },
 
   /***************************************************************************

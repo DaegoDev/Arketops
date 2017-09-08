@@ -143,7 +143,7 @@ module.exports = {
     imageDataURI = req.param('imageDataURI');
 
 
-    var pathAvatars = sails.config.appPath + "/assets/images/avatars/" + nit;
+    var pathAvatars = sails.config.appPath + "/assets/images/avatars/" + nit + "_1";
     var tmpPathAvatars = sails.config.appPath + '/.tmp/public/images/uploads/';
 
     User.findOne({
@@ -216,7 +216,7 @@ module.exports = {
             })
         }).then(function(result) {
           // Transaction has been committed
-          sails.log.debug(result);
+          MailService.sendMailSignup(email, name);
           res.ok(result);
         })
       })
@@ -231,6 +231,55 @@ module.exports = {
         res.serverError(err);
       })
 
+  },
+  /**
+   * Función para obtener el perfil de una empresa.
+   * @param  {Object} req Request object
+   * @param  {Object} res Response object
+   * @return {Object}
+   */
+  getProfile: function(req, res) {
+    // Declaración de variables.
+    var user = null;
+    var company = {};
+
+    // Definición de variables y validaciones.
+    user = req.user;
+
+    Company.findOne({
+        include: [{
+          model: Headquarters,
+          where: {
+            main: true
+          }
+        }, {
+          model: User,
+          where: {
+            id: user.id
+          }
+        }]
+      })
+      .then(function(companyQuery) {
+        company = companyQuery;
+        delete company.User.password;
+        if (company.imageURI) {
+          return ImageDataURIService.encode(company.imageURI);
+        } else {
+          return null;
+        }
+      })
+      .then((imageDataURI) => {
+        if (imageDataURI) {
+          company.imageURI = imageDataURI;
+        }
+        company.nit = parseInt(company.nit);
+        company.Headquarters[0].contactPhonenumber = parseInt(company.Headquarters[0].contactPhonenumber);
+        res.ok(company);
+      })
+      .catch(function(err) {
+        sails.log.debug(err);
+        res.serverError(err);
+      })
   },
   /**
    * Función para actulizar los datos de una empresa.
@@ -346,8 +395,7 @@ module.exports = {
     }
 
     website = req.param('website');
-    // user = req.user;
-    userId = 2;
+    user = req.user;
     // Organización de credenciales.
 
     var companyCredentials = createCompanyCredentials(name, nit, businessOverview, website, null);
@@ -360,7 +408,7 @@ module.exports = {
     return sequelize.transaction(function(t) {
       return User.findOne({
           where: {
-            id: userId,
+            id: user.id,
             state: true
           }
         }, {
@@ -372,13 +420,13 @@ module.exports = {
               email: email
             }, {
               where: {
-                id: userId
+                id: user.id
               },
               transaction: t
             });
             return Company.findOne({
               where: {
-                userId: userId
+                userId: user.id
               }
             })
           } else {
@@ -416,15 +464,16 @@ module.exports = {
     var imageURI = null;
     var imageURIDB = null;
     // variables necesarias para cargar la imagen.
-    var imageFile = null;
-    var tempLocation = null;
+    var imageDataURI = null;
+    // var tempLocation = null;
 
     // Definición de las variables.
-    imageFile = req.file('imageFile');
-    // user = req.user;
-    user = {
-      id: 11
+    imageDataURI = req.param('imageDataURI');
+    if (!imageDataURI) {
+      return res.badRequest("DataURI de la imagen vacío.")
     }
+    user = req.user;
+
 
     Company.findOne({
         where: {
@@ -432,52 +481,51 @@ module.exports = {
         }
       })
       .then(function(company) {
-        imageURIDB = company.imageURI;
-        var pathAvatars = sails.config.appPath + "/assets/images/avatars/";
+        var newNameImage = null;
+        if (company.imageURI) {
+          imageURIDB = company.imageURI;
+          var arrayImageURIDB = imageURIDB.split("/");
+          var fileNameDB = arrayImageURIDB[arrayImageURIDB.length - 1];
+          var imageNameDB = fileNameDB.split(".")[0];
+          var numNewImage = parseInt(imageNameDB.substring(imageNameDB.length - 1)) + 1;
+        }
+        newNameImage = company.imageURI ? company.nit + "_" + numNewImage : company.nit + "_1";
+
+        var pathAvatars = sails.config.appPath + "/assets/images/avatars/" + newNameImage;
         //   var tmpPathAvatars = sails.config.appPath + '/.tmp/public/images/uploads/';
+        return Promise.all = [company, ImageDataURIService.decodeAndSave(imageDataURI, pathAvatars)]
 
-        // Cargar la imagen en el directorio images/avatars
-        imageFile.upload({
-          dirname: pathAvatars
-        }, function onUploadComplete(err, uploadedImage) {
-          if (err) return res.serverError(err);
-          imageURI = uploadedImage[0].fd;
-          // tempLocation = tmpPathAvatars + filename;
-
-          //Copy the file to the temp folder so that it becomes available immediately
-          // fs.createReadStream(imageURI).pipe(fs.createWriteStream(tempLocation));
-
+      })
+      .spread((company, resUpload) => {
+        if (resUpload) {
+          imageURI = resUpload;
           // Se valida que el archivo tenga el formato y la resolución deseada.
-          sizeOf = promise.promisify(sizeOf);
-          sizeOf(imageURI)
-            .then(function(dimensions) {
-              sails.log.debug(dimensions);
-              if (dimensions.width > 800 || dimensions.height > 800 || (dimensions.type != "png" && dimensions.type != "jpeg" && dimensions.type != "jpg")) {
-                throw "La configuración del archivo no es valida";
-              }
-              return company.update({
-                imageURI: imageURI
-              })
-            })
-            .then(function(AmountRowsAffected) {
-              if (imageURIDB) {
-                fs.unlink(imageURIDB, (err) => {
-                  if (err) throw err;
-                  sails.log.debug('Se borró la imagen vieja');
-                });
-              }
-              res.ok(imageURI);
-            })
-            .catch(function(err) {
-              fs.unlink(imageURI, (err) => {
-                if (err) throw err;
-                sails.log.debug('Se borró la imagen nueva');
-              });
-              res.serverError(err);
-            })
-        });
+          var dimensions = sizeOf(imageURI);
+          if (dimensions.type != "png" && dimensions.type != "jpeg" && dimensions.type != "jpg") {
+            fs.unlink(imageURI, (err) => {
+              sails.log.debug('Se borró la imagen');
+            });
+            throw new Error("La configuración del archivo no es valida");
+          }
+        }
+        return company.update({
+          imageURI: imageURI
+        })
+      })
+      .then(function(AmountRowsAffected) {
+        if (imageURIDB) {
+          fs.unlink(imageURIDB, (err) => {
+            if (err) throw err;
+            sails.log.debug('Se borró la imagen vieja');
+          });
+        }
+        res.ok(imageURI);
       })
       .catch(function(err) {
+        fs.unlink(imageURI, (err) => {
+          if (err) throw err;
+          sails.log.debug('Se borró la imagen nueva');
+        });
         res.serverError(err);
       })
   },
@@ -606,6 +654,14 @@ module.exports = {
     }
 
     Company.findAll({
+        include: [{
+          model: Headquarters,
+          where: {
+            main: true
+          }
+        }, {
+          model: User
+        }],
         where: {
           name: {
             $iLike: '%' + name + '%'
@@ -614,9 +670,9 @@ module.exports = {
       })
       .then(function(companies) {
         var numberCompanies = companies.length;
-        companies.forEach(function (company, index, companiesList) {
+        companies.forEach(function(company, index, companiesList) {
           company.dataValues.type = 1;
-            ImageDataURIService.encode(company.imageURI)
+          ImageDataURIService.encode(company.imageURI)
             .then((imageDataURI) => {
               company.imageURI = imageDataURI;
             })
@@ -626,7 +682,7 @@ module.exports = {
         })
         setTimeout(function() {
           res.ok(companies);
-        }, 10);
+        }, 15);
 
       })
       .catch(function(err) {
@@ -678,9 +734,9 @@ module.exports = {
       })
       .then(function(productsQuery) {
         products = productsQuery;
-        products.forEach(function (product, index, productsList) {
+        products.forEach(function(product, index, productsList) {
           product.dataValues.type = 2;
-            ImageDataURIService.encode(product.imageURI)
+          ImageDataURIService.encode(product.imageURI)
             .then((imageDataURI) => {
               product.imageURI = imageDataURI;
             })
@@ -689,6 +745,14 @@ module.exports = {
             })
         })
         return Company.findAll({
+          include: [{
+            model: Headquarters,
+            where: {
+              main: true
+            }
+          }, {
+            model: User
+          }],
           where: {
             $or: [{
               name: {
@@ -703,9 +767,9 @@ module.exports = {
         })
       })
       .then(function(companies) {
-        companies.forEach(function (company, index, companiesList) {
+        companies.forEach(function(company, index, companiesList) {
           company.dataValues.type = 1;
-            ImageDataURIService.encode(company.imageURI)
+          ImageDataURIService.encode(company.imageURI)
             .then((imageDataURI) => {
               company.imageURI = imageDataURI;
             })
@@ -887,8 +951,89 @@ module.exports = {
       .catch(function(err) {
         res.serverError(err);
       })
+  },
 
-  }
+  /**
+   * Funcion para recuperar la contraseña de una empresa.
+   * @param  {Object} req Request object
+   * @param  {Object} res Response object
+   * @return
+   */
+  requestTokenRecovery: function(req, res) {
+    var email = req.param('email');
+    var code = null;
+    var token = null;
+    if (!email) {
+      return res.badRequest('Correo requerido');
+    }
+
+    User.findOne({
+        where: {
+          email: email
+        }
+      })
+      .then(function(user) {
+        if (!user) {
+          return res.badRequest();
+        }
+        code = CriptoService.generateString(15);
+        token = CriptoService.createTokenRecovery({
+          email: email,
+          code: code
+        });
+        MailService.sendMailCode(user, code);
+        return res.json(token);
+      })
+      .catch(res.serverError);
+  },
+
+  /**
+   * Funcion para recuperar la contraseña de una empresa.
+   * @param  {Object} req Request object
+   * @param  {Object} res Response object
+   * @return
+   */
+  recoverPassword: function(req, res) {
+    var user = null;
+    var email = null;;
+    var codeToken = null;
+    var code = null;
+
+    user = req.user;
+    if (!user) {
+      return serverError("Error");
+    }
+
+    email = user.email
+    codeToken = user.code;
+    code = req.param('code');
+
+    if (!email | !codeToken | !code) {
+      return res.serverError("Error");
+    }
+
+    if (code !== codeToken) {
+      return res.badRequest("El codigo ingresado no es invalido.");
+    }
+
+    var newPassword = CriptoService.generateString(20);
+    var passwordEncrypted = CriptoService.hashValor(newPassword);
+
+    User.update({
+        password: passwordEncrypted
+      }, {
+        where: {
+          email: email
+        }
+      })
+      .then(function(user) {
+        MailService.sendMailPassword(email, newPassword);
+        res.ok();
+      })
+      .catch(function(err) {
+        res.serverError(err);
+      });
+  },
 };
 
 // crea las credenciales para insertar un usuario

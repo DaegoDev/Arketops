@@ -75,7 +75,7 @@ angular.module('arketops')
 			if (StorageSvc.get('auth_token', storageType)) {
 				token = StorageSvc.get('auth_token', storageType);
 			}
-			if (token) {
+			if (token && (config.url.substring(0,4) != 'http')) {
 				config.headers.authorization = 'JWT ' + token;
 			}
 			return config;

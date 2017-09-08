@@ -20,5 +20,18 @@ arketops.config(['$stateProvider', '$urlRouterProvider',
         },
       })
 
+      .state('companyProfile', {
+        url: '/perfil',
+        templateUrl: 'templates/private/company/company-profile.html',
+        controller: 'CompanyProfileCtrl',
+      })
+
+      .state('recoverPassword', {
+        url: '/recoverPassword',
+        templateUrl: 'templates/private/company/recover-password.html',
+        controller: 'RecoverPasswordCtrl'
+      })
+
+
 
   }]);

@@ -46,7 +46,7 @@ module.exports = {
   *                       generación de un token.
   * @return {String}      Retorna un string el cual corresponde a el token generado.
   */
-  crearToken: function (user) {
+  createToken: function (user) {
     return jwt.sign({
       // Payload
       user: user.toJSON()
@@ -67,7 +67,7 @@ module.exports = {
   * @param  {Object} payload Objeto usado la validación y generación de un token.
   * @return {String}      Retorna un string el cual corresponde a el token generado.
   */
-  crearTokenRecuperacion: function (user) {
+  createTokenRecovery: function (user) {
     return jwt.sign({
       // Payload
       user: user
@@ -88,11 +88,11 @@ module.exports = {
   * @param  {Object} longitud Cantidad de caracteres que tendrá la hilera generada.
   * @return {String}      Retorna un string el cual corresponde a la hilera generada.
   */
-  generarString: function (longitud) {
+  generateString: function (length) {
     var chars = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUWXYZ!¡@#$%&^*+-()<>1234567890";
     var string = '';
     var j = 0;
-    for (var i = 0; i < longitud; i++) {
+    for (var i = 0; i < length; i++) {
         j = Math.floor(Math.random() * chars.length);
         string += chars.charAt(j);
       }

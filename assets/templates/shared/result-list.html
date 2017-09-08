@@ -4,15 +4,30 @@
   </div>
   <div class="card-panel compProd-list">
     <div class="row">
-      <div class="col s2">
+      <div class="col s2 filters">
         <div class="card-panel">
-          <p>Hi</p>
+          <p>Filtros</p>
         </div>
       </div>
       <div class="col s10">
-        <result-card ng-repeat="compProd in filteredResults" comp-prod="compProd" type="{{compProd.type}}"></result-card>
+        <div style="padding-left: 10px;" class="row ">
+          <div ng-if="isCompanySearch()" class="card-title">
+            <p>{{total}} empresas con la palabra: {{searchValue}}</p>
+          </div>
+          <div ng-if="isProductSearch()" class="card-title">
+            <p>{{total}} productos con la palabra: {{searchValue}}</p>
+          </div>
+          <div ng-if="isAllSearch()" class="card-title" >
+            <p>{{total}} resultados se obtuvieron para empresas y productos con la palabra o frase: {{searchValue}}</p>
+          </div>
+        </div>
+        <div class="row">
+          <result-card ng-repeat="compProd in filteredResults" comp-prod="compProd" type="{{compProd.type}}">
+
+          </result-card>
+        </div>
       </div>
-      <pagination class="center" page="1" page-size="10" total="total" show-prev-next="true" use-simple-prev-next="true" dots="...." hide-if-empty="false" adjacent="2" scroll-top="false" pagination-action="changePage(page)" />
+      <pagination class="center" page="1" page-size="20" total="total" show-prev-next="true" use-simple-prev-next="true" dots="...." hide-if-empty="false" adjacent="2" scroll-top="false" pagination-action="changePage(page)" />
     </div>
   </div>
 </div>

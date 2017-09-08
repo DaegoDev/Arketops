@@ -1,24 +1,29 @@
 (function() {
   var arketops = angular.module('arketops');
 
-  arketops.controller('HomeCtrl', ['$scope', '$log', '$sce', 'GeographicSvc', 'CompanySvc', '$ngConfirm', 'AuthSvc',
-    function($scope, $log, $sce, GeographicSvc, CompanySvc, $ngConfirm, AuthSvc) {
+  arketops.controller('HomeCtrl', ['$scope', '$log', '$sce', 'GeographicSvc', 'CompanySvc', '$ngConfirm', 'AuthSvc', 'orderByFilter',
+    function($scope, $log, $sce, GeographicSvc, CompanySvc, $ngConfirm, AuthSvc, orderBy) {
 
-      $scope.termsAndConditions = 'NO';
+      $scope.termsAndConditions = false;
       $scope.user = {};
       $scope.countries = {};
       $scope.departments = {};
       $scope.cities = {};
       $scope.countryCode = null;
 
+      $scope.forms = {};
+
+      // Se obtiene los paises del mundo.
       GeographicSvc.getCountriesByContinent()
       .then((res) => {
         $scope.countries = {
           choices: res.data,
-          selected: res.data[0]
+          selected: res.data[51]
         };
+        $scope.getDepartments($scope.countries.selected.alpha2Code);
       })
 
+      // Se obtiene las primeras divisiones administrativas de un país.
       $scope.getDepartments = function (countryCode) {
         $scope.countryCode = countryCode;
         GeographicSvc.getDepartmentsByCountry({
@@ -28,13 +33,16 @@
           username: 'jonnatan328'
         })
         .then((res) => {
+          var departments = orderBy(res.data.geonames, 'adminName1');
+          departments.unshift({adminName1: 'Seleccione...', adminCode1: -1});
           $scope.departments = {
-            choices: res.data.geonames,
-            selected: res.data.geonames[0]
+            choices: departments,
+            selected: departments[0]
           }
         })
       }
 
+      // Se obtienen las segundas divisiones administrativas de un país.
       $scope.getCities = function (adminCode1) {
         GeographicSvc.getCitiesByDepartment({
           country: $scope.countryCode,
@@ -43,9 +51,10 @@
           username: 'jonnatan328'
         })
         .then((res) => {
+          var cities = orderBy(res.data.geonames, 'name');
           $scope.cities = {
-            choices: res.data.geonames,
-            selected: res.data.geonames[0]
+            choices: cities,
+            selected: cities[0]
           }
         })
       }
@@ -64,15 +73,11 @@
         $scope.user.imageDataURI = 'data:' + fileObj.filetype + ';base64,' + fileObj.base64;
       };
 
-      // Error control variables.
-      $scope.infoMsgOptions = {
-        showMessage: false,
-        message: '',
-        type: 'error',
-        title: ''
+      // Función que cambia el valor del checkbox de terminos y condiciones.
+      $scope.switchValueCheckbox = function () {
+        $scope.termsAndConditions = !$scope.termsAndConditions;
       }
 
-      $scope.infoErrorMsg = '';
 
       // Función para registrar un usuario en el sistema.
       $scope.registerUser = function() {
@@ -104,8 +109,8 @@
         password = $scope.user.password;
         rePassword = $scope.user.rePassword
         country = $scope.countries.selected.name;
-        department = $scope.departments.selected.adminName1;
-        city = $scope.cities.selected.name;
+        department = $scope.departments.selected;
+        city = $scope.cities.selected;
         nomenclature = $scope.user.nomenclature;
         phonenumber = $scope.user.phonenumber;
         contact = $scope.user.contact;
@@ -114,21 +119,20 @@
         imageFile = $scope.user.imageFile;
         imageDataURI = $scope.user.imageDataURI;
 
-        console.log($scope.termsAndConditions);
-
+        console.log($scope.forms.formSignup);
 
         // Validación de los datos ingresados.
         if (!name || !nit || !businessOverview || !email || !password || !rePassword || !country ||
-          !department || !city || !nomenclature || !phonenumber || !contact || !contactPhonenumber ) {
-            // || !termsAndConditions
-          $scope.infoMsgOptions.message = 'Verifique que todos los datos se hayan ingresado correctamente.';
-          $scope.infoMsgOptions.showMessage = true;
+          department.adminCode1 == -1 || !city || !nomenclature || !phonenumber || !contact || !contactPhonenumber || !termsAndConditions) {
+          Materialize.toast('Verifique que todos los datos se hayan ingresado correctamente.', 4000,'red darken-1 rounded')
           return;
         }
 
+        city = city.name;
+        department = department.adminName1;
+
         if (password.length < 6 || password !== rePassword) {
-          $scope.infoMsgOptions.message = 'Verifique la contraseña y confirmela.';
-          $scope.infoMsgOptions.showMessage = true;
+          Materialize.toast('Verifique la contraseña y confirmela.', 4000,'red darken-1 rounded')
           return;
         }
 
@@ -153,12 +157,10 @@
         $scope.signinup = true;
         CompanySvc.signup(userCredentials)
           .then(function(res) {
-
-            // $scope.signingUp = false;
-            // $scope.signupError = false;
-            // $scope.signup.$setPristine();
-            // $scope.signup.$setUntouched();
-            console.log(res.data);
+            $scope.signingUp = false;
+            console.log($scope.forms.formSignup);
+            $scope.forms.formSignup.$setPristine();
+            $scope.forms.formSignup.$setUntouched();
             $ngConfirm({
               title: 'Registro exitoso',
               content: 'Se ha enviado un correo de bienvenida a tu correo electronico.',
@@ -171,8 +173,6 @@
                   btnClass: 'btn-green',
                   action: function() {
                     $scope.user= {};
-                    $scope.formSignup.$setPristine();
-                    $scope.formSignup.$setUntouched();
                     $scope.$apply();
                   }
                 }
@@ -187,8 +187,6 @@
               $scope.alertMessage = "No se ha podido crear el empleado.";
             }
             $scope.signingUp = false;
-            $scope.signupError = true;
-            $scope.showAlert = true;
           })
 
 

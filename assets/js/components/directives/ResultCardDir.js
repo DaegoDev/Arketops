@@ -20,6 +20,8 @@ var arketops = angular.module('arketops');
 
     if ($scope.type == 1) {
       $scope.isCompany = true;
+    } else if ($scope.type == 2) {
+      $scope.isProduct = true;
     }
 
     // Variable para verificar que el usuario esté autenticado.

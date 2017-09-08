@@ -3,27 +3,27 @@ var arketops = angular.module('arketops');
 arketops.directive('signinForm', function() {
   return {
     restric: 'E',
-    require: '^topbar',
+    // require: '^topbar',
     templateUrl: 'templates/public/signin.html',
     controller: 'signinCtrl',
-    link: function(scope, element, attrs, parentCtrl) {
-      // scope.closeModal = parentCtrl.closeModal;
-      scope.openModal = parentCtrl.openModal;
-    }
+    // link: function(scope, element, attrs, parentCtrl) {
+    //
+    // }
   }
 })
 
-arketops.controller('signinCtrl', ['$scope', '$cookieStore', '$log', 'AuthSvc',
-  function($scope,  $cookieStore, $log, AuthSvc) {
+arketops.controller('signinCtrl', ['$scope', '$state', '$cookieStore', '$log', 'AuthSvc',
+  function($scope, $state, $cookieStore, $log, AuthSvc) {
+
   $scope.user = {};
 
-  // $scope.closeModalF = function () {
-  //   $scope.closeModal();
-  // }
+  $scope.toFormRecoverPws = function () {
+    $scope.closeModal();
+    $state.go('recoverPassword')
+  }
 
   // Función para el inicio de sesión de un usuario.
   $scope.signinUser = function() {
-
     //Definición de variables.
     var email = null;
     var password = null;
@@ -54,29 +54,19 @@ arketops.controller('signinCtrl', ['$scope', '$cookieStore', '$log', 'AuthSvc',
     //Llamado al servicio de signin de usuario.
     AuthSvc.signinUser(credentials)
       .then(function(result) {
-        $scope.openModal = false;
-        // $scope.closeModalF()
-        console.log(result.data);
-        // $scope.signing = false;
-        // $scope.user = {};
-        // $scope.loginError = false;
+        $scope.signing = false;
+        $scope.closeModal();
+        $scope.user = {};
         // $state.go('home');
-        // role = AuthService.getRole().toUpperCase();
-        // if (role === "ADMINISTRADOR") {
-        //   $state.go('admin');
-        // } else if (role === "DESPACHADOR") {
-        //   $state.go('despachador');
-        // } else if (role === "CLIENTE") {
-        //   $state.go('clientRole');
-        // }
       })
       .catch(function(err) {
-        // $scope.openModal = false;
-        // $scope.closeModalF()
-        $scope.user.password = '';
+        Materialize.toast('No se ha podido iniciar sesión, verifique su nombre de usuario o contraseña.', 4000,'rounded')
         $scope.signing = false;
-        $scope.loginError = true;
-        $scope.errorMessage = "No se ha podido iniciar sesión, verifique su nombre de usuario o contraseña.";
+        $scope.closeModal();
+        $scope.user.password = '';
+        // $scope.signing = false;
+        // $scope.loginError = true;
+        // $scope.errorMessage = "No se ha podido iniciar sesión, verifique su nombre de usuario o contraseña.";
       });
   };
 

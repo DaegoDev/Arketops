@@ -3,7 +3,7 @@ result-card {
   vertical-align: top;
 
   .card {
-    width: 205px;
+    width: 255px;
     margin: 10px;
   }
 
@@ -17,11 +17,14 @@ result-card {
     padding-top: 5px !important;
     padding-bottom: 5px !important;
     vertical-align: middle;
+    height: 70px;
+
     .card-title {
       font-size: 14px;
       font-weight: bold;
       line-height: 10px !important;
     }
+
     a {
       font-size: 12px;
       cursor: pointer;
@@ -36,14 +39,32 @@ result-card {
   .card-reveal {
     max-height: 100%;
     max-width: 100%;
+    padding: 10px !important;
+    padding-bottom: 40px !important;
+
     .card-title {
-      font-size: 14px;
+      font-size: 20px;
       font-weight: bold;
-      line-height: 10px !important;
+      line-height: 17px !important;
     }
+
     p {
       text-align: justify;
-      font-size: 12px;
+      font-size: 13px;
+      line-height: 17px;
+      font-family: Arial, Helvetica, sans-serif;
+      margin-top: 4px;
+    }
+
+    label {
+      font-size: 15px;
+      color: #000000;
+    }
+
+    .data-value {
+      font-size: 13px;
+      font-family: Arial, Helvetica, sans-serif;
+      color: rgba(0, 0, 0, 0.71);
     }
   }
 }

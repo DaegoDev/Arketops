@@ -8,7 +8,7 @@ arketops.controller('ResultListCtrl', ['$scope', '$log', '$state', '$stateParams
 
   // Declaración de variables para la paginación.
   $scope.filteredResults = [];
-  $scope.itemsPerPage = 10;
+  $scope.itemsPerPage = 20;
 
   $scope.figureOutResultsToDisplay = function(currentPage) {
     var begin = ((currentPage - 1) * $scope.itemsPerPage);
@@ -21,33 +21,45 @@ arketops.controller('ResultListCtrl', ['$scope', '$log', '$state', '$stateParams
     $scope.figureOutResultsToDisplay(currentPage);
   };
 
-  if ($scope.filter.toUpperCase() == "EMPRESA") {
+  $scope.isCompanySearch = function () {
+    return $scope.filter.toUpperCase() == "EMPRESA";
+  }
+
+  $scope.isProductSearch = function () {
+    return $scope.filter.toUpperCase() == "PRODUCTO"
+  }
+
+  $scope.isAllSearch = function () {
+    return $scope.filter.toUpperCase() == "TODO"
+  }
+
+  if ($scope.isCompanySearch()) {
     CompanySvc.getByName({
         name: $scope.searchValue
       })
       .then((result) => {
-        // console.log(result.data);
+        console.log(result.data);
         $scope.result = result.data;
         $scope.total = $scope.result.length
         $scope.figureOutResultsToDisplay(1);
       })
-  } else if ($scope.filter.toUpperCase() == "PRODUCTO") {
+  } else if ($scope.isProductSearch()) {
     ProductSvc.getByName({
         name: $scope.searchValue
       })
       .then((result) => {
-        // console.log(result.data);
+        console.log(result.data);
         $scope.result = result.data;
         $scope.total = $scope.result.length
         $scope.figureOutResultsToDisplay(1);
       })
 
-  } else if ($scope.filter.toUpperCase() == "TODO") {
+  } else if ($scope.isAllSearch()) {
     CompanySvc.getCompaniesAndProducts({
         keyword: $scope.searchValue
       })
       .then((result) => {
-        // console.log(result.data);
+        console.log(result.data);
         $scope.result = result.data.companies.concat(result.data.products);
         $scope.total = $scope.result.length
         $scope.figureOutResultsToDisplay(1);

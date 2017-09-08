@@ -32,16 +32,65 @@
         <strong> {{errorMessage}} </strong>
       </div>
       <p class="center">
-        <a ui-sref="home">¿Olvidaste tu contraseña?</a>
+        <a ng-click="toFormRecoverPws()" style="cursor: pointer;">¿Olvidaste tu contraseña?</a>
       </p>
       <div class="center">
         <button class="btn waves-effect waves-light" type="submit" name="submit">Iniciar sesión
         </button>
       </div>
       <!-- <div class="center">
-        <button ng-click="closeModalF()" class="btn waves-effect waves-light">Cerrar
+        <button ng-click="closeModal()" class="btn waves-effect waves-light">Cerrar
         </button>
       </div> -->
     </div>
   </form>
 </div>
+<!-- <div ng-if="signing" class="preloader-wrapper big active">
+  <div class="spinner-layer spinner-blue">
+    <div class="circle-clipper left">
+      <div class="circle"></div>
+    </div>
+    <div class="gap-patch">
+      <div class="circle"></div>
+    </div>
+    <div class="circle-clipper right">
+      <div class="circle"></div>
+    </div>
+  </div>
+
+  <div class="spinner-layer spinner-red">
+    <div class="circle-clipper left">
+      <div class="circle"></div>
+    </div>
+    <div class="gap-patch">
+      <div class="circle"></div>
+    </div>
+    <div class="circle-clipper right">
+      <div class="circle"></div>
+    </div>
+  </div>
+
+  <div class="spinner-layer spinner-yellow">
+    <div class="circle-clipper left">
+      <div class="circle"></div>
+    </div>
+    <div class="gap-patch">
+      <div class="circle"></div>
+    </div>
+    <div class="circle-clipper right">
+      <div class="circle"></div>
+    </div>
+  </div>
+
+  <div class="spinner-layer spinner-green">
+    <div class="circle-clipper left">
+      <div class="circle"></div>
+    </div>
+    <div class="gap-patch">
+      <div class="circle"></div>
+    </div>
+    <div class="circle-clipper right">
+      <div class="circle"></div>
+    </div>
+  </div>
+</div> -->
