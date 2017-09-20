@@ -28,7 +28,7 @@
      return res.serverError(info.code);
    }
    return res.ok({
-     token: CriptoService.crearToken(user),
+     token: CriptoService.createToken(user),
      role: "COMPANY"
    });
  }

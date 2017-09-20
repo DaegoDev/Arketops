@@ -984,7 +984,9 @@ module.exports = {
         MailService.sendMailCode(user, code);
         return res.json(token);
       })
-      .catch(res.serverError);
+      .catch((err) => {
+        res.serverError(err)
+      });
   },
 
   /**

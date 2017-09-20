@@ -1,9 +1,9 @@
 var arketops = angular.module('arketops');
-arketops.controller('RecoverPasswordCtrl', ['$scope', '$log', '$state', '$stateParams', 'CompanySvc', 'RecoverPasswordSvc',
-  function($scope, $log, $state, $stateParams, CompanySvc, RecoverPasswordSvc) {
+arketops.controller('RecoverPasswordCtrl', ['$scope', '$log', '$ngConfirm', '$state', '$stateParams', 'CompanySvc', 'RecoverPasswordSvc',
+  function($scope, $log, $ngConfirm, $state, $stateParams, CompanySvc, RecoverPasswordSvc) {
 
     // Función para iniciar el proceso de recuperar la contraseña de una empresa.
-    $scope.getToken = function () {
+    $scope.getToken = function() {
       //Definición de variables.
       var email = null;
       var credentials = null;
@@ -17,20 +17,21 @@ arketops.controller('RecoverPasswordCtrl', ['$scope', '$log', '$state', '$stateP
       };
       $scope.sending = true;
       RecoverPasswordSvc.startRecover(credentials)
-      .then(function(res) {
-        $scope.token = res.data;
-        $scope.sending = false;
-        $scope.waitingCode = true;
-        Materialize.toast('Se envió a su correo el código para cambiar la contraseña.', 6000,'green darken-1 rounded')
-      })
-      .catch(function(err) {
-        Materialize.toast('Error, el correo electrónico ingresado no existe.', 6000,'red darken-1 rounded');
-        $scope.sending = false;
-      });
+        .then(function(res) {
+          $scope.token = res.data;
+          $scope.sending = false;
+          $scope.waitingCode = true;
+          $scope.user = {};
+          Materialize.toast('Se envió a su correo el código para cambiar la contraseña.', 6000, 'green darken-1 rounded')
+        })
+        .catch(function(err) {
+          Materialize.toast('Error, el correo electrónico ingresado no existe.', 6000, 'red darken-1 rounded');
+          $scope.sending = false;
+        });
     }
 
     // Función para recuperar contraseña de una empresa.
-    $scope.recoverPassword = function () {
+    $scope.recoverPassword = function() {
       //Definición de variables.
       var code = null;
       var request = null;
@@ -52,14 +53,23 @@ arketops.controller('RecoverPasswordCtrl', ['$scope', '$log', '$state', '$stateP
       $scope.sending = true;
       //Llamado al servicio de recuperar contraseña de una empresa.
       RecoverPasswordSvc.recoverPassword(request, $scope.token)
-      .then(function(res) {
-        // $state.go('contrasenaReestablecida');
-        $scope.sending = false;
-      })
-      .catch(function(err) {
-        Materialize.toast('El codigo ingresado es incorrecto.', 6000,'red darken-1 rounded');
-        $scope.sending = false;
-      });
+        .then(function(res) {
+          $state.go('home');
+          $ngConfirm({
+            title: 'Se recuperó la contraseña.',
+            content: "Se ha enviado la nueva contraseña a su correo electronico.",
+            type: 'green',
+            typeAnimated: true,
+            theme: 'light',
+          });
+          $scope.user = {};
+          $scope.sending = false;
+        })
+        .catch(function(err) {
+          console.log(err);
+          Materialize.toast('El codigo ingresado es incorrecto.', 6000, 'red darken-1 rounded');
+          $scope.sending = false;
+        });
     };
 
   }
