@@ -35,7 +35,7 @@ module.exports.policies = {
     updateImageProfile: 'isAuthenticated',
     deactivateAccount: 'isAuthenticated',
     followCompany: 'isAuthenticated',
-    recoverPassword: 'isAuthenticated'
+    recoverPassword: 'isValidRecovery',
   },
 
   ElementController: {
