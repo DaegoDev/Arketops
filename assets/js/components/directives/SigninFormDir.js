@@ -57,13 +57,14 @@ arketops.controller('signinCtrl', ['$scope', '$state', '$cookieStore', '$log', '
         $scope.signing = false;
         $scope.closeModal();
         $scope.user = {};
+        console.log($scope.closeModal);
         // $state.go('home');
       })
       .catch(function(err) {
         Materialize.toast('No se ha podido iniciar sesión, verifique su nombre de usuario o contraseña.', 4000,'rounded')
         $scope.signing = false;
-        $scope.closeModal();
         $scope.user.password = '';
+        //$scope.closeModal();
         // $scope.signing = false;
         // $scope.loginError = true;
         // $scope.errorMessage = "No se ha podido iniciar sesión, verifique su nombre de usuario o contraseña.";

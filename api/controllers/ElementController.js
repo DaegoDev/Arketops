@@ -11,6 +11,22 @@ module.exports = {
    * @param  {Object} req Request object
    * @param  {Object} res Response object
    */
+   getElements: function (req, res) {
+     Element.findAll({
+       include: [{model: ElementData}]
+     })
+     .then(function (resElement) {
+       return res.ok(resElement);
+     })
+     .catch(function (err) {
+       return res.serverError(err);
+     })
+   },
+  /**
+   * Función para crear un elemento de un producto.
+   * @param  {Object} req Request object
+   * @param  {Object} res Response object
+   */
   createElement: function(req, res) {
     // Declaración de variables.
     var name = null;
@@ -29,10 +45,10 @@ module.exports = {
 
     Element.create(elementCredentials)
       .then(function(element) {
-        res.created(element);
+        return res.created(element);
       })
       .catch(function(err) {
-        res.serverError(err);
+        return res.serverError(err);
       })
   },
   /**
@@ -42,9 +58,9 @@ module.exports = {
    */
   createElementData: function(req, res) {
     // Declaración de variables.
+    var user = null;
     var name = null;
     var discount = null;
-    var user = null;
     var elementId = null;
     var elementDataCredentials = null;
 
@@ -64,10 +80,7 @@ module.exports = {
       return res.badRequest('Id del elemento vacío');
     }
 
-    // user = req.user;
-    user = {
-      id: 1
-    }
+    user = req.user;
 
     // Se valida que el elemento con el id elementId exista.
     Element.findById(elementId)
@@ -210,10 +223,7 @@ module.exports = {
        return res.badRequest('Id del elemento vacío');
      }
 
-    //  user = req.user;
-     user = {
-       id: 1
-     }
+     user = req.user;
 
      // Se valida que el elemento con el id elementId exista.
      ElementData.findById(elementDataId)
@@ -242,6 +252,5 @@ module.exports = {
        .catch(function(err) {
          res.serverError(err);
        })
-
    }
 };

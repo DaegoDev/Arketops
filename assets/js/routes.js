@@ -32,6 +32,12 @@ arketops.config(['$stateProvider', '$urlRouterProvider',
         controller: 'RecoverPasswordCtrl'
       })
 
+      .state('elements', {
+        url: '/elementos',
+        templateUrl: 'templates/private/company/elements.html',
+        controller: 'ElementCtrl'
+      })
+
 
 
   }]);

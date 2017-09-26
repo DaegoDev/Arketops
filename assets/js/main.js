@@ -1,8 +1,9 @@
 'use stric';
 
 (function() {
-  var arketops = angular.module('arketops', ['ui.router', 'permission', 'permission.ui', 'ngCookies', 'ui.materialize', 'ngMdIcons', 'ngMessages', 'cp.ngConfirm',
-    'ngPassword', 'naif.base64'
+  var arketops = angular.module('arketops', ['ui.router', 'permission', 'permission.ui',
+  'ngCookies', 'ui.materialize', 'ngMdIcons', 'ngMessages', 'cp.ngConfirm', 'ngPassword',
+  'naif.base64', 'ngAnimate'
   ]);
 
   // Inicializacion de la configuracion principal al ingresar al dominio.

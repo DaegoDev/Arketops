@@ -35,8 +35,16 @@ module.exports.policies = {
     updateImageProfile: 'isAuthenticated',
     deactivateAccount: 'isAuthenticated',
     followCompany: 'isAuthenticated',
-    recoverPassword: 'isAuthenticated',
+    recoverPassword: 'isAuthenticated'
   },
+
+  ElementController: {
+    getElements: 'isAuthenticated',
+    createElement: 'isAuthenticated',
+    createElementData: 'isAuthenticated',
+    createLineForCategory: 'isAuthenticated',
+    editElementData: 'isAuthenticated'
+  }
 
   /***************************************************************************
   *                                                                          *
