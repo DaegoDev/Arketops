@@ -15,48 +15,51 @@
 
       // Se obtiene los paises del mundo.
       GeographicSvc.getCountriesByContinent()
-      .then((res) => {
-        $scope.countries = {
-          choices: res.data,
-          selected: res.data[51]
-        };
-        $scope.getDepartments($scope.countries.selected.alpha2Code);
-      })
+        .then((res) => {
+          $scope.countries = {
+            choices: res.data,
+            selected: res.data[51]
+          };
+          $scope.getDepartments($scope.countries.selected.alpha2Code);
+        })
 
       // Se obtiene las primeras divisiones administrativas de un país.
-      $scope.getDepartments = function (countryCode) {
+      $scope.getDepartments = function(countryCode) {
         $scope.countryCode = countryCode;
         GeographicSvc.getDepartmentsByCountry({
-          country: countryCode,
-          featureCode: 'ADM1',
-          land: 'es',
-          username: 'jonnatan328'
-        })
-        .then((res) => {
-          var departments = orderBy(res.data.geonames, 'adminName1');
-          departments.unshift({adminName1: 'Seleccione...', adminCode1: -1});
-          $scope.departments = {
-            choices: departments,
-            selected: departments[0]
-          }
-        })
+            country: countryCode,
+            featureCode: 'ADM1',
+            land: 'es',
+            username: 'jonnatan328'
+          })
+          .then((res) => {
+            var departments = orderBy(res.data.geonames, 'adminName1');
+            departments.unshift({
+              adminName1: 'Seleccione...',
+              adminCode1: -1
+            });
+            $scope.departments = {
+              choices: departments,
+              selected: departments[0]
+            }
+          })
       }
 
       // Se obtienen las segundas divisiones administrativas de un país.
-      $scope.getCities = function (adminCode1) {
+      $scope.getCities = function(adminCode1) {
         GeographicSvc.getCitiesByDepartment({
-          country: $scope.countryCode,
-          featureCode: 'ADM2',
-          adminCode1: adminCode1,
-          username: 'jonnatan328'
-        })
-        .then((res) => {
-          var cities = orderBy(res.data.geonames, 'name');
-          $scope.cities = {
-            choices: cities,
-            selected: cities[0]
-          }
-        })
+            country: $scope.countryCode,
+            featureCode: 'ADM2',
+            adminCode1: adminCode1,
+            username: 'jonnatan328'
+          })
+          .then((res) => {
+            var cities = orderBy(res.data.geonames, 'name');
+            $scope.cities = {
+              choices: cities,
+              selected: cities[0]
+            }
+          })
       }
 
       // Verifica si el usuario está autenticado.
@@ -66,15 +69,18 @@
         $scope.authenticated = AuthSvc.isAuthenticated();
       });
 
+
       // Función que se llama cuanto la imagen se carga.
       $scope.onLoad = function(e, reader, file, fileList, fileOjects, fileObj) {
-        $scope.imgAvatarStyle = {'background-image': 'none'};
-        $scope.fileObject = fileObj;
+        $scope.imgAvatarStyle = {
+          'background-image': 'none'
+        };
         $scope.user.imageDataURI = 'data:' + fileObj.filetype + ';base64,' + fileObj.base64;
       };
 
+
       // Función que cambia el valor del checkbox de terminos y condiciones.
-      $scope.switchValueCheckbox = function () {
+      $scope.switchValueCheckbox = function() {
         $scope.termsAndConditions = !$scope.termsAndConditions;
       }
 
@@ -124,7 +130,7 @@
         // Validación de los datos ingresados.
         if (!name || !nit || !businessOverview || !email || !password || !rePassword || !country ||
           department.adminCode1 == -1 || !city || !nomenclature || !phonenumber || !contact || !contactPhonenumber || !termsAndConditions) {
-          Materialize.toast('Verifique que todos los datos se hayan ingresado correctamente.', 4000,'red darken-1 rounded')
+          Materialize.toast('Verifique que todos los datos se hayan ingresado correctamente.', 4000, 'red darken-1 rounded')
           return;
         }
 
@@ -132,7 +138,7 @@
         department = department.adminName1;
 
         if (password.length < 6 || password !== rePassword) {
-          Materialize.toast('Verifique la contraseña y confirmela.', 4000,'red darken-1 rounded')
+          Materialize.toast('Verifique la contraseña y confirmela.', 4000, 'red darken-1 rounded')
           return;
         }
 
@@ -172,7 +178,7 @@
                   text: 'Aceptar',
                   btnClass: 'btn-green',
                   action: function() {
-                    $scope.user= {};
+                    $scope.user = {};
                     $scope.$apply();
                   }
                 }

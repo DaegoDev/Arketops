@@ -470,23 +470,31 @@ module.exports = {
       });
     }
 
-    Company.findAll({
+    Product.findAll({
         include: [{
-          model: Product,
+          model: ElementData,
           include: [{
-            model: ElementData,
-            include: [{
-              model: Element,
-            }]
+            model: Element,
           }]
         }],
         where: {
-          id: companyId
+          companyId: companyId
         }
       })
-      .then(function(company) {
-        sails.log.debug(company[0]);
-        res.ok(company[0]);
+      .then(function(products) {
+        products.forEach(function(product, index, productsList) {
+          ImageDataURIService.encode(product.imageURI)
+            .then((imageDataURI) => {
+              product.imageURI = imageDataURI;
+            })
+            .catch((err) => {
+              sails.log.debug(err)
+            })
+        })
+        setTimeout(function() {
+          // sails.log.debug(products);
+          res.ok(products);
+        }, 10);
       })
       .catch(function(err) {
         res.serverError(err);

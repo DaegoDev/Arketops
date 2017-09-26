@@ -1,7 +1,8 @@
 var arketops = angular.module('arketops');
-arketops.controller('ResultListCtrl', ['$scope', '$log', '$state', '$stateParams', 'CompanySvc', 'ProductSvc', function($scope, $log, $state, $stateParams, CompanySvc, ProductSvc) {
-  $scope.searchValue = $stateParams.searchValue;
-  $scope.filter = $stateParams.filter;
+arketops.controller('ResultListCtrl', ['$scope', '$log', '$state', '$stateParams', 'CompanySvc', 'ProductSvc', 'StorageSvc',
+ function($scope, $log, $state, $stateParams, CompanySvc, ProductSvc, StorageSvc) {
+  $scope.searchValue = StorageSvc.get('searchValue', 'session');
+  $scope.filter = StorageSvc.get('filter', 'session');
 
   $scope.result = [];
   $scope.total = 0;

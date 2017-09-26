@@ -481,6 +481,7 @@ module.exports = {
         }
       })
       .then(function(company) {
+        sails.log.debug(company);
         var newNameImage = null;
         if (company.imageURI) {
           imageURIDB = company.imageURI;
@@ -490,7 +491,7 @@ module.exports = {
           var numNewImage = parseInt(imageNameDB.substring(imageNameDB.length - 1)) + 1;
         }
         newNameImage = company.imageURI ? company.nit + "_" + numNewImage : company.nit + "_1";
-
+        sails.log.debug(newNameImage);
         var pathAvatars = sails.config.appPath + "/assets/images/avatars/" + newNameImage;
         //   var tmpPathAvatars = sails.config.appPath + '/.tmp/public/images/uploads/';
         return Promise.all = [company, ImageDataURIService.decodeAndSave(imageDataURI, pathAvatars)]
@@ -660,7 +661,8 @@ module.exports = {
             main: true
           }
         }, {
-          model: User
+          model: User,
+          attributes: { exclude: ['password'] }
         }],
         where: {
           name: {
@@ -672,6 +674,7 @@ module.exports = {
         var numberCompanies = companies.length;
         companies.forEach(function(company, index, companiesList) {
           company.dataValues.type = 1;
+          delete company.User.password;
           ImageDataURIService.encode(company.imageURI)
             .then((imageDataURI) => {
               company.imageURI = imageDataURI;
@@ -751,7 +754,8 @@ module.exports = {
               main: true
             }
           }, {
-            model: User
+            model: User,
+            attributes: { exclude: ['password'] }
           }],
           where: {
             $or: [{

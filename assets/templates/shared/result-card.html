@@ -11,7 +11,7 @@
     </div>
   </div>
   <div class="card-action">
-    <span ng-if="isCompany"><a href="#">Ver productos</a></span>
+    <span ng-if="isCompany"><a ng-click="showProductsByCompany()">Ver productos</a></span>
     <span ng-if="!isCompany"><a href="#">Ver empresa</a></span>
     <span ng-if="isCompany && authenticated"><a href="#">Seguir</a></span>
   </div>

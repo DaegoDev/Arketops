@@ -1,0 +1,89 @@
+<div class="container">
+  <div class="card">
+    <div class="card-content">
+      <div class="row card-company">
+        <div class="col s2 image-profile">
+          <img id="image-avatar" ng-src="{{company.imageURI}}" height="120" width="110">
+        </div>
+        <div class="col s10 company-data">
+          <h5>{{company.name | capitalize}}</h5>
+          <div class="col s7 business-overview-field">
+            <p>{{company.businessOverview}}</p>
+          </div>
+          <div class="col s5">
+            <div class="row">
+              <div class="col s3">
+                <label for="email">Correo: </label>
+              </div>
+              <div class="col s9">
+                <strong id="email">{{company.User.email}}</strong><br>
+              </div>
+            </div>
+            <div class="row field-data">
+              <div class="col s3">
+                <label for="address">Dirección: </label>
+              </div>
+              <div class="col s9">
+                <strong id="address">{{company.Headquarters[0].nomenclature  + ', ' + company.Headquarters[0].city + ', ' + company.Headquarters[0].department}}</strong><br>
+              </div>
+            </div>
+            <div class="row field-data">
+              <div class="col s3">
+                <label for="phonenumber">Teléfono: </label>
+              </div>
+              <div class="col s9">
+                <strong id="phonenumber">{{company.Headquarters[0].phonenumber}}</strong><br>
+              </div>
+            </div>
+            <div class="row field-data">
+              <div class="col s3">
+                <label for="website">Sitio web: </label>
+              </div>
+              <div class="col s9">
+                <strong id="website">{{company.website}}</strong><br>
+              </div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </div>
+  </div>
+   <h3 class="center">Productos</h3>
+  <ul class="collapsible popout" data-collapsible="accordion" watch>
+    <li ng-repeat="product in products">
+      <div class="collapsible-header">
+        <ng-md-icon class="prefix" icon="blur_on" style="fill: blue darken-1" size="20"></ng-md-icon>
+        <span class="main-data">{{product.name}} {{client.lastnames}}</span>
+        <!-- <a ui-sref="createWorkoutResult" class="options center">Agregar reporte</a> -->
+      </div>
+      <div class="collapsible-body">
+        <div class="row">
+          <div class="col s2">
+            <img ng-style="imgAvatarStyle" class="img-profile" ng-src="{{product.imageURI}}" height="100" width="100">
+          </div>
+          <!-- <div class="content-data-client col s4">
+            <label for="">Cedula: </label>
+            <span>{{client.identification}}</span> <br>
+            <label for="">Email: </label>
+            <span>{{client.email}}</span> <br>
+            <label for="">Teléfono: </label>
+            <span>{{client.phonenumber}}</span> <br>
+            <label for="">Fecha nacimiento: </label>
+            <span>{{client.phonenumber}}</span>
+          </div>
+          <div class="content-data-client col s4">
+            <label for="">País: </label>
+            <span>{{client.country}}</span> <br>
+            <label for="">Departamento: </label>
+            <span>{{client.department}}</span> <br>
+            <label for="">Ciudad: </label>
+            <span>{{client.city}}</span> <br>
+            <label for="">Dirección: </label>
+            <span>{{client.nomenclature}}</span>
+          </div> -->
+        </div>
+      </div>
+    </li>
+  </ul>
+</div>

@@ -12,11 +12,11 @@ var arketops = angular.module('arketops');
     }
   })
 
-  arketops.controller('resultCardCtrl', ['$scope', '$log', '$ngConfirm', 'AuthSvc', resultCardCtrl]);
+  arketops.controller('resultCardCtrl', ['$scope', '$log', '$ngConfirm', 'AuthSvc', '$state', 'StorageSvc', resultCardCtrl]);
 
-  function resultCardCtrl($scope, $log, $ngConfirm, AuthSvc) {
+  function resultCardCtrl($scope, $log, $ngConfirm, AuthSvc, $state, StorageSvc) {
 
-    console.log($scope.compProd);
+    // console.log($scope.compProd);
 
     if ($scope.type == 1) {
       $scope.isCompany = true;
@@ -26,5 +26,11 @@ var arketops = angular.module('arketops');
 
     // Variable para verificar que el usuario esté autenticado.
     $scope.authenticated = AuthSvc.isAuthenticated();
+
+    $scope.showProductsByCompany = function () {
+      var companyToSend = JSON.stringify($scope.compProd);
+      StorageSvc.set('companySelected', companyToSend, 'session');
+      $state.go('productsByCompany');
+    }
 
   }
