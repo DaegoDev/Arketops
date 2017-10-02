@@ -1,9 +1,9 @@
 /**
- * ProductController
- *
- * @description :: Server-side logic for managing products
- * @help        :: See http://sailsjs.org/#!/documentation/concepts/Controllers
- */
+* ProductController
+*
+* @description :: Server-side logic for managing products
+* @help        :: See http://sailsjs.org/#!/documentation/concepts/Controllers
+*/
 
 // Modulos requeridos.
 var promise = require('bluebird');
@@ -12,10 +12,10 @@ var sizeOf = require('image-size');
 
 module.exports = {
   /**
-   * Función para crear un producto o servicio.
-   * @param  {Object} req Request object
-   * @param  {Object} res Response object
-   */
+  * Función para crear un producto o servicio.
+  * @param  {Object} req Request object
+  * @param  {Object} res Response object
+  */
   create: function(req, res) {
     // Declaración de variables.
     var code = null;
@@ -35,30 +35,23 @@ module.exports = {
 
     // Definición de las variables y validaciones.
     elements = req.param("elements");
-    if (typeof elements == 'string') {
-      return res.badRequest({
-        code: 1,
-        msg: 'There are no enough elements'
-      });
-    } else {
+    if (!elements) {
+      return res.badRequest({code: 1, msg: 'There are no enough elements'});
+    }
+    if (typeof elements != 'string') {
       elements.forEach(function(element, i, elementsList) {
-        element = JSON.parse(element)
-        elementsList[i] = element;
-        index = addedElements.indexOf(elementsList[i].name.toUpperCase().trim());
+        index = addedElements.indexOf(element);
         if (index != -1) {
-          return res.badRequest({
-            code: 2,
-            msg: 'There are repeated elements.'
-          })
+          return res.badRequest({code: 2, msg: 'There are repeated elements.'});
         } else {
-          addedElements.push(elementsList[i].name.toUpperCase().trim());
+          addedElements.push(element);
         }
       })
     }
 
     code = req.param('code');
     if (!code) {
-      return res.badRequest('Códio del producto vacío');
+      return res.badRequest('Código del producto vacío');
     }
 
     name = req.param('name');
@@ -81,108 +74,83 @@ module.exports = {
       return res.badRequest('Id del estado vacío');
     }
 
-    //  user = req.user;
-    user = {
-      id: 1
-    }
-    imageFile = req.file('imageFile');
+    user = req.user;
+    imageDataURI = req.param('imageDataURI');
 
     var pathAvatars = sails.config.appPath + "/assets/images/products/";
-    // var tmpPathAvatars = sails.config.appPath + '/.tmp/public/images/uploads/';
 
-    // Cargar la imagen en el directorio images/avatars
-    imageFile.upload({
-      dirname: pathAvatars
-    }, function onUploadComplete(err, uploadedImage) {
-      if (err) return res.serverError(err);
-      imageURI = uploadedImage[0].fd;
+    return sequelize.transaction(function(t) {
+      var imageURI;
+      var company;
+      var product;
 
-      //Copy the file to the temp folder so that it becomes available immediately
-      // fs.createReadStream(imageURI).pipe(fs.createWriteStream(tempLocation));
+      return Company.findAll({where: {userId: user.id}, transaction: t})
+      .then(function(company) {
+        return Promise.all = [
+          company[0],
+          company[0].getProducts({where: {code: code},transaction: t})
+        ];
+      })
+      .spread(function(companyInst, products) {
+        if (products.length == 0) {
+          company = companyInst;
+          pathAvatars = pathAvatars + company.nit + "-" + code;
+          sails.log.debug(pathAvatars);
+          return ImageDataURIService.decodeAndSave(imageDataURI, pathAvatars)
+        }
+        throw "Ya existe un producto con ese código";
+      })
+      .then(function (resUpload) {
+        if (resUpload) {
+          imageURI = resUpload;
+          // Se valida que el archivo tenga el formato y la resolución deseada.
+          var dimensions = sizeOf(imageURI);
+          if (dimensions.type != "png" && dimensions.type != "jpeg" && dimensions.type != "jpg") {
+            fs.unlink(imageURI, (err) => {
+              sails.log.debug('Se borró la imagen');
+            });
+            throw new Error("La configuración del archivo no es valida");
+          }
+        }
 
-      // Se valida que el archivo tenga el formato y la resolución deseada.
-      var dimensions = sizeOf(imageURI);
-      sails.log.debug(dimensions);
-      if (dimensions.width > 800 || dimensions.height > 800 || (dimensions.type != "png" && dimensions.type != "jpeg" && dimensions.type != "jpg")) {
+        // Creación de las credenciales para crear un producto.
+        productCredentials = {
+          code: code,
+          name: name,
+          description: description,
+          price: price,
+          stateId: stateId,
+          imageURI: imageURI,
+          companyId: company.id
+        }
+        return Product.create(productCredentials, {transaction: t});
+      })
+      .then(function(newProduct) {
+        product = newProduct;
+        return ElementData.findAll({where: {id: {$in: elements}}});
+      })
+      .then(function(result) {
+        sails.log.debug(product);
+        return product.addElementData(result);
+      })
+      .then(function (finalProduct) {
+        sails.log.debug(finalProduct)
+        return res.ok(finalProduct);
+      })
+      .catch(function(err) {
         fs.unlink(imageURI, (err) => {
           if (err) throw err;
           sails.log.debug('Se borró la imagen');
         });
-        return res.badRequest("La configuración del archivo no es valida");
-      }
-
-      return sequelize.transaction(function(t) {
-          return Company.findAll({
-              where: {
-                userId: user.id
-              },
-              transaction: t
-            })
-            .then(function(company) {
-              // sails.log.debug(company[0]);
-              return Promise.all = [company[0], company[0].getProducts({
-                where: {
-                  code: code
-                },
-                transaction: t
-              })];
-            })
-            .spread(function(company, products) {
-              if (products.length == 0) {
-                // Creación de las credenciales para crear un producto.
-                productCredentials = {
-                  code: code,
-                  name: name,
-                  description: description,
-                  price: price,
-                  stateId: stateId,
-                  imageURI: imageURI,
-                  companyId: company.id
-                }
-                return Product.create(productCredentials, {
-                  transaction: t
-                });
-              }
-              throw "Ya existe un producto con ese código";
-            })
-            .then(function(newProduct) {
-              if (elements.length >= 3) {
-                elements.forEach(function(element, i, elementsList) {
-                  var elementProduct = {
-                    elementId: element.id,
-                    productId: newProduct.id,
-                    main: element.main,
-                  }
-                  elements[i] = elementProduct;
-                })
-                return ElementProduct.bulkCreate(elements, {
-                  transaction: t
-                })
-              } else {
-                throw "No hay elementos";
-              }
-            })
-        })
-        .then(function(result) {
-          res.ok(result);
-        })
-        .catch(function(err) {
-          fs.unlink(imageURI, (err) => {
-            if (err) throw err;
-            sails.log.debug('Se borró la imagen');
-          });
-          sails.log.debug(err);
-        })
-
+        sails.log.debug(err);
+      })
     });
-
-
   },
   /**
-   * Función para editar un producto o servicio.
-   * @param  {Object} req Request object
-   * @param  {Object} res Response object
-   */
+  * Función para editar un producto o servicio.
+  * @param  {Object} req Request object
+  * @param  {Object} res Response object
+  */
   edit: function(req, res) {
     // Declaración de variables.
     var code = null;
@@ -257,81 +225,81 @@ module.exports = {
     }
 
     return sequelize.transaction(function(t) {
-        return Company.findAll({
+      return Company.findAll({
+        where: {
+          userId: user.id
+        },
+        transaction: t
+      })
+      .then(function(company) {
+        return company[0].getProducts({
+          where: {
+            code: code
+          },
+          transaction: t
+        });
+      })
+      .then(function(products) {
+        if (products.length == 0 || products[0].id == productId) {
+          // Creación de las credenciales para crear un producto.
+          productCredentials = {
+            code: code,
+            name: name,
+            description: description,
+            price: price,
+            stateId: stateId,
+            imageURI: "falsdf.com",
+          }
+          return Promise.all = [Product.findById(productId), Product.update(productCredentials, {
             where: {
-              userId: user.id
+              id: productId
             },
             transaction: t
-          })
-          .then(function(company) {
-            return company[0].getProducts({
-              where: {
-                code: code
-              },
-              transaction: t
-            });
-          })
-          .then(function(products) {
-            if (products.length == 0 || products[0].id == productId) {
-              // Creación de las credenciales para crear un producto.
-              productCredentials = {
-                code: code,
-                name: name,
-                description: description,
-                price: price,
-                stateId: stateId,
-                imageURI: "falsdf.com",
-              }
-              return Promise.all = [Product.findById(productId), Product.update(productCredentials, {
-                where: {
-                  id: productId
-                },
-                transaction: t
-              })];
-            }
-            throw "Ya existe un producto con ese código";
-          })
-          .spread(function(product, amountProductsUpdated) {
-            sails.log.debug(elements);
-            if (elements.length >= 3) {
-              elements.forEach(function(element, i, elementsList) {
-                if (element.main == 'true') {
-                  mainElement = element.id;
-                } else {
-                  elementsToSet.push(element.id);
-                }
-              })
-              return Promise.all = [product, ElementData.findById(mainElement, {
-                transaction: t
-              })];
+          })];
+        }
+        throw "Ya existe un producto con ese código";
+      })
+      .spread(function(product, amountProductsUpdated) {
+        sails.log.debug(elements);
+        if (elements.length >= 3) {
+          elements.forEach(function(element, i, elementsList) {
+            if (element.main == 'true') {
+              mainElement = element.id;
             } else {
-              throw "No hay elementos";
+              elementsToSet.push(element.id);
             }
           })
-          .spread(function(product, element) {
-            element.ElementProduct = {
-              main: true
-            }
-            elementsToSet.push(element);
-            return product.setElementData(elementsToSet, {
-              transaction: t
-            })
+          return Promise.all = [product, ElementData.findById(mainElement, {
+            transaction: t
+          })];
+        } else {
+          throw "No hay elementos";
+        }
+      })
+      .spread(function(product, element) {
+        element.ElementProduct = {
+          main: true
+        }
+        elementsToSet.push(element);
+        return product.setElementData(elementsToSet, {
+          transaction: t
+        })
 
-          })
       })
-      .then(function(result) {
-        sails.log.debug(result[1]);
-        res.ok(result[1]);
-      })
-      .catch(function(err) {
-        sails.log.debug(err);
-      })
+    })
+    .then(function(result) {
+      sails.log.debug(result[1]);
+      res.ok(result[1]);
+    })
+    .catch(function(err) {
+      sails.log.debug(err);
+    })
   },
   /**
-   * Función para eliminar un producto o servicio.
-   * @param  {Object} req Request object
-   * @param  {Object} res Response object
-   */
+  * Función para eliminar un producto o servicio.
+  * @param  {Object} req Request object
+  * @param  {Object} res Response object
+  */
   delete: function(req, res) {
     // Declaración de variables.
     var productId = null;
@@ -344,26 +312,26 @@ module.exports = {
 
     // Se verifica que el producto exista, en caso de que exista se actualiza el campo enabled a false.
     Product.findById(productId)
-      .then(function(product) {
-        if (product) {
-          return product.update({
-            enabled: false
-          })
-        }
-        throw "El producto no existe";
-      })
-      .then(function() {
-        res.ok()
-      })
-      .catch(function(err) {
-        res.serverError(err);
-      })
+    .then(function(product) {
+      if (product) {
+        return product.update({
+          enabled: false
+        })
+      }
+      throw "El producto no existe";
+    })
+    .then(function() {
+      res.ok()
+    })
+    .catch(function(err) {
+      res.serverError(err);
+    })
   },
   /**
-   * Función para obtener los productos o servicios de un usuario atenticado.
-   * @param  {Object} req Request object
-   * @param  {Object} res Response object
-   */
+  * Función para obtener los productos o servicios de un usuario atenticado.
+  * @param  {Object} req Request object
+  * @param  {Object} res Response object
+  */
   getMyProducts: function(req, res) {
     // Declaración de variables.
     var user = null;
@@ -375,32 +343,32 @@ module.exports = {
     }
 
     Company.findAll({
+      include: [{
+        model: Product,
         include: [{
-          model: Product,
+          model: ElementData,
           include: [{
-            model: ElementData,
-            include: [{
-              model: Element,
-            }]
+            model: Element,
           }]
-        }],
-        where: {
-          userId: user.id
-        }
-      })
-      .then(function(company) {
-        sails.log.debug(company[0]);
-        res.ok(company[0]);
-      })
-      .catch(function(err) {
-        res.serverError(err);
-      })
+        }]
+      }],
+      where: {
+        userId: user.id
+      }
+    })
+    .then(function(company) {
+      sails.log.debug(company[0]);
+      res.ok(company[0]);
+    })
+    .catch(function(err) {
+      res.serverError(err);
+    })
   },
   /**
-   * Función para obtener los productos o servicios por nombre.
-   * @param  {Object} req Request object
-   * @param  {Object} res Response object
-   */
+  * Función para obtener los productos o servicios por nombre.
+  * @param  {Object} req Request object
+  * @param  {Object} res Response object
+  */
   getByName: function(req, res) {
     // Declaración de variables.
     var name = null;
@@ -415,48 +383,48 @@ module.exports = {
     }
 
     Product.findAll({
-        where: {
-          name: {
-            $iLike: '%' + name + '%'
-          }
-        },
+      where: {
+        name: {
+          $iLike: '%' + name + '%'
+        }
+      },
+      include: [{
+        model: ElementData,
         include: [{
-          model: ElementData,
-          include: [{
-            model: Element,
-          }]
-        }, {
-          model: Company,
-          attributes: ['name']
+          model: Element,
         }]
-      })
-      .then(function(products) {
-        var numberProducts = products.length;
-        products.forEach(function(product, index, productsList) {
-          product.dataValues.type= 2;
-          ImageDataURIService.encode(product.imageURI)
-            .then((imageDataURI) => {
-              product.imageURI = imageDataURI;
-            })
-            .catch((err) => {
-              sails.log.debug(err)
-            })
+      }, {
+        model: Company,
+        attributes: ['name']
+      }]
+    })
+    .then(function(products) {
+      var numberProducts = products.length;
+      products.forEach(function(product, index, productsList) {
+        product.dataValues.type= 2;
+        ImageDataURIService.encode(product.imageURI)
+        .then((imageDataURI) => {
+          product.imageURI = imageDataURI;
         })
-        setTimeout(function() {
-          // sails.log.debug(products);
-          res.ok(products);
-        }, 10);
+        .catch((err) => {
+          sails.log.debug(err)
+        })
       })
-      .catch(function(err) {
-        sails.log.debug(err);
-        res.serverError(err);
-      })
+      setTimeout(function() {
+        // sails.log.debug(products);
+        res.ok(products);
+      }, 10);
+    })
+    .catch(function(err) {
+      sails.log.debug(err);
+      res.serverError(err);
+    })
   },
   /**
-   * Función para obtener los productos o servicios de una empresa.
-   * @param  {Object} req Request object
-   * @param  {Object} res Response object
-   */
+  * Función para obtener los productos o servicios de una empresa.
+  * @param  {Object} req Request object
+  * @param  {Object} res Response object
+  */
   getByCompany: function(req, res) {
     // Declaración de variables.
     var companyId = null;
@@ -471,26 +439,26 @@ module.exports = {
     }
 
     Company.findAll({
+      include: [{
+        model: Product,
         include: [{
-          model: Product,
+          model: ElementData,
           include: [{
-            model: ElementData,
-            include: [{
-              model: Element,
-            }]
+            model: Element,
           }]
-        }],
-        where: {
-          id: companyId
-        }
-      })
-      .then(function(company) {
-        sails.log.debug(company[0]);
-        res.ok(company[0]);
-      })
-      .catch(function(err) {
-        res.serverError(err);
-      })
+        }]
+      }],
+      where: {
+        id: companyId
+      }
+    })
+    .then(function(company) {
+      sails.log.debug(company[0]);
+      res.ok(company[0]);
+    })
+    .catch(function(err) {
+      res.serverError(err);
+    })
   },
 
 };

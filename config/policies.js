@@ -25,8 +25,7 @@ module.exports.policies = {
   * access)                                                                  *
   *                                                                          *
   ***************************************************************************/
-
-  '*': true,
+  '*': true, // Disables all policies defined above.
 
   CompanyController: {
     getProfile: 'isAuthenticated',
@@ -40,11 +39,18 @@ module.exports.policies = {
 
   ElementController: {
     getElements: 'isAuthenticated',
+    getElementsByUser: 'isAuthenticated',
     createElement: 'isAuthenticated',
     createElementData: 'isAuthenticated',
-    createLineForCategory: 'isAuthenticated',
+    createLinkedElementData: 'isAuthenticated',
     editElementData: 'isAuthenticated'
-  }
+  },
+
+  ProductController: {
+    create: 'isAuthenticated'
+  },
+
+
 
   /***************************************************************************
   *                                                                          *

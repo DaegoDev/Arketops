@@ -1,0 +1,99 @@
+<div class="container">
+  <div class="">
+    <h2>Crea tu nuevo producto.</h2>
+  </div>
+  <form ng-submit="createProduct()" novalidate>
+    <div class="row">
+      <div class="col l8 s12">
+        <div class="col l6 s12">
+          <div input-field>
+            <input type="text" ng-model="product.name" required>
+            <label>Nombre</label>
+          </div>
+        </div>
+
+        <div class="col l6 s12">
+          <div input-field>
+            <input type="text" ng-model="product.code" required>
+            <label>Código</label>
+          </div>
+        </div>
+
+        <div class="col l6 s12">
+          <div input-field>
+            <select material-select data-beloworigin="true" ng-model="product.category"
+              ng-options="data.name for data in categories.ElementData">
+              <option value="" >Seleccione la categoria</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="col l6 s12">
+          <div input-field>
+            <select material-select data-beloworigin="true" ng-model="product.line"
+              ng-options="data.name for data in lines.ElementData">
+              <option value="" >Seleccione la linea </option>
+            </select>
+          </div>
+        </div>
+
+        <div class="col l6 s12">
+          <div input-field>
+            <select material-select data-beloworigin="true" ng-model="product.brand"
+              ng-options="data.name for data in brands.ElementData">
+              <option value="" >Seleccione la marca </option>
+            </select>
+          </div>
+        </div>
+
+        <div class="col l6 s12">
+          <div input-field>
+            <select material-select data-beloworigin="true" ng-model="product.tax"
+              ng-options="data.name for data in taxes.ElementData">
+              <option value="" >Seleccione el impuesto </option>
+            </select>
+          </div>
+        </div>
+
+
+      <div class="col l12 s12 ">
+        <div input-field class="image-upload">
+          <textarea class="materialize-textarea" type="text" ng-model="product.description" required></textarea>
+          <label>Descripción</label>
+        </div>
+      </div>
+
+      <div class="col l6 s12">
+        <div input-field>
+          <input type="text" ng-model="product.price" required>
+          <label>Precio</label>
+        </div>
+      </div>
+
+      <div class="col l6 s12">
+        <div input-field>
+          <input type="text" ng-model="product.stateId" required>
+          <label>Estado</label>
+        </div>
+      </div>
+    </div>
+
+    <div class="col l4 s12 image-upload">
+      <input type="file" id="file-input" name="imageFile" ng-model="imageFile"
+      base-sixty-four-input required onload="onLoad" accept="image/jpg, image/jpeg, image/png">
+      <img class="image-avatar" ng-style="imgAvatarStyle" id="image-avatar"
+      ng-src="data:{{fileObject.filetype}};base64,{{fileObject.base64}}" height="300" width="300">
+      <div class="icon-upload">
+        <label for="file-input">
+          <img class="add-image" id="add-image" ng-src="../../images/uploadIcon.png" >
+        </label>
+      </div>
+      <div class="row center label-logo">
+        <p>Seleccione la imagen del producto.</p>
+      </div>
+    </div>
+  </div>
+  <button type="submit" name="button">Crear</button>
+</form>
+
+</div>

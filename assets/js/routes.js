@@ -38,6 +38,10 @@ arketops.config(['$stateProvider', '$urlRouterProvider',
         controller: 'ElementCtrl'
       })
 
-
+      .state('products', {
+        url: '/products',
+        templateUrl: 'templates/private/company/products.html',
+        controller: 'ProductCtrl'
+      })
 
   }]);
