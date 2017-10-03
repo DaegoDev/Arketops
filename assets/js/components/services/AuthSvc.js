@@ -44,20 +44,15 @@ var storageType = 'session';
 		// Servicio para autenticar una sesión de usuario activa.
 		isAuthenticated: function() {
 			var role = StorageSvc.get("role", storageType);
-			if (!role) {
-				return false;
-			}
-			if(role == "ANON"){
-				return false;
-			}
+			if (!role) {return false;}
+			if (role == "ANON") {return false;}
 			return true;
 		},
 
 		// Servicio para obtener el tipo de rol del usuario de la sesión actual.
-		getRole: function(){
+		getRole: function() {
 			return StorageSvc.get("role", storageType);
 		},
-
 	};
 }]);
 

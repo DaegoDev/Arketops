@@ -1,0 +1,120 @@
+<div class="container element">
+  <div class="row">
+
+    <!-- ELEMENT TYPE LIST -->
+    <div class="col l2 s3">
+      <div class="section">
+        <div class="collection hoverable z-depth-3 element-type-list">
+          <a class="collection-item" ng-repeat="element in elements" ng-click="selectElement(element)">
+          {{element.name | capitalize}}
+        </a>
+        </div>
+      </div>
+    </div>
+
+    <!-- ELEMENT DATA SECTION -->
+    <div class="element-type col l8 s7 offset-l1 offset-s1" ng-show="showElement">
+      <!-- SECTION FOR STANDARD ELEMENTS -->
+      <div class="section" ng-show="selectedElement.name != 'Linea'">
+        <!-- CREATE ELEMENT DATA FORM -->
+        <div class="card-panel hoverable z-depth-3 element-create">
+          <label><h5>{{selectedElement.name | capitalize}}s</h5></label>
+          <div class="row">
+            <form ng-submit="createElementData()" novalidate>
+              <!-- ELEMENT DATA NAME INPUT -->
+              <div class="input-field col l6 s8">
+                <input id="name" type="text" class="validate" ng-model="elementData.name">
+                <label for="name">Nombre</label>
+              </div>
+
+              <!-- ELEMENT DATA DISCOUNT INPUT -->
+              <div class="input-field col l3 s4">
+                <input id="discount" type="number" class="validate" ng-model="elementData.discount">
+                <label for="discount">Descuento</label>
+              </div>
+
+              <!-- SUBMIT FORM BUTTOM -->
+              <div class="input-field col l3 s12">
+                <button type="submit" class="waves-effect waves-light btn yellow darken-1">
+                Guardar<i class="mdi-content-send right"></i>
+              </button>
+              </div>
+
+            </form>
+          </div>
+        </div>
+
+        <!-- ELEMENT DATA LIST -->
+        <div class="card-panel hoverable z-depth-3 element-list">
+          <!-- ANGULAR REPEAT FOR EACH ELEMENT DATA -->
+          <label style="width: 100%"><h5>Lista de {{selectedElement.name}}s</h5></label>
+          <div class="element-card" ng-repeat="data in selectedElement.ElementData" ng-click="disableElementData(data)">
+            <div class="card z-depth-1 z-depth-2">
+              <div class="card-content">
+                <p>{{data.name}}</p>
+                <p>{{data.discount}}</p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- SECTION FOR 'LINEA' ELEMENT -->
+      <div class="section" ng-show="selectedElement.name == 'Linea'">
+        <!-- CREATE ELEMENT DATA FORM -->
+        <div class="card-panel hoverable z-depth-3 element-create">
+
+          <div class="row">
+            <label class="col s4"><h5>{{selectedElement.name}}s</h5></label>
+            <div class="input-field col s8">
+              <select material-select>
+              <option value="" disabled selected>Escoja una categoria </option>
+              <option value="1" ng-repeat="data in elements[0].ElementData">{{data.name}}</option>
+            </select>
+            </div>
+          </div>
+
+          <div class="row" ng-show="isCategorySelected">
+            <form ng-submit="createElementData()" novalidate>
+              <!-- ELEMENT DATA NAME INPUT -->
+              <div class="input-field col l6 s8">
+                <input id="name" type="text" class="validate" ng-model="elementData.name">
+                <label for="name">Nombre</label>
+              </div>
+
+              <!-- ELEMENT DATA DISCOUNT INPUT -->
+              <div class="input-field col l3 s4">
+                <input id="discount" type="number" class="validate" ng-model="elementData.discount">
+                <label for="discount">Descuento</label>
+              </div>
+
+              <!-- SUBMIT FORM BUTTOM -->
+              <div class="input-field col l3 s12">
+                <button type="submit" class="waves-effect waves-light btn yellow darken-1">
+                Guardar<i class="mdi-content-send right"></i>
+              </button>
+              </div>
+
+            </form>
+          </div>
+        </div>
+
+        <!-- ELEMENT DATA LIST -->
+        <div class="card-panel hoverable z-depth-3 element-list" ng-show="isCategorySelected">
+          <!-- ANGULAR REPEAT FOR EACH ELEMENT DATA -->
+          <label style="width: 100%"><h5>Lista de {{selectedElement.name}}s</h5></label>
+          <div class="element-card" ng-repeat="data in selectedElement.ElementData" ng-click="disableElementData(data)">
+            <div class="card z-depth-1 z-depth-2">
+              <div class="card-content">
+                <p>{{data.name}}</p>
+                <p>{{data.discount}}</p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+</div>

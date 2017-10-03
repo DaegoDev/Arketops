@@ -1,0 +1,45 @@
+.element {
+
+  .element-type {
+    transition: all linear 0.2s;
+    opacity: 1;
+
+    &.ng-show, &.ng-show-active {
+      opacity: 1;
+    }
+
+    &.ng-hide, &.ng-hide-active {
+      opacity: 0;
+    }
+  }
+
+  .element-list {
+    display: flex;
+    flex-wrap: wrap;
+    flex-direction: row;
+    justify-content: center;
+    .element-card {
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+
+      word-wrap: break-word;
+      margin: 7px;
+      width: 120px;
+
+      .card {
+        margin: 0px;
+        cursor: pointer;
+        height: 100%;
+
+        &:hover {
+          background-color: #ffd600;
+        }
+        .card-content {
+          text-align: center;
+          padding: 5px;
+        }
+      }
+    }
+  }
+}

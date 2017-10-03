@@ -130,8 +130,10 @@ arketops.controller('CompanyProfileCtrl', ['$scope', '$log', '$state', '$statePa
 
       CompanySvc.updatePassword(paramsChangePws)
         .then((res) => {
-          $ngConfirm('Se cambió la contraseña');
-          $scope.user.currentPassword = "";
+          Materialize.toast('Se cambió la contraseña.', 4000, 'green darken-1 rounded');
+          $scope.forms.formChangePws.$setPristine();
+          $scope.forms.formChangePws.$setUntouched();
+          $scope.user.oldPassword = "";
           $scope.user.newPassword = "";
           $scope.user.reNewPassword = "";
         })

@@ -1,0 +1,40 @@
+<div class="row">
+    <div class="input-field input-group">
+      <ng-md-icon icon="search" class="prefix" style="fill: black" size="30"></ng-md-icon>
+      <input type="text" id="searchInput" ng-model="searchText.$">
+      <label for="searchInput">Filtrar los resultados</label>
+    </div>
+</div>
+<ul class="collapsible popout" data-collapsible="accordion" watch>
+  <li ng-repeat="product in products | filter:searchText">
+    <div class="collapsible-header">
+      <ng-md-icon class="prefix" icon="blur_on" style="fill: blue darken-1" size="20"></ng-md-icon>
+      <span class="main-data"><span class="badge">{{product.price | currency : '$' : '0'}}</span>{{product.name | capitalize}} {{product.ElementData[0].name}} {{product.ElementData[1].name}}</span>
+
+    </div>
+    <div class="collapsible-body">
+      <div class="row">
+        <div class="col s2">
+          <img ng-style="imgAvatarStyle" class="img-profile materialboxed"  data-caption="{{product.description}}"
+          ng-src="{{product.imageURI}}" height="80" width="80">
+        </div>
+        <div class="col s3">
+          <label for="">Código: </label>
+          {{product.code}}<br>
+          <label for="description">Descripción: </label><br>
+          <strong id="description">{{product.description | capitalize}}</strong>
+        </div>
+        <div class="col s3">
+          <label for="">Precio: </label>
+          {{product.price | currency : '$' : '0'}}
+        </div>
+        <div class="col s4">
+          <div ng-repeat="elementData in product.ElementData">
+            <label for="">{{elementData.Element.name | capitalize}}</label>
+            {{elementData.name | capitalize}}
+          </div>
+        </div>
+      </div>
+    </div>
+  </li>
+</ul>

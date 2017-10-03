@@ -129,8 +129,13 @@
 
         // Validación de los datos ingresados.
         if (!name || !nit || !businessOverview || !email || !password || !rePassword || !country ||
-          department.adminCode1 == -1 || !city || !nomenclature || !phonenumber || !contact || !contactPhonenumber || !termsAndConditions) {
+          department.adminCode1 == -1 || !city || !nomenclature || !phonenumber || !contact || !contactPhonenumber) {
           Materialize.toast('Verifique que todos los datos se hayan ingresado correctamente.', 4000, 'red darken-1 rounded')
+          return;
+        }
+
+        if (!termsAndConditions) {
+          Materialize.toast('Debe aceptar terminos y condiciones.', 4000, 'red darken-1 rounded')
           return;
         }
 
@@ -164,7 +169,6 @@
         CompanySvc.signup(userCredentials)
           .then(function(res) {
             $scope.signingUp = false;
-            console.log($scope.forms.formSignup);
             $scope.forms.formSignup.$setPristine();
             $scope.forms.formSignup.$setUntouched();
             $ngConfirm({

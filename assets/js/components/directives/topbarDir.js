@@ -8,7 +8,8 @@ arketops.directive('topbar', function() {
   }
 })
 
-arketops.controller('topbarCtrl', ['$scope', '$cookieStore', '$ngConfirm', 'AuthSvc', '$interval', '$state', '$anchorScroll', '$location', '$timeout', 'AnchorSmoothScroll', 'StorageSvc',
+arketops.controller('topbarCtrl', ['$scope', '$cookieStore', '$ngConfirm', 'AuthSvc',
+'$interval', '$state', '$anchorScroll', '$location', '$timeout', 'AnchorSmoothScroll', 'StorageSvc',
   function($scope, $cookieStore, $ngConfirm, AuthSvc, $interval, $state, $anchorScroll, $location, $timeout, AnchorSmoothScroll, StorageSvc) {
     $(document).ready(function() {
       $('.scrollspy').scrollSpy({
@@ -26,6 +27,7 @@ arketops.controller('topbarCtrl', ['$scope', '$cookieStore', '$ngConfirm', 'Auth
 
     $scope.$on('renovateRole', function(evt) {
       $scope.authenticated = AuthSvc.isAuthenticated();
+      $scope.closeModal();
     });
 
     // Opciones para el select de busqueda.
@@ -37,6 +39,7 @@ arketops.controller('topbarCtrl', ['$scope', '$cookieStore', '$ngConfirm', 'Auth
     // Función para cerrar cesión.
     $scope.signout = function() {
       AuthSvc.signout();
+      $state.reload();
     }
 
     // Función que despliega la sección de busqueda.

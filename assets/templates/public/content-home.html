@@ -70,7 +70,7 @@
                     <div class="col s5">
                       <div input-field>
                         <i class="fa fa-external-link prefix"></i>
-                        <input type="url" ng-model="user.website" required>
+                        <input type="text" name="website" ng-model="user.website" required>
                         <label>Sitio web</label>
                       </div>
                     </div>
@@ -238,7 +238,7 @@
             <div class="row ">
               <div ng-class="{'has-error': forms.formSignup.termsAndConditions.$invalid && (!forms.formSignup.termsAndConditions.$pristine || forms.formSignup.$submitted),
               'has-success': forms.formSignup.termsAndConditions.$valid}">
-                <input type="checkbox" class="filled-in" id="filled-in-box" ng-model="termsAndConditions" ng-click="switchValueCheckbox()" ng-required="!termsAndConditions" />
+                <input type="checkbox" class="filled-in" id="filled-in-box" ng-model="termsAndConditions" ng-click="switchValueCheckbox()" ng-required="termsAndConditions" />
                 <label for="filled-in-box">Aceptar terminos y condiciones.</label>
                 <!-- VALIDACIONES DE TERMINOS Y CONDICIONES. -->
                 <div ng-messages="forms.formSignup.termsAndConditions.$error" ng-if="forms.formSignup.$submitted" ng-messages-multiple>

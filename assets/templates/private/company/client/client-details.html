@@ -1,0 +1,20 @@
+<div class="container">
+  <div class="card client-details">
+    <div class="card-content header-client-details">
+        <h5 class="center"><strong>Detalles del cliente: {{client.name | capitalize}}</strong></h5>
+    </div>
+    <div class="row">
+      <!-- OPTIONS CLIENT DETATILS LIST -->
+      <div class="col l2 s3">
+        <div class="section">
+          <div  class="collection hoverable z-depth-3 options-list">
+            <a class="collection-item" ng-repeat="option in options" ng-class="{active: option.selected}"
+            ng-click="goToState(option.name, $index)">{{option.name}}</a>
+          </div>
+        </div>
+      </div>
+      <div class="option-content col l8 s7 offset-l1 offset-s1" ui-view>
+      </div>
+    </div>
+  </div>
+</div>

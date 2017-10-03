@@ -1,5 +1,5 @@
 <div id="navbar" class="navbar-fixed scrollspy">
-  <nav class="white">
+  <nav class="theme-color-1">
     <div class="nav-wrapper container">
       <img src="../../images/logo.png" class="brand-logo" width="200" height="50" alt="Logo Arketops">
       <a href="#" data-activates="mobile-demo" class="button-collapse"><i class="mdi-navigation-menu"></i></a>
@@ -7,16 +7,17 @@
         <li><a class="head-link" ng-click="openSearchNav()" >Buscar</a></li>
         <li><a class="head-link" ui-sref="home">Inicio</a></li>
         <li><a class="head-link" ng-click="showFormContactus()">Contáctenos</a></li>
-        <li ng-if="!authenticated"><a class="head-link" ng-click="showFormSignup()" >Registrarse</a></li>
-        <li ng-if="!authenticated"><a class="head-link" href="#signinModal" ready="modalReady()" complete="modalComplete()" open="openModal" modal>Iniciar sesión</a></li>
-        <li ng-if="authenticated"><a class="head-link" ng-click="signout()">Cerrar sesión</a></li>
+        <li ng-show="!authenticated"><a class="head-link" ng-click="showFormSignup()" >Registrarse</a></li>
+        <li ng-show="!authenticated"><a class="head-link" href="#signinModal"
+           open="openModal" modal>Iniciar sesión</a></li>
+        <li ng-show="authenticated"><a class="head-link" ng-click="signout()">Cerrar sesión</a></li>
       </ul>
       <ul class="right side-nav section" id="mobile-demo">
         <li><a class="head-link" ui-sref="home">Inicio</a></li>
         <li><a class="head-link" href="#contactus">Contáctenos</a></li>
-        <li ng-if="!authenticated"><a class="head-link" href="#signup">Registrarse</a></li>
+        <li ng-show="!authenticated"><a class="head-link" href="#signup">Registrarse</a></li>
         <!-- <li ng-if="!authenticated"><a class="head-link" >Iniciar sesión</a></li> -->
-        <li ng-if="authenticated"><a class="head-link" ng-click="signout()">Cerrar sesión</a></li>
+        <li ng-show="authenticated"><a class="head-link" ng-click="signout()">Cerrar sesión</a></li>
       </ul>
     </div>
   </nav>

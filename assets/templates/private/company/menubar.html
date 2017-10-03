@@ -2,18 +2,16 @@
   <div class="navbar">
     <ul id="nav-mobile" class="center hide-on-med-and-down">
       <li><a ui-sref="companyProfile">Perfil</a></li>
-      <li><a data-activates='elementOptions' dropdown data-hover="true" href="sass.html">Elementos</a></li>
-      <li><a data-activates='productOptions' dropdown data-hover="true" href="badges.html">Productos</a></li>
-      <li><a data-activates='quotationOptions' dropdown data-hover="true" href="collapsible.html">Cotizaciones</a></li>
-      <li><a data-activates='clientSupplierOptions' dropdown data-hover="true" href="collapsible.html">Clientes y proveedores</a></li>
+      <li><a ui-sref="elements">Elementos</a></li>
+      <li><a dropdown data-activates='productOptions'  data-hover="true"
+        data-beloworigin="true" href="badges.html">Productos</a></li>
+      <li><a dropdown data-activates='quotationOptions'  data-hover="true"
+        data-beloworigin="true" href="collapsible.html">Cotizaciones</a></li>
+      <li><a dropdown data-activates='clientSupplierOptions'  data-hover="true"
+        data-beloworigin="true" >Clientes y proveedores</a></li>
     </ul>
   </div>
 </nav>
-
-<ul id='elementOptions' class='dropdown-content'>
-    <li><a href="javascript:void(0);">Crear</a></li>
-    <li><a href="javascript:void(0);">Listar</a></li>
-</ul>
 
 <ul id='productOptions' class='dropdown-content'>
     <li><a href="javascript:void(0);">Crear</a></li>
@@ -26,6 +24,6 @@
 </ul>
 
 <ul id='clientSupplierOptions' class='dropdown-content'>
-    <li><a href="javascript:void(0);">Ver clientes</a></li>
-    <li><a href="javascript:void(0);">Ver proveedores</a></li>
+    <li><a ui-sref="clientsList">Ver clientes</a></li>
+    <li><a ui-sref="suppliersList">Ver proveedores</a></li>
 </ul>
