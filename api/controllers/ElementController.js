@@ -33,7 +33,10 @@ module.exports = {
       include: [
         {
           model: ElementData,
-          include: [{model: ElementData, as: 'ElementChildren'}]
+          include: [
+            {model: ElementData, as: 'ElementParent'},
+            {model: ElementData, as: 'ElementChildren'}
+          ]
         }
       ]
     })

@@ -29,8 +29,15 @@ angular.module('arketops')
             params: params
           });
           return products;
-        }
+        },
 
+        getMyPortfolio: function () {
+          var portfolio = $http({
+            url: '/product/getMyProducts',
+            method: 'GET'
+          });
+          return portfolio;
+        }
       };
     }
   ]);

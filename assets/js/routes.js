@@ -44,4 +44,10 @@ arketops.config(['$stateProvider', '$urlRouterProvider',
         controller: 'ProductCtrl'
       })
 
+      .state('portfolio', {
+        url: '/portfolio',
+        templateUrl: 'templates/private/company/portfolio.html',
+        controller: 'PortfolioCtrl'
+      })
+
   }]);

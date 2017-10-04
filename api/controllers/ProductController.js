@@ -337,24 +337,17 @@ module.exports = {
     var user = null;
 
     // Definición de variables.
-    // user = req.user;
-    user = {
-      id: 1
-    }
+    user = req.user;
 
     Company.findAll({
       include: [{
         model: Product,
         include: [{
           model: ElementData,
-          include: [{
-            model: Element,
-          }]
+          include: [{model: Element}]
         }]
       }],
-      where: {
-        userId: user.id
-      }
+      where: {userId: user.id}
     })
     .then(function(company) {
       sails.log.debug(company[0]);
