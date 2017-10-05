@@ -30,11 +30,13 @@ function($scope, $log, $state, $stateParams, $ngConfirm, ElementSvc, ProductSvc)
             break;
         }
       });
-      console.log($scope.elements);
     })
-    .catch(function (err) {
-      console.log(err);
-    });
+    .catch(function (err) {$log.error(err);});
+
+    // Gets all the states a product can be.
+    ProductSvc.getStates()
+    .then(function (res) {$scope.states = res.data;})
+    .catch(function (err) {$log.error(err);});
   }
   $scope.init();
 
@@ -53,7 +55,7 @@ function($scope, $log, $state, $stateParams, $ngConfirm, ElementSvc, ProductSvc)
       name: $scope.product.name,
       description: $scope.product.description,
       price: $scope.product.price,
-      stateId: $scope.product.stateId,
+      stateId: $scope.product.state.id,
       imageDataURI: $scope.product.image,
       elements: [
         $scope.product.category.id,

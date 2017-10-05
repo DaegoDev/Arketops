@@ -31,12 +31,21 @@ angular.module('arketops')
           return products;
         },
 
+        // Servicio para obtener todos los productos de la empresa.
         getMyPortfolio: function () {
           var portfolio = $http({
             url: '/product/getMyProducts',
             method: 'GET'
           });
           return portfolio;
+        },
+
+        getStates: function () {
+          var states = $http({
+            url: '/product/getStates',
+            method: 'GET'
+          });
+          return states;
         }
       };
     }

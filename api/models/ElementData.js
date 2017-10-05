@@ -47,7 +47,9 @@ module.exports = {
         allowNull: false
       }
     });
+
     // Asociación muchos a muchos con el modelo ElementData.
+    // Obtiene los hijos del element data
     ElementData.belongsToMany(ElementData, {
       as: 'ElementChildren',
       through: ElementLink,
@@ -60,6 +62,23 @@ module.exports = {
         allowNull: false
       }
     });
+
+    // Asociación muchos a muchos con el modelo ElementData.
+    // Obtiene los padres del element data.
+    ElementData.belongsToMany(ElementData, {
+      as: 'ElementParent',
+      through: ElementLink,
+      foreignKey: {
+        name: 'elementChildId',
+        allowNull: false
+      },
+      otherKey: {
+        name: 'elementFatherId',
+        allowNull: false
+      }
+    });
+
+
     // Asociación muchos a muchos con el modelo ClientSupplier.
     ElementData.belongsToMany(ClientSupplier, {
       through: ClientDiscount,

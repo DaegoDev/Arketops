@@ -74,13 +74,15 @@
 
             <div class="col l8 s12">
               <div input-field>
-                <input type="text" name="" value="{{0 || product.price | currency}}" disabled>
+                <input type="text" name="" value="{{(0 || product.price) - (product.category ? product.price * product.category.discount / 100: 0) | currency}}" disabled>
               </div>
             </div>
 
             <div class="col l4 s12">
               <div input-field>
-                <input type="text" ng-model="product.stateId" required>
+                <select material-select data-beloworigin="true" ng-model="product.state" ng-options="state.name for state in states">
+                  <option value="">Estado</option>
+                </select>
                 <label>Estado</label>
               </div>
             </div>

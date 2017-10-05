@@ -9,6 +9,7 @@
 var promise = require('bluebird');
 var fs = require('fs');
 var sizeOf = require('image-size');
+var path = require('path');
 
 module.exports = {
   /**
@@ -77,7 +78,9 @@ module.exports = {
     user = req.user;
     imageDataURI = req.param('imageDataURI');
 
-    var pathAvatars = sails.config.appPath + "/assets/images/products/";
+    var relativePath = "/assets/images/products/";
+    var appPath = sails.config.appPath;
+    var imagePath = null;
 
     return sequelize.transaction(function(t) {
       var imageURI;
@@ -85,30 +88,34 @@ module.exports = {
       var product;
 
       return Company.findAll({where: {userId: user.id}, transaction: t})
+
       .then(function(company) {
         return Promise.all = [
           company[0],
           company[0].getProducts({where: {code: code},transaction: t})
         ];
       })
+
       .spread(function(companyInst, products) {
         if (products.length == 0) {
           company = companyInst;
-          pathAvatars = pathAvatars + company.nit + "-" + code;
-          sails.log.debug(pathAvatars);
-          return ImageDataURIService.decodeAndSave(imageDataURI, pathAvatars)
+          relativePath = path.join(relativePath, company.nit + "-" + code + "-" + Date.now());
+          imagePath = path.join(appPath, relativePath);
+          sails.log.debug(imagePath);
+          return ImageDataURIService.decodeAndSave(imageDataURI, imagePath)
         }
         throw "Ya existe un producto con ese código";
       })
+
       .then(function (resUpload) {
         if (resUpload) {
           imageURI = resUpload;
+          relativePath = imageURI.replace(appPath, "");
+
           // Se valida que el archivo tenga el formato y la resolución deseada.
           var dimensions = sizeOf(imageURI);
           if (dimensions.type != "png" && dimensions.type != "jpeg" && dimensions.type != "jpg") {
-            fs.unlink(imageURI, (err) => {
-              sails.log.debug('Se borró la imagen');
-            });
+            fs.unlink(imageURI, (err) => {sails.log.debug('Se borró la imagen');});
             throw new Error("La configuración del archivo no es valida");
           }
         }
@@ -120,7 +127,7 @@ module.exports = {
           description: description,
           price: price,
           stateId: stateId,
-          imageURI: imageURI,
+          imageURI: relativePath,
           companyId: company.id
         }
         return Product.create(productCredentials, {transaction: t});
@@ -395,7 +402,8 @@ module.exports = {
       var numberProducts = products.length;
       products.forEach(function(product, index, productsList) {
         product.dataValues.type= 2;
-        ImageDataURIService.encode(product.imageURI)
+
+        ImageDataURIService.encode(path.resolve(sails.config.appPath + product.imageURI))
         .then((imageDataURI) => {
           product.imageURI = imageDataURI;
         })
@@ -453,5 +461,20 @@ module.exports = {
       res.serverError(err);
     })
   },
+
+  /**
+  * Función para obtener los estados en los que se puede encontrar un productos.
+  * @param  {Object} req Request object
+  * @param  {Object} res Response object
+  */
+  getStates: function (req, res) {
+    State.findAll()
+    .then(function (states) {
+      return res.ok(states);
+    })
+    .catch(function (err) {
+      return res.serverError(err);
+    });
+  }
 
 };
