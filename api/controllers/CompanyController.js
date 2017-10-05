@@ -459,6 +459,7 @@ module.exports = {
         }
       })
       .then(function(company) {
+        sails.log.debug(company);
         var newNameImage = null;
         if (company.imageURI) {
           imageURIDB = company.imageURI;
@@ -468,7 +469,7 @@ module.exports = {
           var numNewImage = parseInt(imageNameDB.substring(imageNameDB.length - 1)) + 1;
         }
         newNameImage = company.imageURI ? company.nit + "_" + numNewImage : company.nit + "_1";
-
+        sails.log.debug(newNameImage);
         var pathAvatars = sails.config.appPath + "/assets/images/avatars/" + newNameImage;
         //   var tmpPathAvatars = sails.config.appPath + '/.tmp/public/images/uploads/';
         return Promise.all = [company, ImageDataURIService.decodeAndSave(imageDataURI, pathAvatars)]
@@ -589,11 +590,8 @@ module.exports = {
       res.badRequest("El id del proveedor es vacio");
     }
 
-    // user = req.user;
-    user = {
-      id: 5
-    }
-
+    user = req.user;
+    sails.log.debug(user.id);
     Company.findAll({
         include: [User],
         where: {
@@ -607,6 +605,7 @@ module.exports = {
         throw "La empresa no existe"
       })
       .then(function(clientSupplier) {
+        sails.log.debug(clientSupplier)
         res.ok(clientSupplier[0][0]);
       })
       .catch(function(err) {
@@ -638,7 +637,10 @@ module.exports = {
             main: true
           }
         }, {
-          model: User
+          model: User,
+          attributes: {
+            exclude: ['password']
+          }
         }],
         where: {
           name: {
@@ -650,6 +652,7 @@ module.exports = {
         var numberCompanies = companies.length;
         companies.forEach(function(company, index, companiesList) {
           company.dataValues.type = 1;
+          delete company.User.password;
           ImageDataURIService.encode(company.imageURI)
             .then((imageDataURI) => {
               company.imageURI = imageDataURI;
@@ -729,7 +732,10 @@ module.exports = {
               main: true
             }
           }, {
-            model: User
+            model: User,
+            attributes: {
+              exclude: ['password']
+            }
           }],
           where: {
             $or: [{
@@ -775,10 +781,7 @@ module.exports = {
     // Declaración de variables.
     var user = null;
 
-    //  user = req.user;
-    user = {
-      id: 2
-    }
+    user = req.user;
 
     Company.findOne({
         where: {
@@ -786,10 +789,30 @@ module.exports = {
         }
       })
       .then(function(company) {
-        return company.getClients()
+        return company.getClients({
+          include: [{
+            model: Headquarters,
+          }, {
+            model: User,
+            attributes: {
+              exclude: ['password']
+            }
+          }]
+        })
       })
       .then(function(clients) {
-        res.ok(clients);
+        clients.forEach(function(client, index, clientsList) {
+          ImageDataURIService.encode(client.imageURI)
+            .then((imageDataURI) => {
+              client.imageURI = imageDataURI;
+            })
+            .catch((err) => {
+              sails.log.debug(err)
+            })
+        })
+        setTimeout(function() {
+          res.ok(clients);
+        }, 15);
       })
       .catch(function(err) {
         res.serverError(err);
@@ -804,10 +827,7 @@ module.exports = {
     // Declaración de variables.
     var user = null;
 
-    //  user = req.user;
-    user = {
-      id: 3
-    }
+    user = req.user;
 
     Company.findOne({
         where: {
@@ -815,10 +835,33 @@ module.exports = {
         }
       })
       .then(function(company) {
-        return company.getSuppliers()
+        return company.getSuppliers({
+          include: [{
+            model: Headquarters,
+            where: {
+              main: true
+            }
+          }, {
+            model: User,
+            attributes: {
+              exclude: ['password']
+            }
+          }]
+        })
       })
       .then(function(suppliers) {
-        res.ok(suppliers);
+        suppliers.forEach(function(supplier, index, suppliersList) {
+          ImageDataURIService.encode(supplier.imageURI)
+            .then((imageDataURI) => {
+              supplier.imageURI = imageDataURI;
+            })
+            .catch((err) => {
+              sails.log.debug(err)
+            })
+        })
+        setTimeout(function() {
+          res.ok(suppliers);
+        }, 15);
       })
       .catch(function(err) {
         res.serverError(err);
@@ -852,10 +895,7 @@ module.exports = {
       return res.badRequest('Descuento vacío')
     }
 
-    //  user = req.user;
-    user = {
-      id: 1
-    }
+    user = req.user;
 
     // Se verifica que la empresa con clientId en verdad sea un cliente.
     ClientSupplier.findOne({
@@ -1013,6 +1053,53 @@ module.exports = {
       .catch(function(err) {
         res.serverError(err);
       });
+  },
+  /**
+   * Funcion para validar si una empresa es proveedor.
+   * @param  {Object} req Request object
+   * @param  {Object} res Response object
+   * @return
+   */
+  validateSupplier: function(req, res) {
+    //Declaración de variables.
+    var user = null;
+    var companyId = null;
+
+    // Definición de variables y validaciones.
+    companyId = parseInt(req.param('companyId'));
+    if (!companyId) {
+      return res.badRequest({
+        code: 1,
+        msg: 'Se debe ingresar el id de una empresa.'
+      });
+    }
+
+    user = req.user;
+
+    Company.findOne({
+        where: {
+          id: companyId
+        }
+      })
+      .then((supplier) => {
+        if (!supplier) {
+          throw new Error("La empresa no existe");
+        }
+        return Company.findOne({
+          where: {
+            userId: user.id
+          }
+        });
+      })
+      .then((client) => {
+        return client.hasSupplier(companyId);
+      })
+      .then((isSupplier) => {
+        res.ok(isSupplier)
+      })
+      .catch((err) => {
+        sails.log.debug(err)
+      })
   },
 };
 

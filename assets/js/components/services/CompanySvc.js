@@ -64,6 +64,40 @@ function ($http, $rootScope) {
         data: params
       });
       return updated;
+    },
+    // Service to validate if a company is supplier.
+    isSupplier: function (params) {
+      var isSupplier = $http({
+        url: '/company/validateSupplier',
+        method: 'GET',
+        params: params
+      });
+      return isSupplier;
+    },
+    // Service to follow a company.
+    followCompany: function (params) {
+      var follow = $http({
+        url: '/company/followCompany',
+        method: 'POST',
+        data: params
+      });
+      return follow;
+    },
+    // Service to get the suppliers of a company.
+    getSuppliers: function () {
+      var suppliers = $http({
+        url: '/company/getSuppliers',
+        method: 'GET'
+      });
+      return suppliers;
+    },
+    // Service to get the clients of a company.
+    getClients: function () {
+      var clients = $http({
+        url: '/company/getClients',
+        method: 'GET'
+      });
+      return clients;
     }
 
   };

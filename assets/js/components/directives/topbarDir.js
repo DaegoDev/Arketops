@@ -9,9 +9,8 @@ arketops.directive('topbar', function() {
 })
 
 arketops.controller('topbarCtrl', ['$scope', '$cookieStore', '$ngConfirm', 'AuthSvc',
-'$interval', '$state', '$anchorScroll', '$location', '$timeout', 'AnchorSmoothScroll',
-  function($scope, $cookieStore, $ngConfirm, AuthSvc, $interval, $state, $anchorScroll,
-    $location, $timeout, AnchorSmoothScroll) {
+'$interval', '$state', '$anchorScroll', '$location', '$timeout', 'AnchorSmoothScroll', 'StorageSvc',
+  function($scope, $cookieStore, $ngConfirm, AuthSvc, $interval, $state, $anchorScroll, $location, $timeout, AnchorSmoothScroll, StorageSvc) {
     $(document).ready(function() {
       $('.scrollspy').scrollSpy({
         scrollOffset: 0
@@ -64,10 +63,9 @@ arketops.controller('topbarCtrl', ['$scope', '$cookieStore', '$ngConfirm', 'Auth
         return;
       }
       $scope.closeSearchNav();
-      $state.go('showResults', {
-        searchValue: searchValue,
-        filter: filter
-      });
+      $state.go('showResults');
+      StorageSvc.set('searchValue', searchValue, 'session');
+      StorageSvc.set('filter', filter, 'session');
     }
 
     // Enfoca el formulario para el registro.

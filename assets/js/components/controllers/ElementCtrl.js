@@ -42,24 +42,27 @@ function($scope, $log, $state, $stateParams, $ngConfirm, $timeout, ElementSvc) {
     }, 1000 * 0.3);
   }
 
-  // Function to create a new data element.
-  $scope.createElementData = function () {
-    // Here we set the required parameter values for de data element.
-    var elementData = {
-      elementId: $scope.selectedElement.id,
-      name: $scope.elementData.name,
-      discount: $scope.elementData.discount
-    }
 
-    // Call the data element create service and save it into the element
-    // data list when created.
-    ElementSvc.createElementData(elementData)
-    .then(function (res) {
-      $scope.selectedElement.ElementData.push(res.data);
-      $scope.elementData = {};
-    })
-    .catch(function (err) {$log.debug(err)});
-  }
+    // Function to create a new data element.
+    $scope.createElementData = function() {
+      // Here we set the required parameter values for de data element.
+      var elementData = {
+        elementId: $scope.selectedElement.id,
+        name: $scope.elementData.name,
+        discount: $scope.elementData.discount
+      }
+
+      // Call the data element create service and save it into the element data list
+      // when created.
+      ElementSvc.createElementData(elementData)
+        .then(function(res) {
+          $scope.selectedElement.ElementData.push(res.data);
+          $scope.elementData = {};
+        })
+        .catch(function(err) {
+          $log.debug(err)
+        });
+    }
 
   // Function to create a new data element which is linked to another data element.
   $scope.createLinkedElementData = function () {
@@ -95,4 +98,5 @@ function($scope, $log, $state, $stateParams, $ngConfirm, $timeout, ElementSvc) {
     $scope.mode = CREATE;
     $scope.elementData = {};
   }
-}]);
+}
+]);

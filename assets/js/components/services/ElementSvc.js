@@ -21,6 +21,17 @@ function ($http, $log) {
       return elements;
     },
 
+    // Service to get all elements discount by client.
+    getElementsDiscountByClient: function(params) {
+      console.log(params);
+      var elements = $http({
+        url: '/element/getElementsDiscountByClient',
+        method: 'GET',
+        params: params
+      });
+      return elements;
+    },
+
     createElementData: function (elementData) {
       var credentials = {
         elementId: elementData.elementId,

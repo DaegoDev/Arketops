@@ -1,0 +1,42 @@
+<div class="container">
+  <div class="card">
+    <div class="card-content">
+      <div class="row">
+        <div class="col s4">
+          <select class="" ng-model="elements.selected" ng-options="element.name | capitalize for element in elements.choices" ng-change="getElementData(elements.selected)" material-select watch></select>
+          <label>Elemento</label>
+        </div>
+        <div class="col s4">
+          <select class="" ng-model="elementData.selected" ng-options="value.name | capitalize for value in elementData.choices" ng-change="getElementData(elements.selected.name)" material-select watch></select>
+          <label>Valores</label>
+        </div>
+      </div>
+    </div>
+  </div>
+  <h5 class="center"><strong>Elementos con descuento</strong></h5>
+  <div class="row">
+      <div class="input-field input-group">
+        <ng-md-icon icon="search" class="prefix" style="fill: black" size="30"></ng-md-icon>
+        <input type="text" id="searchInput" ng-model="searchText.$">
+        <label for="searchInput">Filtrar los resultados</label>
+      </div>
+  </div>
+  <div class="responsive-table">
+    <table class="highlight">
+      <thead>
+        <tr>
+          <th>Elemento</th>
+          <th>Valor</th>
+          <th>Descuento</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr class="row-link" ng-click="showDetails(client)" ng-repeat="client in clients | filter:searchText | orderBy: sortByProperty:sortReversed">
+          <td style="vertical-align:middle">{{client.name | capitalize}}</td>
+          <td style="vertical-align:middle">{{client.nit}}</td>
+          <td style="vertical-align:middle">{{client.Headquarters[0].phonenumber}}</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>

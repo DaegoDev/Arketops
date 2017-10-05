@@ -34,6 +34,11 @@ module.exports.policies = {
     updateImageProfile: 'isAuthenticated',
     deactivateAccount: 'isAuthenticated',
     followCompany: 'isAuthenticated',
+    validateSupplier: 'isAuthenticated',
+    getSuppliers: 'isAuthenticated',
+    getClients: 'isAuthenticated',
+    setDiscountToClient: 'isAuthenticated',
+    getElements: 'isAuthenticated',
     recoverPassword: 'isValidRecovery',
   },
 

@@ -7,24 +7,6 @@
 
 module.exports = {
   /**
-   * Función para obtener todos los elementos.
-   * @param  {Object} req Request object
-   * @param  {Object} res Response object
-   */
-  getElements: function(req, res) {
-    Element.findAll({
-        include: [{
-          model: ElementData
-        }]
-      })
-      .then(function(resElement) {
-        return res.ok(resElement);
-      })
-      .catch(function(err) {
-        return res.serverError(err);
-      })
-  },
-  /**
    * Función para crear un elemento de un producto.
    * @param  {Object} req Request object
    * @param  {Object} res Response object
@@ -63,7 +45,68 @@ module.exports = {
       .catch(function(err) {
         return res.serverError(err);
       });
+    },
+
+   /* Función para obtener los elemento de un usuario.
+   * @param  {Object} req Request object
+   * @param  {Object} res Response object
+   */
+  getElements: function(req, res) {
+    // Declaración de variables.
+    var user = null;
+    user = req.user;
+
+    Element.findAll({
+        include: [{
+          model: ElementData,
+          where: {
+            userId: user.id
+          },
+          required: false
+        }]
+      })
+      .then(function(resElement) {
+        return res.ok(resElement);
+      })
+      .catch(function(err) {
+        return res.serverError(err);
+      })
   },
+
+  /**
+   * Función para obtener los elementos con descuentos para un cliente.
+   * @param  {Object} req Request object
+   * @param  {Object} res Response object
+   */
+  getElementsDiscountByClient: function(req, res) {
+    // Declaración de variables.
+    var clientSupplierId = null;
+    sails.log.debug(req.param('clientSupplierId'));
+    clientSupplierId = parseInt(req.param('clientSupplierId'))
+    if (!clientSupplierId) {
+      return res.badRequest('Id de clientSupplier requerido')
+    }
+
+    ClientSupplier.findOne({
+        where: {
+          id: clientSupplierId,
+        }
+      })
+      .then((clientSupplier) => {
+        return clientSupplier.getElementData({
+          include: [{
+            model: Element
+          }]
+        })
+      })
+      .then(function(resElement) {
+        return res.ok(resElement);
+      })
+      .catch(function(err) {
+        return res.serverError(err);
+      })
+  },
+  
   /**
    * Función para crear un elemento de un producto.
    * @param  {Object} req Request object
