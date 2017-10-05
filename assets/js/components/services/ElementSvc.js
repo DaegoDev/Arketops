@@ -11,6 +11,16 @@ function ($http, $log) {
       });
       return elements;
     },
+
+    // Service to get all elements of a specific user with their element data.
+    getElementsByUser: function () {
+      var elements = $http({
+        url: '/element/getElementsByUser',
+        method: 'POST'
+      });
+      return elements;
+    },
+
     // Service to get all elements discount by client.
     getElementsDiscountByClient: function(params) {
       console.log(params);
@@ -21,6 +31,7 @@ function ($http, $log) {
       });
       return elements;
     },
+
     createElementData: function (elementData) {
       var credentials = {
         elementId: elementData.elementId,
@@ -30,6 +41,23 @@ function ($http, $log) {
 
       var create = $http({
         url: '/element/createElementData',
+        method: 'POST',
+        data: credentials
+      });
+
+      return create;
+    },
+
+    createLinkedElementData: function (elementData) {
+      var credentials = {
+        elementId: elementData.elementId,
+        name: elementData.name,
+        discount: elementData.discount,
+        dataParentId: elementData.dataParentId
+      };
+
+      var create = $http({
+        url: '/element/createLinkedElementData',
         method: 'POST',
         data: credentials
       });
