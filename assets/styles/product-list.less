@@ -33,14 +33,40 @@
   }
 }
 
-.collapsible-body {
-  padding: 10px 10px 10px 20px !important;
-
-  .row {
-    margin-bottom: -5px;
-  }
-
+.collapsible {
   label {
     font-size: 15px;
+  }
+
+  .collapsible-body {
+    padding: 10px 10px 10px 20px !important;
+
+    .row {
+      margin-bottom: -5px;
+
+      .product-description {
+        margin-left: -40px;
+      }
+
+      .element-data {
+        width: 40%;
+        margin-left: -60px;
+        display: inline-table;
+
+        .element {
+          display: table-cell;
+          width: 100px;
+        }
+
+        .value-element-data {
+          display: table-cell;
+          width: 100px;
+        }
+
+        .discount-element-data {
+          display: table-cell;
+        }
+      }
+    }
   }
 }

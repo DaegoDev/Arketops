@@ -4,15 +4,15 @@ arketops.controller('ProductsByCompanyCtrl', ['$scope', '$log', '$ngConfirm', '$
 
     // Get the company stored in session
     $scope.company = JSON.parse(StorageSvc.get('companySelected', 'session'));
-    console.log($scope.company);
+    // console.log($scope.company);
 
     ProductSvc.getByCompany({companyId: $scope.company.id})
     .then((res) => {
-      $scope.products = res.data;
       console.log(res.data);
+      $scope.products = res.data;
     })
     .catch((err) => {
-
+      console.log(err);
     })
 
   }

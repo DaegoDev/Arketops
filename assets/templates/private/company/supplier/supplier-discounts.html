@@ -1,0 +1,30 @@
+<div class="container">
+  <h5 class="center"><strong>Descuentos asignados por proveedor</strong></h5>
+  <div class="row">
+      <div class="input-field input-group">
+        <ng-md-icon icon="search" class="prefix" style="fill: black" size="30"></ng-md-icon>
+        <input type="text" id="searchInput" ng-model="searchText.$">
+        <label for="searchInput">Filtrar los resultados</label>
+      </div>
+  </div>
+  <div class="responsive-table">
+    <table class="highlight">
+      <thead>
+        <tr>
+          <th>ID</th>
+          <th>Elemento</th>
+          <th>Valor</th>
+          <th>Descuento</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr ng-repeat="elementDataDiscount in elementDataDiscounts | filter:searchText | orderBy: sortByProperty:sortReversed">
+          <td style="vertical-align:middle">{{elementDataDiscount.ClientDiscount.id}}</td>
+          <td style="vertical-align:middle">{{elementDataDiscount.Element.name | capitalize}}</td>
+          <td style="vertical-align:middle">{{elementDataDiscount.name | capitalize}}</td>
+          <td style="vertical-align:middle">{{elementDataDiscount.ClientDiscount.discount}}%</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>

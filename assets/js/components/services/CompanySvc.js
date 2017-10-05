@@ -98,6 +98,33 @@ function ($http, $rootScope) {
         method: 'GET'
       });
       return clients;
+    },
+    // Service to set a discount in an elementData to a client.
+    setDiscountToClient: function (params) {
+      var clientDiscount = $http({
+        url: '/company/setDiscountToClient',
+        method: 'POST',
+        data: params
+      });
+      return clientDiscount;
+    },
+    // Service to update a discount in an elementData to a client.
+    updateDiscountToClient: function (params) {
+      var clientDiscount = $http({
+        url: '/company/updateDiscountToClient',
+        method: 'PUT',
+        data: params
+      });
+      return clientDiscount;
+    },
+    // Service to delete a discount in an elementData to a client.
+    deleteDiscountToClient: function (params) {
+      var clientDiscount = $http({
+        url: '/company/deleteDiscountToClient',
+        method: 'DELETE',
+        data: params
+      });
+      return clientDiscount;
     }
 
   };

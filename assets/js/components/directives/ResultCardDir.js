@@ -16,7 +16,7 @@ var arketops = angular.module('arketops');
 
   function resultCardCtrl($scope, $log, $ngConfirm, AuthSvc, $state, StorageSvc, CompanySvc) {
 
-    console.log($scope.compProd);
+    // console.log($scope.compProd);
 
     if ($scope.type == 1) {
       $scope.isCompany = true;

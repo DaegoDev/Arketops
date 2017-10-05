@@ -3,14 +3,25 @@
     <div class="card-content">
       <div class="row">
         <div class="col s4">
-          <select class="" ng-model="elements.selected" ng-options="element.name | capitalize for element in elements.choices" ng-change="getElementData(elements.selected)" material-select watch></select>
-          <label>Elemento</label>
+          <label for="element">Elemento</label>
+          <select id="element" ng-model="elements.selected" ng-options="element.name | capitalize for element in elements.choices" ng-change="getElementData(elements.selected,0)" material-select watch></select>
         </div>
         <div class="col s4">
-          <select class="" ng-model="elementData.selected" ng-options="value.name | capitalize for value in elementData.choices" ng-change="getElementData(elements.selected.name)" material-select watch></select>
-          <label>Valores</label>
+          <label for="elementData">Valores</label>
+          <select id="elementData" ng-model="elementData.selected" ng-options="value.name | capitalize for value in elementData.choices" material-select watch></select>
+        </div>
+        <div class="col s4">
+          <label for="discount">Descuento</label>
+          <input type="number" name="discount" id="discount" ng-model="discount">
         </div>
       </div>
+      <!-- <div class="right"> -->
+        <a ng-if="!selectedDiscount" class="waves-effect waves-light btn" ng-click="addDiscount()"><ng-md-icon icon="add"
+        class="right" style="fill: white" size="27"></ng-md-icon>Añadir</a>
+        <a ng-if="selectedDiscount" class="waves-effect waves-light btn" ng-click="updateDiscount()"><ng-md-icon icon="autorenew"
+        class="right" style="fill: white" size="27"></ng-md-icon>Actualizar</a>
+        <a ng-if="selectedDiscount" class="waves-effect waves-light btn" ng-click="enableAdd()">Nuevo</a>
+        <!-- </div> -->
     </div>
   </div>
   <h5 class="center"><strong>Elementos con descuento</strong></h5>
@@ -25,16 +36,22 @@
     <table class="highlight">
       <thead>
         <tr>
+          <th>ID</th>
           <th>Elemento</th>
           <th>Valor</th>
           <th>Descuento</th>
+          <th>Opciones</th>
         </tr>
       </thead>
       <tbody>
-        <tr class="row-link" ng-click="showDetails(client)" ng-repeat="client in clients | filter:searchText | orderBy: sortByProperty:sortReversed">
-          <td style="vertical-align:middle">{{client.name | capitalize}}</td>
-          <td style="vertical-align:middle">{{client.nit}}</td>
-          <td style="vertical-align:middle">{{client.Headquarters[0].phonenumber}}</td>
+        <tr class="row-link" ng-click="selectDiscount(elementDataDiscount)" ng-repeat="elementDataDiscount in elementDataDiscounts | filter:searchText | orderBy: sortByProperty:sortReversed">
+          <td style="vertical-align:middle">{{elementDataDiscount.ClientDiscount.id}}</td>
+          <td style="vertical-align:middle">{{elementDataDiscount.Element.name | capitalize}}</td>
+          <td style="vertical-align:middle">{{elementDataDiscount.name | capitalize}}</td>
+          <td style="vertical-align:middle">{{elementDataDiscount.ClientDiscount.discount}}%</td>
+          <td style="vertical-align:middle" ng-click="removeDiscount(elementDataDiscount.ClientDiscount.id);$event.stopPropagation()">
+          <ng-md-icon tooltipped icon="delete" class="prefix" style="fill: black"
+          size="20" data-position="top" data-delay="50" data-tooltip="Eliminar"></ng-md-icon></td>
         </tr>
       </tbody>
     </table>

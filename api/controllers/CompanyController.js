@@ -146,32 +146,17 @@ module.exports = {
     var pathAvatars = sails.config.appPath + "/assets/images/avatars/" + nit + "_1";
     var tmpPathAvatars = sails.config.appPath + '/.tmp/public/images/uploads/';
 
-    User.findOne({
-        where: {
-          email: email
-        }
-      })
+    User.findOne({where: {email: email}})
       .then(function(user) {
-        if (user) {
-          throw new Error("El usuario ya existe");
-        }
-        return Company.findOne({
-          where: {
-            $or: [{
-              nit: nit
-            }, {
-              name: name
-            }]
-          }
+        if (user) {throw new Error("El usuario ya existe");}
+        return Company.findOne({where: {$or: [{nit: nit}, {name: name}]}
         });
       })
       .then(function(company) {
-        if (company) {
-          throw new Error("La compañia ya existe");
-        }
+        if (company) {throw new Error("La compañia ya existe");}
         if (imageDataURI) {
           // return imageDataURIModule.outputFile(imageDataURI, pathAvatars)
-          return ImageDataURIService.decodeAndSave(imageDataURI, pathAvatars)
+          return ImageDataURIService.decodeAndSave(imageDataURI, pathAvatars);
         }
         return null;
       })
@@ -200,19 +185,13 @@ module.exports = {
         // se retorna un error de conflicto con codigo de error 409. En caso de que no exista
         // se crea el regitro del usuario.
         return sequelize.transaction(function(t) {
-          return User.create(userCredentials, {
-              transaction: t
-            })
+          return User.create(userCredentials, {transaction: t})
             .then(function(user) {
-              return user.setCompany(Company.build(companyCredentials), {
-                transaction: t
-              });
+              return user.setCompany(Company.build(companyCredentials), {transaction: t});
             })
             .then(function(company) {
               headquartersCredentials.companyId = company.id;
-              return Headquarters.create(headquartersCredentials, {
-                transaction: t
-              });
+              return Headquarters.create(headquartersCredentials, {transaction: t});
             })
         }).then(function(result) {
           // Transaction has been committed
@@ -230,7 +209,6 @@ module.exports = {
         // Transaction has been rolled back
         res.serverError(err);
       })
-
   },
   /**
    * Función para obtener el perfil de una empresa.
@@ -987,6 +965,36 @@ module.exports = {
       })
       .then(function(clientDiscount) {
         res.ok(clientDiscount);
+      })
+      .catch(function(err) {
+        res.serverError(err);
+      })
+  },
+  /**
+   * Función para eliminar un descuento a un elemento para un cliente.
+   * @param  {Object} req Request object
+   * @param  {Object} res Response object
+   */
+  deleteDiscountToClient: function(req, res) {
+    // Declaración de variables.
+    var clientDiscountId = null;
+
+    // Definición de variables y validaciones;
+    clientDiscountId = parseInt(req.param('clientDiscountId'));
+    if (!clientDiscountId) {
+      return res.badRequest('Id del descuento para el cliente vacío');
+    }
+
+    // Se verifica que el descuento con id clientDiscountId para el cliente exista.
+    ClientDiscount.findById(clientDiscountId)
+      .then(function(clientDiscount) {
+        if (clientDiscount) {
+          return clientDiscount.destroy();
+        }
+        throw "El cliente no tiene asignado un descuento con ese id";
+      })
+      .then(function() {
+        res.ok();
       })
       .catch(function(err) {
         res.serverError(err);

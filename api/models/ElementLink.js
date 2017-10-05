@@ -17,6 +17,7 @@ module.exports = {
       unique: true
     },
   },
+
   // Configuraciones y metodos del modelo.
   options: {
     tableName: 'element_link',
