@@ -402,7 +402,7 @@ module.exports = {
       var numberProducts = products.length;
       products.forEach(function(product, index, productsList) {
         product.dataValues.type= 2;
-
+        sails.log.debug(path.resolve(sails.config.appPath + product.imageURI))
         ImageDataURIService.encode(path.resolve(sails.config.appPath + product.imageURI))
         .then((imageDataURI) => {
           product.imageURI = imageDataURI;
