@@ -49,7 +49,7 @@ module.exports = {
     });
     // Asociación muchos a muchos con el modelo ElementData.
     ElementData.belongsToMany(ElementData, {
-      as: 'ElementsChildren',
+      as: 'ElementChildren',
       through: ElementLink,
       foreignKey: {
         name: 'elementFatherId',

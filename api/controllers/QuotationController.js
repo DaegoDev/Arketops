@@ -8,9 +8,9 @@
 // Modulos requeridos.
 var PdfPrinter = require('pdfmake/src/printer');
 var watermark = require('image-watermark');
+var hummus = require('hummus');
 var fs = require('fs');
 
-var hummus = require('hummus');
 
 module.exports = {
   /**
@@ -468,12 +468,8 @@ module.exports = {
         res.serverError(err);
       })
   },
+
   emailTest: function (req, res) {
     MailService.sendTest("jrios328@gmail.com")
   }
-  /**
-   * Función para obtener las cotizaciones realizadas por un cliente.
-   * @param  {Object} req Request object
-   * @param  {Object} res Response object
-   */
 };

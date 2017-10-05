@@ -1,7 +1,7 @@
 var arketops = angular.module('arketops');
 arketops.controller('SuppliersListCtrl', ['$scope', '$log', '$state', '$stateParams',
-  '$ngConfirm', 'CompanySvc',
-  function($scope, $log, $state, $stateParams, $ngConfirm, CompanySvc) {
+  '$ngConfirm', 'CompanySvc', 'StorageSvc',
+  function($scope, $log, $state, $stateParams, $ngConfirm, CompanySvc, StorageSvc) {
     // Variables needed
     $scope.suppliers = [];
 
