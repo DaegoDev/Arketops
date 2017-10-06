@@ -12,3 +12,47 @@ main {
 .theme-color-1 {
   background-color: @theme-color-1;
 }
+
+.btn {
+  background-color: @theme-color-1;
+  color: @color-black-lighten-1;
+
+  &:hover {
+    background-color: @theme-color-hover-1 !important;
+    color: @color-black;
+  }
+}
+
+ul li a {
+  color: @color-black-lighten-1;
+  &:hover {
+    background-color: @theme-color-hover-1;
+    color: @color-black;
+  }
+
+  &.active {
+    background-color: @theme-color-1;
+  }
+}
+
+.dropdown-content li a {
+  color: @color-black-lighten-1;
+  &:hover {
+    background-color: @theme-color-hover-1;
+    color: @color-black;
+  }
+}
+
+.collection .collection-item {
+  color: @color-black-lighten-1 !important;
+  cursor: pointer;
+  &:hover {
+    background-color: @theme-color-hover-1 !important;
+    color: @color-black !important;
+  }
+
+  &.active {
+    background-color: @theme-color-1 !important;
+    color: @color-black !important;
+  }
+}
