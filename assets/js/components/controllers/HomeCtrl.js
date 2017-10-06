@@ -125,8 +125,6 @@
         imageFile = $scope.user.imageFile;
         imageDataURI = $scope.user.imageDataURI;
 
-        console.log($scope.forms.formSignup);
-
         // Validación de los datos ingresados.
         if (!name || !nit || !businessOverview || !email || !password || !rePassword || !country ||
           department.adminCode1 == -1 || !city || !nomenclature || !phonenumber || !contact || !contactPhonenumber) {
@@ -176,6 +174,7 @@
               content: 'Se ha enviado un correo de bienvenida a tu correo electronico.',
               type: 'green',
               typeAnimated: true,
+              boxWidth: '40%',
               columnClass: 'medium',
               buttons: {
                 accept: {
@@ -183,6 +182,11 @@
                   btnClass: 'btn-green',
                   action: function() {
                     $scope.user = {};
+                    $scope.termsAndConditions = false;
+                    $scope.user.imageDataURI = '';
+                    $scope.imgAvatarStyle = {
+                      'background-image': '../../../images/no-image.jpg'
+                    };
                     $scope.$apply();
                   }
                 }
