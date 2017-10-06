@@ -5,6 +5,8 @@ arketops.controller('ElementCtrl', ['$scope', '$log', '$state', '$stateParams',
     const CREATE = 1;
     const UPDATE = 2;
 
+
+
     // Controller variables inicialization
     $scope.init = function() {
       $scope.elementType = null;
@@ -46,6 +48,7 @@ arketops.controller('ElementCtrl', ['$scope', '$log', '$state', '$stateParams',
       }, 1000 * 0.3);
     }
 
+
     // Function to create a new data element.
     $scope.createElementData = function() {
       // Here we set the required parameter values for de data element.
@@ -54,8 +57,9 @@ arketops.controller('ElementCtrl', ['$scope', '$log', '$state', '$stateParams',
         name: $scope.elementData.name,
         discount: $scope.elementData.discount
       }
-      // Call the data element create service and save it into the element
-      // data list when created.
+
+      // Call the data element create service and save it into the element data list
+      // when created.
       ElementSvc.createElementData(elementData)
         .then(function(res) {
           $scope.selectedElement.ElementData.push(res.data);

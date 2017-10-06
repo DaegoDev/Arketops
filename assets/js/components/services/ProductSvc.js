@@ -30,6 +30,7 @@ angular.module('arketops')
           });
           return products;
         },
+        
         //Service to get the products by company id.
         getByCompany: function(params) {
           var products = $http({
@@ -38,8 +39,24 @@ angular.module('arketops')
             params: params
           });
           return products;
-        }
+        },
 
+        // Servicio para obtener todos los productos de la empresa.
+        getMyPortfolio: function () {
+          var portfolio = $http({
+            url: '/product/getMyProducts',
+            method: 'GET'
+          });
+          return portfolio;
+        },
+
+        getStates: function () {
+          var states = $http({
+            url: '/product/getStates',
+            method: 'GET'
+          });
+          return states;
+        }
       };
     }
   ]);

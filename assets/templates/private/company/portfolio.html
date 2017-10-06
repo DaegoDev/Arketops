@@ -1,0 +1,11 @@
+<div class="row">
+  <div class="col s4" ng-repeat="product in portfolio.Products">
+    <p><b>Nombre:</b> {{product.name}}</p>
+    <p><b>Código:</b> {{product.code}}</p>
+    <p><b>Descripcion:</b> {{product.description}}</p>
+    <p><b>Precio:</b> {{product.price}}</p>
+    <p ng-repeat="item in product.ElementData">
+      <b>{{item.Element.name}}:</b> {{item.name}} {{item.discount}}
+    </p>
+  </div>
+</div>

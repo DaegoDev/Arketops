@@ -44,6 +44,18 @@ arketops.config(['$stateProvider', '$urlRouterProvider',
         controller: 'ElementCtrl'
       })
 
+      .state('products', {
+        url: '/products',
+        templateUrl: 'templates/private/company/products.html',
+        controller: 'ProductCtrl'
+      })
+
+      .state('portfolio', {
+        url: '/portfolio',
+        templateUrl: 'templates/private/company/portfolio.html',
+        controller: 'PortfolioCtrl'
+      })
+
       // Routes for supplier
       .state('suppliersList', {
         url: '/suppliers',
@@ -106,10 +118,5 @@ arketops.config(['$stateProvider', '$urlRouterProvider',
         controller: 'ClientDiscountsCtrl'
       })
 
-      .state('products', {
-        url: '/products',
-        templateUrl: 'templates/private/company/products.html',
-        controller: 'ProductCtrl'
-      })
 
   }]);

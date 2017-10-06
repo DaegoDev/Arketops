@@ -1,38 +1,11 @@
 /**
-* ElementController
-*
-* @description :: Server-side logic for managing elements
-* @help        :: See http://sailsjs.org/#!/documentation/concepts/Controllers
-*/
+ * ElementController
+ *
+ * @description :: Server-side logic for managing elements
+ * @help        :: See http://sailsjs.org/#!/documentation/concepts/Controllers
+ */
 
 module.exports = {
-  /**
-  * Función para obtener los elemento de un usuario.
-  * @param  {Object} req Request object
-  * @param  {Object} res Response object
-  */
- getElements: function(req, res) {
-   // Declaración de variables.
-   var user = null;
-   user = req.user;
-
-   Element.findAll({
-       include: [{
-         model: ElementData,
-         where: {
-           userId: user.id
-         },
-         required: false
-       }]
-     })
-     .then(function(resElement) {
-       return res.ok(resElement);
-     })
-     .catch(function(err) {
-       sails.log.debug(err);
-       return res.serverError(err);
-     })
- },
  /**
   * Función para obtener los elementos con descuentos para un cliente.
   * @param  {Object} req Request object
@@ -75,25 +48,104 @@ module.exports = {
   getElementsByUser: function (req, res) {
     var user = req.user;
     Element.findAll({
-      include: [
-        {
+        include: [{
           model: ElementData,
-          include: [{model: ElementData, as: 'ElementChildren'}]
-        }
-      ]
-    })
-    .then(function (resElements) {
-      return res.ok(resElements)
-    })
-    .catch(function (err) {
-      return res.serverError(err);
-    });
+          where: {userId: user.id},
+          attributes: {
+            exclude: ['userId', 'elementId']
+          },
+          required: false,
+          include: [
+            {
+              model: ElementData,
+              as: 'ElementParent',
+              attributes: {
+                exclude: ['userId', 'elementId']
+              }
+            },
+            {
+              model: ElementData,
+              as: 'ElementChildren',
+              attributes: {
+                exclude: ['userId', 'elementId']
+              }
+            }
+          ]
+        }]
+      })
+      .then(function(resElements) {
+        return res.ok(resElements)
+      })
+      .catch(function(err) {
+        return res.serverError(err);
+      });
+    },
+
+   /* Función para obtener los elemento de un usuario.
+   * @param  {Object} req Request object
+   * @param  {Object} res Response object
+   */
+  getElements: function(req, res) {
+    // Declaración de variables.
+    var user = null;
+    user = req.user;
+
+    Element.findAll({
+        include: [{
+          model: ElementData,
+          where: {
+            userId: user.id
+          },
+          required: false
+        }]
+      })
+      .then(function(resElement) {
+        return res.ok(resElement);
+      })
+      .catch(function(err) {
+        return res.serverError(err);
+      })
   },
+
   /**
-  * Función para crear un elemento de un producto.
-  * @param  {Object} req Request object
-  * @param  {Object} res Response object
-  */
+   * Función para obtener los elementos con descuentos para un cliente.
+   * @param  {Object} req Request object
+   * @param  {Object} res Response object
+   */
+  getElementsDiscountByClient: function(req, res) {
+    // Declaración de variables.
+    var clientSupplierId = null;
+    sails.log.debug(req.param('clientSupplierId'));
+    clientSupplierId = parseInt(req.param('clientSupplierId'))
+    if (!clientSupplierId) {
+      return res.badRequest('Id de clientSupplier requerido')
+    }
+
+    ClientSupplier.findOne({
+        where: {
+          id: clientSupplierId,
+        }
+      })
+      .then((clientSupplier) => {
+        return clientSupplier.getElementData({
+          include: [{
+            model: Element
+          }]
+        })
+      })
+      .then(function(resElement) {
+        return res.ok(resElement);
+      })
+      .catch(function(err) {
+        return res.serverError(err);
+      })
+  },
+
+  /**
+   * Función para crear un elemento de un producto.
+   * @param  {Object} req Request object
+   * @param  {Object} res Response object
+   */
   createElement: function(req, res) {
     // Declaración de variables.
     var name = null;
@@ -111,18 +163,18 @@ module.exports = {
     }
 
     Element.create(elementCredentials)
-    .then(function(element) {
-      return res.created(element);
-    })
-    .catch(function(err) {
-      return res.serverError(err);
-    })
+      .then(function(element) {
+        return res.created(element);
+      })
+      .catch(function(err) {
+        return res.serverError(err);
+      })
   },
   /**
-  * Función para crear un valor de un elemento.
-  * @param  {Object} req Request object
-  * @param  {Object} res Response object
-  */
+   * Función para crear un valor de un elemento.
+   * @param  {Object} req Request object
+   * @param  {Object} res Response object
+   */
   createElementData: function(req, res) {
     // Declaración de variables.
     var user = null;
@@ -151,39 +203,43 @@ module.exports = {
 
     // Se valida que el elemento con el id elementId exista.
     Element.findById(elementId)
-    .then(function(element) {
-      if (element) {
-        return ElementData.findAll({where: {userId: user.id}});
-      }
-      throw "El elemento no existe";
-    })
-    .then(function (elementsData) {
-      elementsData.forEach(function (elementData, index, elementsDataList) {
-        if (elementData.name == name) {
-          throw "Ya existe un elemento con ese nombre";
+      .then(function(element) {
+        if (element) {
+          return ElementData.findAll({
+            where: {
+              userId: user.id
+            }
+          });
         }
+        throw "El elemento no existe";
       })
-      // Se contruye las credenciales para crear el elemento.
-      elementDataCredentials = {
-        name: name,
-        discount: discount,
-        elementId: elementId,
-        userId: user.id
-      }
-      return ElementData.create(elementDataCredentials);
-    })
-    .then(function(elementData) {
-      res.created(elementData);
-    })
-    .catch(function(err) {
-      res.serverError(err);
-    })
+      .then(function(elementsData) {
+        elementsData.forEach(function(elementData, index, elementsDataList) {
+          if (elementData.name == name) {
+            throw "Ya existe un elemento con ese nombre";
+          }
+        })
+        // Se contruye las credenciales para crear el elemento.
+        elementDataCredentials = {
+          name: name,
+          discount: discount,
+          elementId: elementId,
+          userId: user.id
+        }
+        return ElementData.create(elementDataCredentials);
+      })
+      .then(function(elementData) {
+        res.created(elementData);
+      })
+      .catch(function(err) {
+        res.serverError(err);
+      })
   },
   /**
-  * Función para crear una linea de una categoria.
-  * @param  {Object} req Request object
-  * @param  {Object} res Response object
-  */
+   * Función para crear una linea de una categoria.
+   * @param  {Object} req Request object
+   * @param  {Object} res Response object
+   */
   createLinkedElementData: function(req, res) {
     // Declaración de variables.
     var name = null;
@@ -217,58 +273,70 @@ module.exports = {
     user = req.user;
 
     return sequelize.transaction(function(t) {
-      /* Wew will save the parent instance in this variable
-       so we can assign it the child later.*/
-      var parentInstance = null;
+        /* Wew will save the parent instance in this variable
+         so we can assign it the child later.*/
+        var parentInstance = null;
 
-      // First let's find out if the parent data element exists.
-      return ElementData.find({where: {id: dataParentId}})
-      .then(function (elementData) {
-        if (!elementData) {
-          throw "El padre del elemento no existe."
-        }
+        // First let's find out if the parent data element exists.
+        return ElementData.find({
+            where: {
+              id: dataParentId
+            }
+          })
+          .then(function(elementData) {
+            if (!elementData) {
+              throw "El padre del elemento no existe."
+            }
 
-        parentInstance = elementData;
-        // Then lets find ot if the element of the new elementData exists.
-        return Element.find({where: {id: elementId}});
+            parentInstance = elementData;
+            // Then lets find ot if the element of the new elementData exists.
+            return Element.find({
+              where: {
+                id: elementId
+              }
+            });
+          })
+          .then(function(element) {
+            if (!element) {
+              throw "El elemento del nuevo item no exite."
+            }
+            // Now we can create the new dataElement
+            elementDataCredentials = {
+              name: name,
+              discount: discount,
+              elementId: elementId,
+              userId: user.id
+            }
+            sails.log.debug(elementDataCredentials)
+            return ElementData.create(elementDataCredentials, {
+              transaction: t
+            })
+          })
+          .then(function(elementData) {
+            if (!elementData) {
+              throw "El nuevo item no ha sido creado."
+            }
+            // Finally when the new dataElement is created link it to the parent.
+            return parentInstance.addElementChildren(elementData, {
+              transaction: t
+            });
+          });
+
+      }).then(function(result) {
+        // Transaction has been commited
+        return res.ok(result);
       })
-      .then(function (element) {
-        if (!element) {
-          throw "El elemento del nuevo item no exite."
-        }
-        // Now we can create the new dataElement
-        elementDataCredentials = {
-            name: name,
-            discount: discount,
-            elementId: elementId,
-            userId: user.id
-        }
-        sails.log.debug(elementDataCredentials)
-        return ElementData.create(elementDataCredentials, {transaction: t})
+      .catch(function(err) {
+        return res.serverError(err);
       })
-      .then(function (elementData) {
-        if (!elementData) {
-          throw "El nuevo item no ha sido creado."
-        }
-        // Finally when the new dataElement is created link it to the parent.
-        return parentInstance.addElementChildren(elementData, {transaction: t});
-      });
-
-    }).then(function(result) {
-      // Transaction has been commited
-      return res.ok(result);
-    })
-    .catch(function(err) {
-      return res.serverError(err);
-    })
   },
 
   /**
-  * Función para editar el descuento de un elemento.
-  * @param  {Object} req Request object
-  * @param  {Object} res Response object
-  */
-  editElementData: function (req, res) {
+   * Función para editar el descuento de un elemento.
+   * @param  {Object} req Request object
+   * @param  {Object} res Response object
+   */
+  editElementData: function(req, res) {
     // Declaración de variables.
     var name = null;
     var discount = null;
@@ -296,30 +364,34 @@ module.exports = {
 
     // Se valida que el elemento con el id elementId exista.
     ElementData.findById(elementDataId)
-    .then(function(elementData) {
-      if (elementData) {
-        return Promise.all = [elementData, ElementData.findAll({where: {userId: user.id}})];
-      }
-      throw "El elemento no existe";
-    })
-    .spread(function (elementData, elementsData) {
-      elementsData.forEach(function (elementData, index, elementsDataList) {
-        if (elementData.name == name && elementData.id != elementDataId) {
-          throw "Ya existe un elemento con ese nombre";
+      .then(function(elementData) {
+        if (elementData) {
+          return Promise.all = [elementData, ElementData.findAll({
+            where: {
+              userId: user.id
+            }
+          })];
         }
+        throw "El elemento no existe";
       })
-      // Se contruye las credenciales para crear el elemento.
-      elementDataCredentials = {
-        name: name,
-        discount: discount,
-      }
-      return elementData.update(elementDataCredentials);
-    })
-    .then(function(elementData) {
-      res.ok(elementData);
-    })
-    .catch(function(err) {
-      res.serverError(err);
-    })
+      .spread(function(elementData, elementsData) {
+        elementsData.forEach(function(elementData, index, elementsDataList) {
+          if (elementData.name == name && elementData.id != elementDataId) {
+            throw "Ya existe un elemento con ese nombre";
+          }
+        })
+        // Se contruye las credenciales para crear el elemento.
+        elementDataCredentials = {
+          name: name,
+          discount: discount,
+        }
+        return elementData.update(elementDataCredentials);
+      })
+      .then(function(elementData) {
+        res.ok(elementData);
+      })
+      .catch(function(err) {
+        res.serverError(err);
+      })
   }
 };
