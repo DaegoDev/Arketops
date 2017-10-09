@@ -17,7 +17,7 @@
   </div>
   <div class="card-reveal">
     <span class="card-title grey-text text-darken-4">{{compProd.name | capitalize}}<i class="fa fa-close right"></i></span>
-    <label for="">Descripción:</label>
+    <!-- <label for="">Descripción:</label> -->
     <p ng-if="isCompany">{{compProd.businessOverview | capitalize}}</p>
     <p ng-if="isProduct">{{compProd.description | capitalize}}</p>
     <div ng-if="isCompany">

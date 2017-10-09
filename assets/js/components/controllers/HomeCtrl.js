@@ -182,7 +182,7 @@
                   btnClass: 'btn-green',
                   action: function() {
                     $scope.user = {};
-                    $scope.termsAndConditions = false;
+                    $scope.switchValueCheckbox();
                     $scope.user.imageDataURI = '';
                     $scope.imgAvatarStyle = {
                       'background-image': '../../../images/no-image.jpg'

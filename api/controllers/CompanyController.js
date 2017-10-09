@@ -10,6 +10,7 @@ var promise = require('bluebird');
 var fs = require('fs');
 var sizeOf = require('image-size');
 var imageDataURIModule = require('image-data-uri');
+var path = require('path');
 
 module.exports = {
   /**
@@ -29,6 +30,7 @@ module.exports = {
     // variables necesarias para cargar la imagen.
     var imageDataURI = null;
     var tempLocation = null;
+    var absolutePath = null;
 
     var country = null;
     var department = null;
@@ -142,9 +144,8 @@ module.exports = {
     website = req.param('website');
     imageDataURI = req.param('imageDataURI');
 
-
-    var pathAvatars = sails.config.appPath + "/assets/images/avatars/" + nit + "_1";
-    var tmpPathAvatars = sails.config.appPath + '/.tmp/public/images/uploads/';
+    var relativePath = "/assets/images/avatars/" + nit + "_1"
+    var pathAvatar = sails.config.appPath + relativePath;
 
     User.findOne({where: {email: email}})
       .then(function(user) {
@@ -155,23 +156,22 @@ module.exports = {
       .then(function(company) {
         if (company) {throw new Error("La compañia ya existe");}
         if (imageDataURI) {
-          // return imageDataURIModule.outputFile(imageDataURI, pathAvatars)
-          return ImageDataURIService.decodeAndSave(imageDataURI, pathAvatars);
+          return ImageDataURIService.decodeAndSave(imageDataURI, pathAvatar);
         }
         return null;
       })
       .then(function(resUpload) {
-        sails.log.debug(resUpload)
         if (resUpload) {
-          imageURI = resUpload;
+          absolutePath = resUpload;
           // Se valida que el archivo tenga el formato y la resolución deseada.
-          var dimensions = sizeOf(imageURI);
+          var dimensions = sizeOf(absolutePath);
           if (dimensions.type != "png" && dimensions.type != "jpeg" && dimensions.type != "jpg") {
-            fs.unlink(imageURI, (err) => {
+            fs.unlink(absolutePath, (err) => {
               sails.log.debug('Se borró la imagen');
             });
             throw new Error("La configuración del archivo no es valida");
           }
+          imageURI = relativePath + '.' + absolutePath.split('.')[1];
         }
 
         // Organización de credenciales y cifrado de la contraseña del usuario.
@@ -200,8 +200,8 @@ module.exports = {
         })
       })
       .catch(function(err) {
-        if (imageURI) {
-          fs.unlink(imageURI, (err) => {
+        if (absolutePath) {
+          fs.unlink(absolutePath, (err) => {
             if (err) throw err;
             sails.log.debug('Se borró la imagen');
           });
@@ -239,9 +239,9 @@ module.exports = {
       })
       .then(function(companyQuery) {
         company = companyQuery;
-        delete company.User.password;
         if (company.imageURI) {
-          return ImageDataURIService.encode(company.imageURI);
+          sails.log.debug(path.resolve(sails.config.appPath + company.imageURI));
+          return ImageDataURIService.encode(path.resolve(sails.config.appPath + company.imageURI));
         } else {
           return null;
         }
@@ -452,6 +452,7 @@ module.exports = {
     }
     user = req.user;
 
+    var relativePath = null;
 
     Company.findOne({
         where: {
@@ -462,16 +463,15 @@ module.exports = {
         sails.log.debug(company);
         var newNameImage = null;
         if (company.imageURI) {
-          imageURIDB = company.imageURI;
+          imageURIDB = sails.config.appPath + company.imageURI;
           var arrayImageURIDB = imageURIDB.split("/");
           var fileNameDB = arrayImageURIDB[arrayImageURIDB.length - 1];
           var imageNameDB = fileNameDB.split(".")[0];
           var numNewImage = parseInt(imageNameDB.substring(imageNameDB.length - 1)) + 1;
         }
         newNameImage = company.imageURI ? company.nit + "_" + numNewImage : company.nit + "_1";
-        sails.log.debug(newNameImage);
-        var pathAvatars = sails.config.appPath + "/assets/images/avatars/" + newNameImage;
-        //   var tmpPathAvatars = sails.config.appPath + '/.tmp/public/images/uploads/';
+        relativePath = "/assets/images/avatars/" + newNameImage;
+        var pathAvatars = sails.config.appPath + relativePath;
         return Promise.all = [company, ImageDataURIService.decodeAndSave(imageDataURI, pathAvatars)]
 
       })
@@ -488,7 +488,7 @@ module.exports = {
           }
         }
         return company.update({
-          imageURI: imageURI
+          imageURI: relativePath + '.' + imageURI.split('.')[1],
         })
       })
       .then(function(AmountRowsAffected) {
@@ -652,8 +652,7 @@ module.exports = {
         var numberCompanies = companies.length;
         companies.forEach(function(company, index, companiesList) {
           company.dataValues.type = 1;
-          delete company.User.password;
-          ImageDataURIService.encode(company.imageURI)
+          ImageDataURIService.encode(path.resolve(sails.config.appPath + company.imageURI))
             .then((imageDataURI) => {
               company.imageURI = imageDataURI;
             })
@@ -717,7 +716,7 @@ module.exports = {
         products = productsQuery;
         products.forEach(function(product, index, productsList) {
           product.dataValues.type = 2;
-          ImageDataURIService.encode(product.imageURI)
+          ImageDataURIService.encode(path.resolve(sails.config.appPath + product.imageURI))
             .then((imageDataURI) => {
               product.imageURI = imageDataURI;
             })
@@ -753,7 +752,7 @@ module.exports = {
       .then(function(companies) {
         companies.forEach(function(company, index, companiesList) {
           company.dataValues.type = 1;
-          ImageDataURIService.encode(company.imageURI)
+          ImageDataURIService.encode(path.resolve(sails.config.appPath + company.imageURI))
             .then((imageDataURI) => {
               company.imageURI = imageDataURI;
             })
@@ -802,7 +801,7 @@ module.exports = {
       })
       .then(function(clients) {
         clients.forEach(function(client, index, clientsList) {
-          ImageDataURIService.encode(client.imageURI)
+          ImageDataURIService.encode(sails.config.appPath + client.imageURI)
             .then((imageDataURI) => {
               client.imageURI = imageDataURI;
             })
@@ -851,7 +850,7 @@ module.exports = {
       })
       .then(function(suppliers) {
         suppliers.forEach(function(supplier, index, suppliersList) {
-          ImageDataURIService.encode(supplier.imageURI)
+          ImageDataURIService.encode(sails.config.appPath + supplier.imageURI)
             .then((imageDataURI) => {
               supplier.imageURI = imageDataURI;
             })

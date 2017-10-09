@@ -529,7 +529,7 @@ module.exports = {
       })
       .then(function(products) {
         products.forEach(function(product, index, productsList) {
-          ImageDataURIService.encode(product.imageURI)
+          ImageDataURIService.encode(path.resolve(sails.config.appPath + product.imageURI))
             .then((imageDataURI) => {
               product.imageURI = imageDataURI;
             })
