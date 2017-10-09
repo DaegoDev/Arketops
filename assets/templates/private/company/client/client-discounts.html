@@ -7,7 +7,9 @@
           <label>Elemento</label>
         </div>
         <div class="col s4">
-          <select class="" ng-model="elementData.selected" ng-options="value.name | capitalize for value in elementData.choices" ng-change="getElementData(elements.selected.name)" material-select watch></select>
+          <select class="" ng-model="elementData.selected"
+          ng-options="value.name | capitalize for value in elementData.choices"
+          ng-change="getElementData(elements.selected.name)" material-select watch></select>
           <label>Valores</label>
         </div>
       </div>

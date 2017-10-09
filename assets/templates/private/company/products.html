@@ -24,7 +24,7 @@
 
             <div class="col l3 m6 s12">
               <div input-field>
-                <select material-select data-beloworigin="true" ng-model="product.category" ng-options="data.name for data in categories.ElementData">
+                <select watch material-select ng-model="product.category" ng-options="data.name for data in categories.ElementData">
                   <option value="">Categoria</option>
                 </select>
                 <label>Categoria</label>
@@ -33,7 +33,7 @@
 
             <div class="col l3 m6 s12">
               <div input-field>
-                <select material-select data-beloworigin="true" ng-model="product.line" ng-options="data.name for data in lines.ElementData">
+                <select watch material-select ng-model="product.line" ng-options="data.name for data in lines.ElementData">
                   <option value="">Linea</option>
                 </select>
                 <label>Linea</label>
@@ -42,7 +42,7 @@
 
             <div class="col l3 m6 s12">
               <div input-field>
-                <select material-select data-beloworigin="true" ng-model="product.brand" ng-options="data.name for data in brands.ElementData">
+                <select watch material-select ng-model="product.brand" ng-options="data.name for data in brands.ElementData">
                   <option value="">Marca</option>
                 </select>
                 <label>Marca</label>
@@ -51,7 +51,7 @@
 
             <div class="col l3 m6 s12">
               <div input-field>
-                <select material-select data-beloworigin="true" ng-model="product.tax" ng-options="data.name for data in taxes.ElementData">
+                <select watch material-select ng-model="product.tax" ng-options="data.name for data in taxes.ElementData">
                   <option value="">Impuesto</option>
                 </select>
                 <label>Impuesto</label>

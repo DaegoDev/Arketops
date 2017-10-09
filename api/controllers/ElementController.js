@@ -47,7 +47,7 @@ module.exports = {
       });
     },
 
-   /* Función para obtener los elemento de un usuario.
+   /** Función para obtener los elemento de un usuario.
    * @param  {Object} req Request object
    * @param  {Object} res Response object
    */
@@ -106,7 +106,7 @@ module.exports = {
         return res.serverError(err);
       })
   },
-  
+
   /**
    * Función para crear un elemento de un producto.
    * @param  {Object} req Request object
@@ -171,11 +171,7 @@ module.exports = {
     Element.findById(elementId)
       .then(function(element) {
         if (element) {
-          return ElementData.findAll({
-            where: {
-              userId: user.id
-            }
-          });
+          return ElementData.findAll({where: {userId: user.id}});
         }
         throw "El elemento no existe";
       })
@@ -195,10 +191,10 @@ module.exports = {
         return ElementData.create(elementDataCredentials);
       })
       .then(function(elementData) {
-        res.created(elementData);
+        return res.created(elementData);
       })
       .catch(function(err) {
-        res.serverError(err);
+        return res.serverError(err);
       })
   },
   /**
@@ -237,35 +233,51 @@ module.exports = {
     }
 
     user = req.user;
+    /* Wew will save the parent instance in this variable
+    so we can assign it the child later.*/
+    var parentInstance = null;
+    var elementDataInstance = null;
 
     return sequelize.transaction(function(t) {
-        /* Wew will save the parent instance in this variable
-         so we can assign it the child later.*/
-        var parentInstance = null;
 
         // First let's find out if the parent data element exists.
-        return ElementData.find({
-            where: {
-              id: dataParentId
-            }
-          })
+        return ElementData.find({where: {id: dataParentId}})
           .then(function(elementData) {
             if (!elementData) {
               throw "El padre del elemento no existe."
             }
 
             parentInstance = elementData;
-            // Then lets find ot if the element of the new elementData exists.
-            return Element.find({
-              where: {
-                id: elementId
-              }
-            });
+            // Then lets check if the element of the new elementData exists.
+            return Element.find({where: {id: elementId}});
           })
           .then(function(element) {
             if (!element) {
               throw "El elemento del nuevo item no exite."
             }
+
+            return ElementData.findAll({
+              where: {
+                userId: user.id,
+                name: name
+              },
+              include: [
+                {
+                  model: ElementData,
+                  as: 'ElementParent',
+                  where: {
+                    id: dataParentId
+                  }
+                }
+              ]
+            })
+
+          })
+          .then(function (resElements) {
+            if (resElements.length != 0) {
+                throw "El dato que desea crear ya existe."
+            }
+
             // Now we can create the new dataElement
             elementDataCredentials = {
               name: name,
@@ -273,24 +285,21 @@ module.exports = {
               elementId: elementId,
               userId: user.id
             }
-            sails.log.debug(elementDataCredentials)
-            return ElementData.create(elementDataCredentials, {
-              transaction: t
-            })
+
+            return ElementData.create(elementDataCredentials, {transaction: t})
           })
           .then(function(elementData) {
             if (!elementData) {
               throw "El nuevo item no ha sido creado."
             }
+            elementDataInstance = elementData;
             // Finally when the new dataElement is created link it to the parent.
-            return parentInstance.addElementChildren(elementData, {
-              transaction: t
-            });
+            return parentInstance.addElementChildren(elementData, {transaction: t});
           });
 
       }).then(function(result) {
         // Transaction has been commited
-        return res.ok(result);
+        return res.ok(elementDataInstance);
       })
       .catch(function(err) {
         return res.serverError(err);

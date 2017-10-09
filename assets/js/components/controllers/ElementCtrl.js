@@ -1,53 +1,87 @@
 var arketops = angular.module('arketops');
 arketops.controller('ElementCtrl', ['$scope', '$log', '$state', '$stateParams',
-'$ngConfirm', '$timeout', 'ElementSvc',
-function($scope, $log, $state, $stateParams, $ngConfirm, $timeout, ElementSvc) {
-  const CREATE = 1;
-  const UPDATE = 2;
+  '$ngConfirm', '$timeout', 'ElementSvc',
+  function($scope, $log, $state, $stateParams, $ngConfirm, $timeout, ElementSvc) {
 
-  // Controller variables inicialization
-  $scope.init = function () {
-    $scope.elementType = null;
-    $scope.selectedElement = null;
-    $scope.parentElement = null;
-    $scope.elementData = {};
-    $scope.mode = CREATE;
+    // Baked relations between parent and child elements.
+    var linkRelations = [
+      {parent: "CATEGORIA", child: "LINEA", parentRef: null}
+    ];
 
-    $scope.showElement = false;
+    // Current mode of form
+    $scope.CREATE = 1;
+    $scope.UPDATE = 2;
 
-    ElementSvc.getElementsByUser()
-    .then(function (res) {$scope.elements = res.data;})
-    .catch(function (err) {$log.debug(err);});
-  }
+    // Current type of element data
+    $scope.NORMAL = 1;
+    $scope.LINKED = 2;
 
-  $scope.init();
+    // Controller variable inizialization
+    $scope.init = function() {
+      $scope.mode = $scope.CREATE;
+      $scope.type = $scope.NORMAL;
+      $scope.currentElement = null;
+      $scope.parentElement = null;
+      $scope.elementData = {};
 
-  $scope.selectElement = function (element) {
-    $scope.mode = CREATE;
-    $scope.elementData = {};
-    $scope.showElement = false;
-    $timeout(function() {
-      $scope.elementType = element.name.toUpperCase();
-      $scope.selectedElement = element;
+      ElementSvc.getElementsByUser()
+        .then(function(res) {
+          $scope.elements = res.data;
 
-      if ($scope.elementType == 'LINEA') {
-        for (var i in $scope.elements) {
-          if ($scope.elements[i].name.toUpperCase() == 'CATEGORIA') {
-            $scope.parentElement = $scope.elements[i];
-          }
+          // Save the reference of all the elements that can be parents to avoid future
+          // Loops to find the right parent of a child.
+          angular.forEach($scope.elements, function(element, key1) {
+            angular.forEach(linkRelations, function(relation, key2) {
+              if (element.name.toUpperCase() === relation.parent) {
+                relation.parentRef = element;
+              }
+            })
+          });
+        })
+        .catch(function(err) {$log.debug(err);});
+    }
+
+    // Populates the needed data for the current controller.
+    $scope.init();
+
+    // Selects an element to be displayed.
+    // The element selected will be validated to standard or linked element data.
+    $scope.selectElement = function(element) {
+      $scope.mode = $scope.CREATE;
+      $scope.type = $scope.NORMAL;
+      $scope.elementData = {};
+      $scope.parentElement = null;
+
+      // Check if the element is a child type of element, if so the elements will
+      // be filter later with a selected parent elementData, otherwise show all
+      // elementData of the element.
+      for (var i in linkRelations) {
+        if (element.name.toUpperCase() == linkRelations[i].child) {
+          $scope.parentElement = linkRelations[i].parentRef;
+          $scope.type = $scope.LINKED;
+          break;
         }
       }
 
-      $scope.showElement = true;
-    }, 1000 * 0.3);
-  }
+      $scope.currentElement = element;
+    }
 
 
     // Function to create a new data element.
     $scope.createElementData = function() {
+      if ($scope.type === $scope.NORMAL) {
+        $scope.createNormalElementData();
+      }
+      else if ($scope.type === $scope.LINKED) {
+        $scope.createLinkedElementData();
+      }
+    }
+
+    // Function to create a new normal element data
+    $scope.createNormalElementData = function () {
       // Here we set the required parameter values for de data element.
       var elementData = {
-        elementId: $scope.selectedElement.id,
+        elementId: $scope.currentElement.id,
         name: $scope.elementData.name,
         discount: $scope.elementData.discount
       }
@@ -56,47 +90,107 @@ function($scope, $log, $state, $stateParams, $ngConfirm, $timeout, ElementSvc) {
       // when created.
       ElementSvc.createElementData(elementData)
         .then(function(res) {
-          $scope.selectedElement.ElementData.push(res.data);
+          $scope.currentElement.ElementData.push(res.data);
           $scope.elementData = {};
         })
-        .catch(function(err) {
-          $log.debug(err)
-        });
+        .catch(function(err) {$log.debug(err)});
     }
 
-  // Function to create a new data element which is linked to another data element.
-  $scope.createLinkedElementData = function () {
-    // Here we set the required parameter values for de data element.
-    var elementData = {
-      elementId: $scope.selectedElement.id,
-      name: $scope.elementData.name,
-      discount: $scope.elementData.discount,
-      dataParentId: $scope.dataParent.id
+    // Function to create a new data element which is linked to another data element.
+    $scope.createLinkedElementData = function() {
+      // Here we set the required parameter values for de data element.
+      var elementData = {
+        elementId: $scope.currentElement.id,
+        name: $scope.elementData.name,
+        discount: $scope.elementData.discount,
+        dataParentId: $scope.elementData.parent.id
+      }
+
+      // Call the linked data element create service and save it into both the element
+      // data list and the parent children when created.
+      ElementSvc.createLinkedElementData(elementData)
+        .then(function(res) {
+          var elementData = res.data;
+          elementData.ElementParent = [];
+          elementData.ElementParent.push($scope.elementData.parent);
+          $scope.currentElement.ElementData.push(res.data);
+          $scope.elementData.name = "";
+          $scope.elementData.discount = "";
+        })
+        .catch(function(err) {$log.debug(err)});
     }
 
-    // Call the linked data element create service and save it into both the element
-    // data list and the parent children when created.
-    ElementSvc.createLinkedElementData(elementData)
-    .then(function (res) {
-      $scope.selectedElement.ElementData.push(res.data);
+    //
+    $scope.selectElementData = function(elementData) {
+      $scope.mode = UPDATE;
+      $scope.elementData = {
+        name: elementData.name,
+        discount: elementData.discount,
+        id: elementData.id,
+      }
+    }
+
+    //
+    $scope.exitUpdate = function() {
+      $scope.mode = CREATE;
       $scope.elementData = {};
-    })
-    .catch(function (err) {$log.debug(err)});
-  }
-
-
-  $scope.selectElementData = function (elementData) {
-    $scope.mode = UPDATE;
-    $scope.elementData = {
-      name: elementData.name,
-      discount: elementData.discount,
-      id: elementData.id,
     }
-  }
 
-  $scope.exitUpdate = function () {
-    $scope.mode = CREATE;
-    $scope.elementData = {};
+    // Function that returns true when the current element is a child element.
+    $scope.isLinked = function () {
+      return $scope.type === $scope.LINKED;
+    }
+
+    // Function that returns true when the form is ready to show, create, update,
+    // and delete elementData.
+    $scope.isReadyToCRUD = function () {
+      if ($scope.type === $scope.LINKED) {
+        return $scope.elementData.parent && $scope.parentElement && $scope.currentElement;
+      }
+      else {
+        return $scope.currentElement != null;
+      }
+    }
+
+    // Function that returns true when the current mode is activated to
+    // create new elementData to the element.
+    $scope.isCreating = function () {
+      return $scope.mode === $scope.CREATE;
+    }
+
+    // Function that return true when the current mode is activated to
+    // update existing elementData of the element.
+    $scope.isUpdating = function () {
+      return $scope.mode === $scope.UPDATE;
+    }
+
   }
-}
 ]);
+
+// Angular filters
+arketops.filter('linkedElementFilter', function() {
+  return function(dataElements, parentElement) {
+    var filteredDataElements = null;
+
+    if (!dataElements) {
+      return null;
+    }
+
+    if (!parentElement) {
+      return dataElements;
+    }
+
+    filteredDataElements = [];
+
+    angular.forEach(dataElements, function (dataElement) {
+      for (var i in dataElement.ElementParent) {
+        if (dataElement.ElementParent[i].id === parentElement.id ) {
+          filteredDataElements.push(dataElement);
+          break;
+        }
+      }
+    });
+
+    return filteredDataElements;
+  }
+});
