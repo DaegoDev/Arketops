@@ -425,7 +425,7 @@ module.exports = {
           }]
         }, {
           model: Company,
-          attributes: ['name']
+          attributes: ['name', 'id']
         }]
       })
       .then(function(products) {

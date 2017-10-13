@@ -16,7 +16,7 @@ var arketops = angular.module('arketops');
 
   function resultCardCtrl($scope, $log, $ngConfirm, AuthSvc, $state, StorageSvc, CompanySvc) {
 
-    // console.log($scope.compProd);
+    console.log($scope.compProd);
 
     if ($scope.type == 1) {
       $scope.isCompany = true;
@@ -53,6 +53,18 @@ var arketops = angular.module('arketops');
       var companyToSend = JSON.stringify($scope.compProd);
       StorageSvc.set('companySelected', companyToSend, 'session');
       $state.go('productsByCompany');
+    }
+
+    $scope.showCompanyByProduct = function () {
+      CompanySvc.getById({companyId: $scope.compProd.Company.id})
+      .then((res) => {
+        var companyToSend = JSON.stringify(res.data);
+        StorageSvc.set('companySelected', companyToSend, 'session');
+        $state.go('productsByCompany');
+      })
+      .catch((err) => {
+        console.log(err);
+      })
     }
 
     $scope.followCompany = function () {

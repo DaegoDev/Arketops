@@ -147,14 +147,29 @@ module.exports = {
     var relativePath = "/assets/images/avatars/" + nit + "_1"
     var pathAvatar = sails.config.appPath + relativePath;
 
-    User.findOne({where: {email: email}})
+    User.findOne({
+        where: {
+          email: email
+        }
+      })
       .then(function(user) {
-        if (user) {throw new Error("El usuario ya existe");}
-        return Company.findOne({where: {$or: [{nit: nit}, {name: name}]}
+        if (user) {
+          throw new Error("El usuario ya existe");
+        }
+        return Company.findOne({
+          where: {
+            $or: [{
+              nit: nit
+            }, {
+              name: name
+            }]
+          }
         });
       })
       .then(function(company) {
-        if (company) {throw new Error("La compañia ya existe");}
+        if (company) {
+          throw new Error("La compañia ya existe");
+        }
         if (imageDataURI) {
           return ImageDataURIService.decodeAndSave(imageDataURI, pathAvatar);
         }
@@ -185,13 +200,19 @@ module.exports = {
         // se retorna un error de conflicto con codigo de error 409. En caso de que no exista
         // se crea el regitro del usuario.
         return sequelize.transaction(function(t) {
-          return User.create(userCredentials, {transaction: t})
+          return User.create(userCredentials, {
+              transaction: t
+            })
             .then(function(user) {
-              return user.setCompany(Company.build(companyCredentials), {transaction: t});
+              return user.setCompany(Company.build(companyCredentials), {
+                transaction: t
+              });
             })
             .then(function(company) {
               headquartersCredentials.companyId = company.id;
-              return Headquarters.create(headquartersCredentials, {transaction: t});
+              return Headquarters.create(headquartersCredentials, {
+                transaction: t
+              });
             })
         }).then(function(result) {
           // Transaction has been committed
@@ -227,9 +248,6 @@ module.exports = {
     Company.findOne({
         include: [{
           model: Headquarters,
-          where: {
-            main: true
-          }
         }, {
           model: User,
           where: {
@@ -240,7 +258,6 @@ module.exports = {
       .then(function(companyQuery) {
         company = companyQuery;
         if (company.imageURI) {
-          sails.log.debug(path.resolve(sails.config.appPath + company.imageURI));
           return ImageDataURIService.encode(path.resolve(sails.config.appPath + company.imageURI));
         } else {
           return null;
@@ -417,7 +434,8 @@ module.exports = {
           });
           return Headquarters.update(headquartersCredentials, {
             where: {
-              companyId: company.id
+              companyId: company.id,
+              main: true
             },
             transaction: t
           });
@@ -613,6 +631,52 @@ module.exports = {
       })
   },
   /**
+   * Función para buscar a una empresa por su id.
+   * @param  {Object} req Request object
+   * @param  {Object} res Response object
+   */
+  getById: function(req, res) {
+    // Declaración de variables.
+    var companyId = null;
+
+    // Definición de variables y validaciones.
+    companyId = parseInt(req.param('companyId'));
+    if (!companyId) {
+      return res.badRequest({
+        code: 1,
+        msg: 'Se debe ingresar un id.'
+      });
+    }
+
+    Company.findOne({
+        include: [{
+          model: Headquarters,
+        }, {
+          model: User,
+          attributes: {
+            exclude: ['password']
+          }
+        }],
+        where: {
+          id: companyId
+        }
+      })
+      .then(function(company) {
+        ImageDataURIService.encode(path.resolve(sails.config.appPath + company.imageURI))
+          .then((imageDataURI) => {
+            company.imageURI = imageDataURI;
+            res.ok(company);
+          })
+          .catch((err) => {
+            sails.log.debug(err)
+          })
+      })
+      .catch(function(err) {
+        sails.log.debug(err);
+        res.serverError(err);
+      })
+  },
+  /**
    * Función para buscar a una empresa por su nombre.
    * @param  {Object} req Request object
    * @param  {Object} res Response object
@@ -633,9 +697,6 @@ module.exports = {
     Company.findAll({
         include: [{
           model: Headquarters,
-          where: {
-            main: true
-          }
         }, {
           model: User,
           attributes: {
@@ -727,9 +788,6 @@ module.exports = {
         return Company.findAll({
           include: [{
             model: Headquarters,
-            where: {
-              main: true
-            }
           }, {
             model: User,
             attributes: {
@@ -837,9 +895,6 @@ module.exports = {
         return company.getSuppliers({
           include: [{
             model: Headquarters,
-            where: {
-              main: true
-            }
           }, {
             model: User,
             attributes: {

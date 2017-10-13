@@ -20,6 +20,15 @@ function ($http, $rootScope) {
       });
       return company;
     },
+    // Servicio para obtener una empresa dado su id.
+    getById: function (params) {
+      var company = $http({
+        url: '/company/getById',
+        method: 'GET',
+        params: params
+      });
+      return company;
+    },
     // Servicio para obtener una empresa dado su nombre.
     getByName: function (params) {
       var companies = $http({

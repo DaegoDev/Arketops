@@ -17,7 +17,7 @@
                         <i class="fa fa-building-o prefix"></i>
                         <input type="text" ng-model="user.name" name="name" required placeholder="Nombre de su empresa" required/>
                         <label>Nombre</label>
-                      <!-- VALIDACIONES DE NOMBRE DE EMPRESA -->
+                        <!-- VALIDACIONES DE NOMBRE DE EMPRESA -->
                         <div ng-messages="forms.formUpdate.name.$error" ng-if="forms.formUpdate.name.$touched || forms.formUpdate.$submitted" ng-messages-multiple>
                           <p ng-message="required" class="help-block"><b>Debe ingresar un nombre de empresa.</b></p>
                         </div>
@@ -181,7 +181,7 @@
                   <div ng-class="{'has-error': forms.formUpdate.nomenclature.$invalid && (!forms.formUpdate.nomenclature.$pristine || forms.formUpdate.$submitted || forms.formUpdate.nomenclature.$touched),
                   'has-success': forms.formUpdate.nomenclature.$valid}">
                     <i class="fa fa-map-marker prefix"></i>
-                    <input type="text" name="nomenclature" placeholder="Ej. Calle 43 # 54-19" ng-model="user.Headquarters[0].nomenclature" required>
+                    <input type="text" name="nomenclature" placeholder="Ej. Calle 43 # 54-19" ng-model="mainHeadquarters.nomenclature" required>
                     <label>Dirección</label>
                     <!-- VALIDACIONES DE DIRECCIÓN -->
                     <div ng-messages="forms.formUpdate.nomenclature.$error" ng-if="forms.formUpdate.nomenclature.$touched || forms.formUpdate.$submitted" ng-messages-multiple>
@@ -195,7 +195,7 @@
                   <div ng-class="{'has-error': forms.formUpdate.phonenumber.$invalid && (!forms.formUpdate.phonenumber.$pristine || forms.formUpdate.$submitted || forms.formUpdate.phonenumber.$touched),
                   'has-success': forms.formUpdate.phonenumber.$valid}">
                     <i class="fa fa-phone prefix"></i>
-                    <input type="text" name="phonenumber" placeholder="Ej. 2232111" ng-model="user.Headquarters[0].phonenumber" required>
+                    <input type="text" name="phonenumber" placeholder="Ej. 2232111" ng-model="mainHeadquarters.phonenumber" required>
                     <label>Teléfono</label>
                     <!-- VALIDACIONES DE TELÉFONO -->
                     <div ng-messages="forms.formUpdate.phonenumber.$error" ng-if="forms.formUpdate.phonenumber.$touched || forms.formUpdate.$submitted" ng-messages-multiple>
@@ -211,7 +211,7 @@
                   <div ng-class="{'has-error': forms.formUpdate.contact.$invalid && (!forms.formUpdate.contact.$pristine || forms.formUpdate.$submitted || forms.formUpdate.contact.$touched),
                   'has-success': forms.formUpdate.contact.$valid}">
                     <i class="fa fa-user-o prefix"></i>
-                    <input type="text" name="contact" placeholder="Ej. Carlos Martinez" ng-model="user.Headquarters[0].contact" required>
+                    <input type="text" name="contact" placeholder="Ej. Carlos Martinez" ng-model="mainHeadquarters.contact" required>
                     <label>Contacto</label>
                     <!-- VALIDACIONES DE CONTACTO -->
                     <div ng-messages="forms.formUpdate.contact.$error" ng-if="forms.formUpdate.contact.$touched || forms.formUpdate.$submitted" ng-messages-multiple>
@@ -225,7 +225,7 @@
                   <div ng-class="{'has-error': forms.formUpdate.contactPhonenumber.$invalid && (!forms.formUpdate.contactPhonenumber.$pristine || forms.formUpdate.$submitted || forms.formUpdate.contactPhonenumber.$touched),
                   'has-success': forms.formUpdate.contactPhonenumber.$valid}">
                     <i class="fa fa-mobile prefix"></i>
-                    <input type="number" name="contactPhonenumber" placeholder="Ej. 3214323456" ng-model="user.Headquarters[0].contactPhonenumber" required>
+                    <input type="text" name="contactPhonenumber" placeholder="Ej. 3214323456" ng-model="mainHeadquarters.contactPhonenumber" required>
                     <label>Teléfono contacto</label>
                     <!-- VALIDACIONES DE NÚMERO DE TELÉFONO DE CONTACTO -->
                     <div ng-messages="forms.formUpdate.contactPhonenumber.$error" ng-if="forms.formUpdate.contactPhonenumber.$touched || forms.formUpdate.$submitted" ng-messages-multiple>
@@ -237,12 +237,50 @@
             </div>
           </div>
         </div>
-
         <div class="container">
           <div class="row center">
             <button class="btn waves-effect waves-light" type="submit" name="updateBtn">Actualizar
                 <i class="fa fa-send right"></i>
             </button>
+          </div>
+        </div>
+        <div class="card">
+          <div class="card-title">
+            <h5>Otras sedes</h5>
+          </div>
+          <div class="card-content">
+            <a ng-click="openFormHeadquarters(null, null)" class="waves-effect waves-light btn">Añadir nuevo</a>
+            <div class="responsive-table">
+              <table class="highlight">
+                <thead>
+                  <tr>
+                    <th>País</th>
+                    <th>Departamento</th>
+                    <th>Ciudad</th>
+                    <th>Dirección</th>
+                    <th>Teléfono</th>
+                    <th>Contacto</th>
+                    <th>Teléfono contacto</th>
+                    <th>Opciones</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr class="row-link" ng-repeat="headquarters in otherHeadquarters | orderBy: sortByProperty:sortReversed">
+                    <td style="vertical-align:middle">{{headquarters.country}}</td>
+                    <td style="vertical-align:middle">{{headquarters.department}}</td>
+                    <td style="vertical-align:middle">{{headquarters.city}}</td>
+                    <td style="vertical-align:middle">{{headquarters.nomenclature}}</td>
+                    <td style="vertical-align:middle">{{headquarters.phonenumber}}</td>
+                    <td style="vertical-align:middle">{{headquarters.contact}}</td>
+                    <td style="vertical-align:middle">{{headquarters.contactPhonenumber}}</td>
+                    <td style="vertical-align:middle">
+                      <ng-md-icon ng-click="openFormHeadquarters(headquarters, $index)" tooltipped icon="edit" style="fill: black" size="20" data-position="top" data-delay="50" data-tooltip="Editar"></ng-md-icon>
+                      <ng-md-icon ng-click="confirmDelete(headquarters.id, $index)" tooltipped icon="delete" style="fill: black" size="20" data-position="top" data-delay="50" data-tooltip="Eliminar"></ng-md-icon>
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
           </div>
         </div>
 
