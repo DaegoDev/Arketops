@@ -74,6 +74,14 @@ function ($http, $rootScope) {
       });
       return updated;
     },
+    // Service to deactivate account.
+    deactivateAccount: function () {
+      var deactivated = $http({
+        url: '/company/deactivateAccount',
+        method: 'PUT',
+      });
+      return deactivated;
+    },
     // Service to validate if a company is supplier.
     isSupplier: function (params) {
       var isSupplier = $http({

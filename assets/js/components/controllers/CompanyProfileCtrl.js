@@ -1,8 +1,9 @@
 var arketops = angular.module('arketops');
 arketops.controller('CompanyProfileCtrl', ['$scope', '$timeout', '$log', '$state', '$stateParams',
-  'CompanySvc', 'GeographicSvc', 'orderByFilter', '$ngConfirm', 'HeadquartersSvc',
+  'CompanySvc', 'GeographicSvc', 'orderByFilter', '$ngConfirm', 'HeadquartersSvc', 'AuthSvc',
 
-  function($scope, $timeout, $log, $state, $stateParams, CompanySvc, GeographicSvc, orderBy, $ngConfirm, HeadquartersSvc) {
+  function($scope, $timeout, $log, $state, $stateParams, CompanySvc, GeographicSvc, orderBy,
+    $ngConfirm, HeadquartersSvc, AuthSvc) {
 
     $scope.user = {};
     $scope.forms = {};
@@ -173,6 +174,51 @@ arketops.controller('CompanyProfileCtrl', ['$scope', '$timeout', '$log', '$state
           })
       }
     });
+
+    $scope.confirmDeleteAccount = function () {
+      $ngConfirm({
+        title: 'Confirmación',
+        content: '¿Realmente desea eliminar la cuenta?',
+        type: 'red',
+        boxWidth: '30%',
+        useBootstrap: false,
+        buttons: {
+          cancel: {
+            text: 'Cancelar',
+            btnClass:'btn-red',
+            action: function (scope, button) {
+
+            }
+          },
+          confirm: {
+            text: 'Confirmar',
+            btnClass: 'btn-yellow',
+            action: function (scope, button) {
+              CompanySvc.deactivateAccount()
+              .then((res) => {
+                $ngConfirm({
+                  title: 'Proceso exitoso',
+                  content: 'Su cuenta se eliminó correctamente.',
+                  boxWidth: '30%',
+                  useBootstrap: false,
+                  type: 'green',
+                })
+                AuthSvc.signout()
+                $state.go('home');
+              })
+              .catch((err) => {
+                $ngConfirm({
+                  title: 'Error',
+                  content: 'No se pudo eliminar la cuenta.',
+                  boxWidth: '30%',
+                  useBootstrap: false,
+                })
+              })
+            }
+          }
+        }
+      })
+    }
 
     $scope.openFormHeadquarters = function(headquarters, indexInList) {
       $scope.formHeadquarters = true;
