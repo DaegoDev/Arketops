@@ -69,7 +69,7 @@
                       <div ng-class="{'has-error': forms.formUpdate.businessOverview.$invalid && (!forms.formUpdate.businessOverview.$pristine || forms.formUpdate.$submitted || forms.formUpdate.businessOverview.$touched),
                       'has-success': forms.formUpdate.businessOverview.$valid}">
                         <i class="fa fa-info prefix"></i>
-                        <textarea ng-model="user.businessOverview" style="height: 150px;" placeholder="Descripción empresarial" ng-maxlength="250" name="businessOverview" class="materialize-textarea" required></textarea>
+                        <textarea ng-model="user.businessOverview" style="height: 95px;" placeholder="Descripción empresarial" ng-maxlength="250" name="businessOverview" class="materialize-textarea" required></textarea>
                         <label>Descripción de la empresa</label>
                         <!-- VALIDACIONES DE OVERVIEW -->
                         <div ng-messages="forms.formUpdate.businessOverview.$error" ng-if="forms.formUpdate.businessOverview.$touched || forms.formUpdate.$submitted" ng-messages-multiple>
@@ -78,6 +78,11 @@
                         </div>
                       </div>
                     </div>
+                  </div>
+                </div>
+                <div class="row right-align">
+                  <div class="input-field">
+                    <a class="waves-effect waves-light btn" ng-click="confirmDeleteAccount()">Eliminar cuenta</a>
                   </div>
                 </div>
               </div>

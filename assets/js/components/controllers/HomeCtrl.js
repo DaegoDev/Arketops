@@ -214,6 +214,7 @@
               type: 'green',
               typeAnimated: true,
               boxWidth: '40%',
+              useBootstrap: false,
               columnClass: 'medium',
               buttons: {
                 accept: {

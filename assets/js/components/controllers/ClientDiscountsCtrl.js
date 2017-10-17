@@ -97,6 +97,8 @@ arketops.controller('ClientDiscountsCtrl', ['$scope', '$log', '$state', '$stateP
         useBootstrap: true,
         content: 'Este dialogo eligirá la opción cancelar automaticamente en 6 segundo si no responde.',
         autoClose: 'cancel|6000',
+        boxWidth: '30%',
+        useBootstrap: false,
         buttons: {
           deleteDiscount: {
             text: 'Eliminar',

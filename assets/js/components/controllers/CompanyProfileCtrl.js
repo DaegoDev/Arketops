@@ -1,8 +1,9 @@
 var arketops = angular.module('arketops');
 arketops.controller('CompanyProfileCtrl', ['$scope', '$timeout', '$log', '$state', '$stateParams',
-  'CompanySvc', 'GeographicSvc', 'orderByFilter', '$ngConfirm', 'HeadquartersSvc',
+  'CompanySvc', 'GeographicSvc', 'orderByFilter', '$ngConfirm', 'HeadquartersSvc', 'AuthSvc',
 
-  function($scope, $timeout, $log, $state, $stateParams, CompanySvc, GeographicSvc, orderBy, $ngConfirm, HeadquartersSvc) {
+  function($scope, $timeout, $log, $state, $stateParams, CompanySvc, GeographicSvc, orderBy,
+    $ngConfirm, HeadquartersSvc, AuthSvc) {
 
     $scope.user = {};
     $scope.forms = {};
@@ -10,15 +11,17 @@ arketops.controller('CompanyProfileCtrl', ['$scope', '$timeout', '$log', '$state
     $scope.citiesHeadquarters = {};
     const maxSize = 10000000; // Tamaño maximo en bytes
 
-    $scope.imgAvatarStyle = {
-      'background-image': 'url("../../../images/no-image.jpg")',
-      'background-size': '200px 200px',
-      'z-index': 2
-    }
 
     CompanySvc.getProfile()
       .then((res) => {
         $scope.user = res.data;
+        if (!$scope.user.imageURI) {
+          $scope.imgAvatarStyle = {
+            'background-image': 'url("../../../images/no-image.jpg")',
+            'background-size': '200px 200px',
+            'z-index': 2
+          }
+        }
         // Flag to activate the function to update profile image.
         $scope.useWatch = false;
         // Save the rest of the company's headquarters.
@@ -195,6 +198,51 @@ arketops.controller('CompanyProfileCtrl', ['$scope', '$timeout', '$log', '$state
           })
       }
     });
+
+    $scope.confirmDeleteAccount = function () {
+      $ngConfirm({
+        title: 'Confirmación',
+        content: '¿Realmente desea eliminar la cuenta?',
+        type: 'red',
+        boxWidth: '30%',
+        useBootstrap: false,
+        buttons: {
+          cancel: {
+            text: 'Cancelar',
+            btnClass:'btn-red',
+            action: function (scope, button) {
+
+            }
+          },
+          confirm: {
+            text: 'Confirmar',
+            btnClass: 'btn-yellow',
+            action: function (scope, button) {
+              CompanySvc.deactivateAccount()
+              .then((res) => {
+                $ngConfirm({
+                  title: 'Proceso exitoso',
+                  content: 'Su cuenta se eliminó correctamente.',
+                  boxWidth: '30%',
+                  useBootstrap: false,
+                  type: 'green',
+                })
+                AuthSvc.signout()
+                $state.go('home');
+              })
+              .catch((err) => {
+                $ngConfirm({
+                  title: 'Error',
+                  content: 'No se pudo eliminar la cuenta.',
+                  boxWidth: '30%',
+                  useBootstrap: false,
+                })
+              })
+            }
+          }
+        }
+      })
+    }
 
     $scope.openFormHeadquarters = function(headquarters, indexInList) {
       $scope.formHeadquarters = true;

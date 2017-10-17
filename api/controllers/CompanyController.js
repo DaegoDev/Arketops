@@ -663,6 +663,9 @@ module.exports = {
           model: User,
           attributes: {
             exclude: ['password']
+          },
+          where: {
+            state: true
           }
         }],
         where: {
@@ -815,7 +818,8 @@ module.exports = {
             where : {
               id: {
                 $ne: user ? user.id : 0
-              }
+              },
+              state: true
             }
           }],
           where: {
@@ -877,6 +881,9 @@ module.exports = {
             model: User,
             attributes: {
               exclude: ['password']
+            },
+            where: {
+              state: true
             }
           }]
         })
@@ -923,6 +930,9 @@ module.exports = {
             model: User,
             attributes: {
               exclude: ['password']
+            },
+            where: {
+              state: true
             }
           }]
         })

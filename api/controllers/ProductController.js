@@ -425,7 +425,16 @@ module.exports = {
           }]
         }, {
           model: Company,
-          attributes: ['name', 'id']
+          attributes: ['name', 'id'],
+          include: [{
+            model: User,
+            attributes: {
+              exclude: ['password']
+            },
+            where: {
+              state: true
+            }
+          }]
         }]
       })
       .then(function(products) {
