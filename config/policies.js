@@ -48,7 +48,8 @@ module.exports.policies = {
     createElement: 'isAuthenticated',
     createElementData: 'isAuthenticated',
     createLinkedElementData: 'isAuthenticated',
-    editElementData: 'isAuthenticated'
+    editElementData: 'isAuthenticated',
+    editLinkedElementData: 'isAuthenticated'
   },
 
   ProductController: {

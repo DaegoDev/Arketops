@@ -8,18 +8,19 @@ arketops.controller('ElementCtrl', ['$scope', '$log', '$state', '$stateParams',
       {parent: "CATEGORIA", child: "LINEA", parentRef: null}
     ];
 
-    // Current mode of form
+    // Current mode of form.
     $scope.CREATE = 1;
     $scope.UPDATE = 2;
 
-    // Current type of element data
+    // Current type of element data.
     $scope.NORMAL = 1;
     $scope.LINKED = 2;
 
-    // Controller variable inizialization
+    // Controller variable inizialization.
     $scope.init = function() {
       $scope.mode = $scope.CREATE;
       $scope.type = $scope.NORMAL;
+      $scope.isRequesting = false;
       $scope.currentElement = null;
       $scope.parentElement = null;
       $scope.elementData = {};
@@ -66,9 +67,17 @@ arketops.controller('ElementCtrl', ['$scope', '$log', '$state', '$stateParams',
       $scope.currentElement = element;
     }
 
-
     // Function to create a new data element.
-    $scope.createElementData = function() {
+    $scope.createElementData = function(form) {
+      if ($scope.isRequesting) {return;}
+
+      if (form.$invalid) {
+        $scope.elementData.hasErrors = true;
+        return;
+      }
+
+      $scope.elementData.hasErrors = false;
+
       if ($scope.type === $scope.NORMAL) {
         $scope.createNormalElementData();
       }
@@ -86,14 +95,20 @@ arketops.controller('ElementCtrl', ['$scope', '$log', '$state', '$stateParams',
         discount: $scope.elementData.discount
       }
 
+      $scope.isRequesting = true; // Block the requests until this one finish
       // Call the data element create service and save it into the element data list
       // when created.
       ElementSvc.createElementData(elementData)
         .then(function(res) {
+          console.log(res);
           $scope.currentElement.ElementData.push(res.data);
           $scope.elementData = {};
+          $scope.isRequesting = false;
         })
-        .catch(function(err) {$log.debug(err)});
+        .catch(function(err) {
+          $log.debug(err);
+          $scope.isRequesting = false;
+        });
     }
 
     // Function to create a new data element which is linked to another data element.
@@ -106,6 +121,8 @@ arketops.controller('ElementCtrl', ['$scope', '$log', '$state', '$stateParams',
         dataParentId: $scope.elementData.parent.id
       }
 
+      $scope.isRequesting = true;
+      // Block the requests until this one finish
       // Call the linked data element create service and save it into both the element
       // data list and the parent children when created.
       ElementSvc.createLinkedElementData(elementData)
@@ -116,24 +133,103 @@ arketops.controller('ElementCtrl', ['$scope', '$log', '$state', '$stateParams',
           $scope.currentElement.ElementData.push(res.data);
           $scope.elementData.name = "";
           $scope.elementData.discount = "";
+          $scope.isRequesting = false;
+
         })
-        .catch(function(err) {$log.debug(err)});
+        .catch(function(err) {
+          $log.debug(err)
+          $scope.isRequesting = false;
+        });
     }
 
     //
     $scope.selectElementData = function(elementData) {
-      $scope.mode = UPDATE;
+      $scope.mode = $scope.UPDATE;
       $scope.elementData = {
+        id: elementData.id,
+        elementId: elementData.elementId,
         name: elementData.name,
         discount: elementData.discount,
-        id: elementData.id,
+        parent: $scope.elementData.parent,
+        self: elementData
       }
     }
 
     //
     $scope.exitUpdate = function() {
-      $scope.mode = CREATE;
-      $scope.elementData = {};
+      $scope.mode = $scope.CREATE;
+      $scope.elementData = {
+        parent: $scope.elementData.parent
+      };
+    }
+
+    $scope.updateElementData = function (form) {
+      if ($scope.isRequesting) {return;}
+
+      if (form.$invalid) {
+        $scope.elementData.hasErrors = true;
+        return;
+      }
+
+      $scope.elementData.hasErrors = false;
+
+      if ($scope.type === $scope.NORMAL) {
+        $scope.updateNormalElementData();
+      }
+      else if ($scope.type === $scope.LINKED) {
+        $scope.updateLinkedElementData();
+      }
+    }
+
+    // Function to update an existing element data.
+    $scope.updateNormalElementData = function () {
+      credentials = {
+        elementDataId: $scope.elementData.id,
+        elementId: $scope.elementData.elementId,
+        name: $scope.elementData.name,
+        discount: $scope.elementData.discount
+      }
+
+      ElementSvc.updateElementData(credentials)
+      .then(function (res) {
+        $scope.elementData.self.name = res.data.name;
+        $scope.elementData.self.discount = res.data.discount;
+        $scope.elementData = {
+          parent: $scope.elementData.parent
+        };
+        $scope.isRequesting = false;
+        $scope.mode = $scope.CREATE;
+      })
+      .catch(function (err) {
+        console.log(err);
+        $scope.isRequesting = false;
+      });
+    }
+
+    // Function to update an existing element data.
+    $scope.updateLinkedElementData = function () {
+      credentials = {
+        elementDataId: $scope.elementData.id,
+        elementId: $scope.elementData.elementId,
+        dataParentId: $scope.elementData.parent.id,
+        name: $scope.elementData.name,
+        discount: $scope.elementData.discount
+      }
+
+      ElementSvc.updateLinkedElementData(credentials)
+      .then(function (res) {
+        $scope.elementData.self.name = res.data.name;
+        $scope.elementData.self.discount = res.data.discount;
+        $scope.elementData = {
+          parent: $scope.elementData.parent
+        };
+        $scope.isRequesting = false;
+        $scope.mode = $scope.CREATE;
+      })
+      .catch(function (err) {
+        console.log(err);
+        $scope.isRequesting = false;
+      });
     }
 
     // Function that returns true when the current element is a child element.

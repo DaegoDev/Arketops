@@ -17,7 +17,7 @@ main {
   background-color: @theme-color-1;
   color: @color-black-lighten-1;
 
-  &:hover {
+  &:hover, &:focus {
     background-color: @theme-color-hover-1 !important;
     color: @color-black;
   }
@@ -80,15 +80,15 @@ ul li a {
   box-shadow: 0 1px 0 0 @theme-input-color !important;
 }
 /* valid color */
-.input-field input.valid, textarea.valid {
-  border-bottom: 1px solid @theme-input-color !important;
-  box-shadow: 0 1px 0 0 @theme-input-color !important;
-}
-/* invalid color */
-.input-field input.invalid, textarea.invalid {
-  border-bottom: 1px solid @theme-input-color !important;
-  box-shadow: 0 1px 0 0 @theme-input-color !important;
-}
+// .input-field input.valid, textarea.valid {
+//   border-bottom: 1px solid @theme-input-color !important;
+//   box-shadow: 0 1px 0 0 @theme-input-color !important;
+// }
+// /* invalid color */
+// .input-field input.invalid, textarea.invalid {
+//   border-bottom: 1px solid @theme-input-color !important;
+//   box-shadow: 0 1px 0 0 @theme-input-color !important;
+// }
 /* icon prefix focus color */
 .input-field .prefix.active {
   color: @theme-input-color !important;
@@ -105,4 +105,10 @@ ul li a {
 .card-panel label {
   color: @color-black !important;
   font-weight: bold;
+}
+
+.invalid {
+  & p {
+    color: #F44336;
+  }
 }
