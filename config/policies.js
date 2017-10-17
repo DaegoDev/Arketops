@@ -38,6 +38,8 @@ module.exports.policies = {
     getSuppliers: 'isAuthenticated',
     getClients: 'isAuthenticated',
     setDiscountToClient: 'isAuthenticated',
+    getByName: 'isValidToDiscounts',
+    searchAll: 'isValidToDiscounts',
     recoverPassword: 'isValidRecovery',
   },
 

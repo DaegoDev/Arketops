@@ -79,8 +79,8 @@
               </div>
             </div>
             <div class="col s4 image-upload">
-              <input type="file" id="file-input" name="imageFile" ng-model="imageFile"
-              base-sixty-four-input required onloadend="onLoad" accept="image/jpg, image/jpeg, image/png">
+              <input type="file" id="file-input" name="imageFile" ng-model="imageFile" maxsize="10000" do-not-parse-if-oversize
+              base-sixty-four-input required onloadend="onLoad" ng-click="setFlagImageDataURI()" accept="image/jpg, image/jpeg, image/png">
               <img class="image-avatar" ng-style="imgAvatarStyle" id="image-avatar"
               ng-src="{{user.imageDataURI}}" height="300" width="300">
               <div class="icon-upload">
@@ -238,19 +238,13 @@
 
           <div class="container">
             <div class="row ">
-              <div ng-class="{'has-error': forms.formSignup.termsAndConditions.$invalid && (!forms.formSignup.termsAndConditions.$pristine || forms.formSignup.$submitted),
-              'has-success': forms.formSignup.termsAndConditions.$valid}">
-                <input type="checkbox" class="filled-in" id="filled-in-box" ng-model="termsAndConditions" ng-click="switchValueCheckbox()" ng-required="termsAndConditions" />
+                <input type="checkbox" class="filled-in" id="filled-in-box" checked="termsAndConditions"
+                ng-model="termsAndConditions" ng-click="switchValueCheckbox()"/>
                 <label for="filled-in-box">Aceptar terminos y condiciones.</label>
-                <!-- VALIDACIONES DE TERMINOS Y CONDICIONES. -->
-                <div ng-messages="forms.formSignup.termsAndConditions.$error" ng-if="forms.formSignup.$submitted" ng-messages-multiple>
-                  <p ng-message="required" class="help-block"><b>Debe aceptar los terminos y condiciones.</b></p>
-                </div>
-              </div>
             </div>
 
             <div class="row center">
-              <button class="btn waves-effect waves-light" type="submit" name="action">Enviar
+              <button class="btn waves-effect waves-light" type="submit"  name="signup">Enviar
                 <i class="fa fa-send right"></i>
               </button>
             </div>

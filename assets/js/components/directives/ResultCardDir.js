@@ -43,7 +43,6 @@ var arketops = angular.module('arketops');
       })
     }
 
-    // $scope.followStyle = {color: 'red'}
     function setFollowingValue() {
       $scope.followValue = 'Siguiendo';
       $scope.followStyle = {color: 'blue'}

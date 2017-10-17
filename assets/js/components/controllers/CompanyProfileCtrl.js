@@ -8,6 +8,7 @@ arketops.controller('CompanyProfileCtrl', ['$scope', '$timeout', '$log', '$state
     $scope.forms = {};
     $scope.departmentsHeadquarters = {};
     $scope.citiesHeadquarters = {};
+    const maxSize = 10000000; // Tamaño maximo en bytes
 
     $scope.imgAvatarStyle = {
       'background-image': 'url("../../../images/no-image.jpg")',
@@ -154,11 +155,32 @@ arketops.controller('CompanyProfileCtrl', ['$scope', '$timeout', '$log', '$state
     // Función que se llama cuando la imagen se carga.
     $scope.onLoad = function(e, reader, file, fileList, fileOjects, fileObj) {
       $scope.useWatch = true;
+      var type = fileObj.filename.split('.')[1];
+      if (fileObj.filesize > maxSize) {
+        $scope.fileSize = fileObj.filesize;
+        return;
+      }
+      if ((type != 'png' && type != 'jpeg' && type != 'jpg')) {
+        $scope.fileType = type;
+        return;
+      }
       $scope.imgAvatarStyle = {
         'background-image': 'none'
       };
       $scope.user.imageURI = 'data:' + fileObj.filetype + ';base64,' + fileObj.base64;
     };
+
+    $scope.$watch('fileSize', function(newValue, oldValue) {
+      if ($scope.useWatch) {
+        Materialize.toast('El tamaño del archivo supera el limite requerido.', 4000, 'red darken-1 rounded')
+      }
+    });
+
+    $scope.$watch('fileType', function(newValue, oldValue) {
+      if ($scope.useWatch) {
+        Materialize.toast('El formato del archivo es incorrecto.', 4000, 'red darken-1 rounded')
+      }
+    });
 
     $scope.$watch('user.imageURI', function(newValue, oldValue) {
       if ($scope.useWatch) {

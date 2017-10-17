@@ -43,6 +43,8 @@ module.exports = {
     var email = null;
     var password = null;
 
+    const maxSize = 10000000; // Tamaño maximo en bytes
+
 
     // Definición de variables apartir de los parametros de la solicitud y validaciones.
     name = req.param('name');
@@ -180,7 +182,10 @@ module.exports = {
           absolutePath = resUpload;
           // Se valida que el archivo tenga el formato y la resolución deseada.
           var dimensions = sizeOf(absolutePath);
-          if (dimensions.type != "png" && dimensions.type != "jpeg" && dimensions.type != "jpg") {
+          var imageFile = fs.statSync(absolutePath)
+          var fileSize = imageFile.size;
+
+          if (fileSize > maxSize || (dimensions.type != "png" && dimensions.type != "jpeg" && dimensions.type != "jpg")) {
             fs.unlink(absolutePath, (err) => {
               sails.log.debug('Se borró la imagen');
             });
@@ -498,7 +503,10 @@ module.exports = {
           imageURI = resUpload;
           // Se valida que el archivo tenga el formato y la resolución deseada.
           var dimensions = sizeOf(imageURI);
-          if (dimensions.type != "png" && dimensions.type != "jpeg" && dimensions.type != "jpg") {
+          var imageFile = fs.statSync(absolutePath)
+          var fileSize = imageFile.size;
+
+          if (fileSize > maxSize || (dimensions.type != "png" && dimensions.type != "jpeg" && dimensions.type != "jpg")) {
             fs.unlink(imageURI, (err) => {
               sails.log.debug('Se borró la imagen');
             });
@@ -684,6 +692,7 @@ module.exports = {
   getByName: function(req, res) {
     // Declaración de variables.
     var name = null;
+    var user = null;
 
     // Definición de variables y validaciones.
     name = req.param('name');
@@ -694,6 +703,8 @@ module.exports = {
       });
     }
 
+    user = req.user;
+
     Company.findAll({
         include: [{
           model: Headquarters,
@@ -701,6 +712,11 @@ module.exports = {
           model: User,
           attributes: {
             exclude: ['password']
+          },
+          where : {
+            id: {
+              $ne: user ? user.id : 0
+            }
           }
         }],
         where: {
@@ -741,6 +757,7 @@ module.exports = {
     var keyword = null;
     var result = {};
     var products = [];
+    var user = null;
 
     // Definición de variables y validaciones.
     keyword = req.param('keyword');
@@ -750,6 +767,8 @@ module.exports = {
         msg: 'Se debe ingresar alguna palabra.'
       });
     }
+
+    user = req.user;
 
     Product.findAll({
         where: {
@@ -792,6 +811,11 @@ module.exports = {
             model: User,
             attributes: {
               exclude: ['password']
+            },
+            where : {
+              id: {
+                $ne: user ? user.id : 0
+              }
             }
           }],
           where: {

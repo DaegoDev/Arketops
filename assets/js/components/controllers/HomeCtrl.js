@@ -1,8 +1,8 @@
 (function() {
   var arketops = angular.module('arketops');
 
-  arketops.controller('HomeCtrl', ['$scope', '$log', '$sce', 'GeographicSvc', 'CompanySvc', '$ngConfirm', 'AuthSvc', 'orderByFilter',
-    function($scope, $log, $sce, GeographicSvc, CompanySvc, $ngConfirm, AuthSvc, orderBy) {
+  arketops.controller('HomeCtrl', ['$scope', '$interval', '$log', '$sce', 'GeographicSvc', 'CompanySvc', '$ngConfirm', 'AuthSvc', 'orderByFilter',
+    function($scope, $interval, $log, $sce, GeographicSvc, CompanySvc, $ngConfirm, AuthSvc, orderBy) {
 
       $scope.termsAndConditions = false;
       $scope.user = {};
@@ -10,6 +10,7 @@
       $scope.departments = {};
       $scope.cities = {};
       $scope.countryCode = null;
+      const maxSize = 10000000; // Tamaño maximo en bytes
 
       $scope.forms = {};
 
@@ -69,14 +70,43 @@
         $scope.authenticated = AuthSvc.isAuthenticated();
       });
 
+      $scope.setFlagImageDataURI = function () {
+        $scope.flagImageDataURI = true;
+      }
+
 
       // Función que se llama cuanto la imagen se carga.
       $scope.onLoad = function(e, reader, file, fileList, fileOjects, fileObj) {
+        var type = fileObj.filename.split('.')[1];
+        $scope.useWatch = true;
+        if (fileObj.filesize > maxSize) {
+          $scope.fileSize = fileObj.filesize;
+          return;
+        }
+        if ((type != 'png' && type != 'jpeg' && type != 'jpg')) {
+          $scope.fileType = type;
+          return;
+        }
         $scope.imgAvatarStyle = {
           'background-image': 'none'
         };
-        $scope.user.imageDataURI = 'data:' + fileObj.filetype + ';base64,' + fileObj.base64;
+        if ($scope.flagImageDataURI) {
+          console.log('flagImageDataURI');
+          $scope.user.imageDataURI = 'data:' + fileObj.filetype + ';base64,' + fileObj.base64;
+        }
       };
+
+      $scope.$watch('fileSize', function(newValue, oldValue) {
+        if ($scope.useWatch) {
+          Materialize.toast('El tamaño del archivo supera el limite requerido.', 4000, 'red darken-1 rounded')
+        }
+      });
+
+      $scope.$watch('fileType', function(newValue, oldValue) {
+        if ($scope.useWatch) {
+          Materialize.toast('El formato del archivo es incorrecto.', 4000, 'red darken-1 rounded')
+        }
+      });
 
 
       // Función que cambia el valor del checkbox de terminos y condiciones.
@@ -125,6 +155,7 @@
         imageFile = $scope.user.imageFile;
         imageDataURI = $scope.user.imageDataURI;
 
+
         // Validación de los datos ingresados.
         if (!name || !nit || !businessOverview || !email || !password || !rePassword || !country ||
           department.adminCode1 == -1 || !city || !nomenclature || !phonenumber || !contact || !contactPhonenumber) {
@@ -164,14 +195,22 @@
         }
 
         $scope.signinup = true;
+
         CompanySvc.signup(userCredentials)
           .then(function(res) {
             $scope.signingUp = false;
+            $scope.user = {};
+            $scope.flagImageDataURI = false;
+            $scope.user.imageDataURI = '';
+            $scope.imgAvatarStyle = {
+              'background-image': '../../../images/no-image.jpg'
+            };
+            $scope.switchValueCheckbox();
             $scope.forms.formSignup.$setPristine();
             $scope.forms.formSignup.$setUntouched();
             $ngConfirm({
               title: 'Registro exitoso',
-              content: 'Se ha enviado un correo de bienvenida a tu correo electronico.',
+              content: 'Se ha enviado un correo de bienvenida a su correo electronico.',
               type: 'green',
               typeAnimated: true,
               boxWidth: '40%',
@@ -181,13 +220,7 @@
                   text: 'Aceptar',
                   btnClass: 'btn-green',
                   action: function() {
-                    $scope.user = {};
-                    $scope.switchValueCheckbox();
-                    $scope.user.imageDataURI = '';
-                    $scope.imgAvatarStyle = {
-                      'background-image': '../../../images/no-image.jpg'
-                    };
-                    $scope.$apply();
+
                   }
                 }
               }
@@ -202,11 +235,7 @@
             }
             $scope.signingUp = false;
           })
-
-
       }
-
-
     }
   ]);
 })();
