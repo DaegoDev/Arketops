@@ -11,6 +11,7 @@ var fs = require('fs');
 var sizeOf = require('image-size');
 var imageDataURIModule = require('image-data-uri');
 var path = require('path');
+const maxSize = 10000000; // Tamaño maximo en bytes
 
 module.exports = {
   /**
@@ -42,9 +43,6 @@ module.exports = {
 
     var email = null;
     var password = null;
-
-    const maxSize = 10000000; // Tamaño maximo en bytes
-
 
     // Definición de variables apartir de los parametros de la solicitud y validaciones.
     name = req.param('name');
@@ -146,8 +144,8 @@ module.exports = {
     website = req.param('website');
     imageDataURI = req.param('imageDataURI');
 
-    var relativePath = "/assets/images/avatars/" + nit + "_1"
-    var pathAvatar = sails.config.appPath + relativePath;
+    var relativePath = "/resources/images/avatars/";
+    var appPath = sails.config.appPath;
 
     User.findOne({
         where: {
@@ -173,7 +171,8 @@ module.exports = {
           throw new Error("La compañia ya existe");
         }
         if (imageDataURI) {
-          return ImageDataURIService.decodeAndSave(imageDataURI, pathAvatar);
+          absolutePath = path.join(appPath, relativePath, nit + "-" + Date.now());
+          return ImageDataURIService.decodeAndSave(imageDataURI, absolutePath);
         }
         return null;
       })
@@ -191,7 +190,7 @@ module.exports = {
             });
             throw new Error("La configuración del archivo no es valida");
           }
-          imageURI = relativePath + '.' + absolutePath.split('.')[1];
+          imageURI = relativePath + path.basename(resUpload);
         }
 
         // Organización de credenciales y cifrado de la contraseña del usuario.
@@ -464,6 +463,7 @@ module.exports = {
     var user = null;
     var imageURI = null;
     var imageURIDB = null;
+    var absolutePath = null;
     // variables necesarias para cargar la imagen.
     var imageDataURI = null;
     // var tempLocation = null;
@@ -475,7 +475,8 @@ module.exports = {
     }
     user = req.user;
 
-    var relativePath = null;
+    var relativePath = "/resources/images/avatars/";
+    var appPath = sails.config.appPath;
 
     Company.findOne({
         where: {
@@ -483,27 +484,19 @@ module.exports = {
         }
       })
       .then(function(company) {
-        sails.log.debug(company);
         var newNameImage = null;
         if (company.imageURI) {
-          imageURIDB = sails.config.appPath + company.imageURI;
-          var arrayImageURIDB = imageURIDB.split("/");
-          var fileNameDB = arrayImageURIDB[arrayImageURIDB.length - 1];
-          var imageNameDB = fileNameDB.split(".")[0];
-          var numNewImage = parseInt(imageNameDB.substring(imageNameDB.length - 1)) + 1;
+          imageURIDB = appPath + company.imageURI;
         }
-        newNameImage = company.imageURI ? company.nit + "_" + numNewImage : company.nit + "_1";
-        relativePath = "/assets/images/avatars/" + newNameImage;
-        var pathAvatars = sails.config.appPath + relativePath;
-        return Promise.all = [company, ImageDataURIService.decodeAndSave(imageDataURI, pathAvatars)]
-
+        absolutePath = path.join(appPath, relativePath, company.nit + "-" + Date.now());
+        return Promise.all = [company, ImageDataURIService.decodeAndSave(imageDataURI, absolutePath)]
       })
       .spread((company, resUpload) => {
         if (resUpload) {
           imageURI = resUpload;
           // Se valida que el archivo tenga el formato y la resolución deseada.
           var dimensions = sizeOf(imageURI);
-          var imageFile = fs.statSync(absolutePath)
+          var imageFile = fs.statSync(resUpload)
           var fileSize = imageFile.size;
 
           if (fileSize > maxSize || (dimensions.type != "png" && dimensions.type != "jpeg" && dimensions.type != "jpg")) {
@@ -513,9 +506,8 @@ module.exports = {
             throw new Error("La configuración del archivo no es valida");
           }
         }
-        return company.update({
-          imageURI: relativePath + '.' + imageURI.split('.')[1],
-        })
+        relativePath = relativePath + path.basename(resUpload);
+        return company.update({imageURI: relativePath});
       })
       .then(function(AmountRowsAffected) {
         if (imageURIDB) {
