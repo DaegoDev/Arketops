@@ -20,6 +20,15 @@ function ($http, $rootScope) {
       });
       return company;
     },
+    // Servicio para obtener una empresa dado su id.
+    getById: function (params) {
+      var company = $http({
+        url: '/company/getById',
+        method: 'GET',
+        params: params
+      });
+      return company;
+    },
     // Servicio para obtener una empresa dado su nombre.
     getByName: function (params) {
       var companies = $http({
@@ -65,6 +74,14 @@ function ($http, $rootScope) {
       });
       return updated;
     },
+    // Service to deactivate account.
+    deactivateAccount: function () {
+      var deactivated = $http({
+        url: '/company/deactivateAccount',
+        method: 'PUT',
+      });
+      return deactivated;
+    },
     // Service to validate if a company is supplier.
     isSupplier: function (params) {
       var isSupplier = $http({
@@ -98,6 +115,33 @@ function ($http, $rootScope) {
         method: 'GET'
       });
       return clients;
+    },
+    // Service to set a discount in an elementData to a client.
+    setDiscountToClient: function (params) {
+      var clientDiscount = $http({
+        url: '/company/setDiscountToClient',
+        method: 'POST',
+        data: params
+      });
+      return clientDiscount;
+    },
+    // Service to update a discount in an elementData to a client.
+    updateDiscountToClient: function (params) {
+      var clientDiscount = $http({
+        url: '/company/updateDiscountToClient',
+        method: 'PUT',
+        data: params
+      });
+      return clientDiscount;
+    },
+    // Service to delete a discount in an elementData to a client.
+    deleteDiscountToClient: function (params) {
+      var clientDiscount = $http({
+        url: '/company/deleteDiscountToClient',
+        method: 'DELETE',
+        data: params
+      });
+      return clientDiscount;
     }
 
   };

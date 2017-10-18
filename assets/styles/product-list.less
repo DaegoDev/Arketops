@@ -19,28 +19,68 @@
           text-align: center;
         }
 
-        .business-overview-field {
+        .business-overview-section {
           margin-left: -25px;
           margin-right: 10px;
           text-align: justify;
         }
 
+        .main-data-section {
+          margin-top: 50px;
+        }
+
         label {
           font-size: 14px;
+        }
+
+        .headquarters {
+          margin-left: -15px;
+          margin-top: -20px;
+          label {
+            font-size: 16px;
+          }
         }
       }
     }
   }
 }
 
-.collapsible-body {
-  padding: 10px 10px 10px 20px !important;
-
-  .row {
-    margin-bottom: -5px;
-  }
-
+.collapsible {
   label {
     font-size: 15px;
+  }
+
+  .collapsible-body {
+    padding: 10px 10px 10px 20px !important;
+
+    .row {
+      margin-bottom: -5px;
+
+      .product-description {
+        margin-left: -40px;
+        max-width: 200px;
+      }
+
+      .element-data {
+        width: 40%;
+        max-width: 400px;
+        display: inline-table;
+
+        .element {
+          display: table-cell;
+          width: 100px;
+        }
+
+        .value-element-data {
+          display: table-cell;
+          width: 100px;
+        }
+
+        .discount-element-data {
+          display: table-cell;
+        }
+      }
+
+    }
   }
 }

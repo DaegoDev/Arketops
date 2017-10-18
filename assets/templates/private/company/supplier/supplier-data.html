@@ -1,0 +1,95 @@
+<div class="card">
+  <div class="card-title">
+    <h5>Información basica</h5>
+  </div>
+  <div class="card-content">
+    <div class="row">
+      <div class="col s2">
+        <img id="image-avatar" ng-src="{{supplier.imageURI}}" height="100" width="100">
+      </div>
+      <div class="col s10">
+        <div input-field>
+          <textarea ng-model="supplier.businessOverview" readonly name="businessOverview" class="materialize-textarea"></textarea>
+          <label>Descripción de la empresa</label>
+        </div>
+      </div>
+    </div>
+    <div class="row">
+      <div class="col s4">
+        <div input-field>
+          <input type="text" name="nit" readonly value="{{supplier.nit}}">
+          <label>NIT</label>
+        </div>
+      </div>
+      <div class="col s4">
+        <div input-field>
+          <input type="text" name="email" value="{{supplier.User.email}}" readonly>
+          <label>Email</label>
+        </div>
+      </div>
+      <div class="col s4">
+        <div input-field>
+          <input type="text" value="{{supplier.website}}" readonly>
+          <label>Sitio web</label>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="card">
+  <div class="card-title">
+    <h5>Información sedes</h5>
+  </div>
+  <div class="card-content">
+    <h5>Sede principal:</h5>
+    <div class="row">
+      <div class="col s4">
+        <div input-field>
+          <input type="text" value="{{mainHeadquarters.country}}" readonly>
+          <label>País</label>
+        </div>
+      </div>
+      <div class="col s4">
+        <div input-field>
+          <input type="text" value="{{mainHeadquarters.department}}" readonly>
+          <label>Departamento</label>
+        </div>
+      </div>
+      <div class="col s4">
+        <div input-field>
+          <input type="text" value="{{mainHeadquarters.city}}" readonly>
+          <label>Ciudad</label>
+        </div>
+      </div>
+    </div>
+    <div class="row">
+      <div class="col s4">
+        <div input-field>
+          <input type="text" value="{{mainHeadquarters.nomenclature}}" readonly>
+          <label>Dirección</label>
+        </div>
+      </div>
+      <div class="col s4">
+        <div input-field>
+          <input type="text" value="{{mainHeadquarters.phonenumber}}" readonly>
+          <label>Teléfono</label>
+        </div>
+      </div>
+    </div>
+    <h5>Otras sedes: </h5>
+    <ul class="collection">
+      <li ng-if="otherHeadquarters == 0" class="collection-item"><h6>No tiene registrada mas sedes.</h6></li>
+      <li ng-if="otherHeadquarters != 0" class="collection-item" ng-repeat="headquarters in otherHeadquarters">
+        <label style="font-size: 16px;" for="">Dirección: </label>
+        <span style="margin-right: 10px;">{{headquarters.nomenclature}}</span>
+        <span>{{headquarters.city}}, </span>
+        <span>{{headquarters.department}}</span>
+        <div class="secondary-content">
+          <label style="font-size: 16px;" for="">Teléfono: </label><span>{{headquarters.phonenumber}}</span>
+        </div>
+      </li>
+    </ul>
+  </div>
+
+</div>

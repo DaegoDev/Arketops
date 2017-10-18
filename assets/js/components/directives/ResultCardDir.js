@@ -33,6 +33,7 @@ var arketops = angular.module('arketops');
       .then((res) => {
         if (!res.data) {
           $scope.followValue = 'Seguir';
+          $scope.followStyle = {color: 'red'}
         }else {
           setFollowingValue();
         }
@@ -44,13 +45,25 @@ var arketops = angular.module('arketops');
 
     function setFollowingValue() {
       $scope.followValue = 'Siguiendo';
-      $scope.followStyle = {"color": "#42a5f5 !important;"}
+      $scope.followStyle = {color: 'blue'}
     }
 
     $scope.showProductsByCompany = function () {
       var companyToSend = JSON.stringify($scope.compProd);
       StorageSvc.set('companySelected', companyToSend, 'session');
       $state.go('productsByCompany');
+    }
+
+    $scope.showCompanyByProduct = function () {
+      CompanySvc.getById({companyId: $scope.compProd.Company.id})
+      .then((res) => {
+        var companyToSend = JSON.stringify(res.data);
+        StorageSvc.set('companySelected', companyToSend, 'session');
+        $state.go('productsByCompany');
+      })
+      .catch((err) => {
+        console.log(err);
+      })
     }
 
     $scope.followCompany = function () {

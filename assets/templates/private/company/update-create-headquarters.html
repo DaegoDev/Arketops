@@ -1,0 +1,60 @@
+<div class="card">
+  <div class="card-content">
+    <div class="row">
+      <div class="col s4">
+        <div input-field>
+          <i class="fa fa-map-o prefix"></i>
+          <select class="" ng-model="countriesHeadquarters.selected" ng-options="country.name for country in countriesHeadquarters.choices" ng-change="getDepartments(countriesHeadquarters.selected.alpha2Code)" material-select watch></select>
+          <label>País</label>
+        </div>
+      </div>
+      <div class="col s4">
+        <div input-field>
+          <i class="fa fa-map-signs prefix"></i>
+          <select class="" ng-model="departmentsHeadquarters.selected" ng-options="department.adminName1 for department in departmentsHeadquarters.choices" ng-change="getCities(departmentsHeadquarters.selected.adminCode1)" material-select watch></select>
+          <label>Departamento</label>
+        </div>
+      </div>
+      <div class="col s4">
+        <div input-field>
+          <ng-md-icon icon="location_city" class="prefix" style="fill: black" size="30"></ng-md-icon>
+          <select class="" ng-model="citiesHeadquarters.selected" ng-options="city.name for city in citiesHeadquarters.choices" material-select watch>
+          </select>
+          <label>Ciudad</label>
+        </div>
+      </div>
+    </div>
+    <div class="row">
+      <div class="col s6">
+        <div input-field>
+            <i class="fa fa-map-marker prefix"></i>
+            <input type="text" name="nomenclature" placeholder="Ej. Calle 43 # 54-19" ng-model="headquarters.nomenclature" required>
+            <label>Dirección</label>
+        </div>
+      </div>
+      <div class="col s6">
+        <div input-field>
+            <i class="fa fa-phone prefix"></i>
+            <input type="text" name="phonenumber" placeholder="Ej. 2232111" ng-model="headquarters.phonenumber" required>
+            <label>Teléfono</label>
+        </div>
+      </div>
+    </div>
+    <div class="row">
+      <div class="col s6">
+        <div input-field>
+            <i class="fa fa-user-o prefix"></i>
+            <input type="text" name="contact" placeholder="Ej. Carlos Martinez" ng-model="headquarters.contact" required>
+            <label>Contacto</label>
+        </div>
+      </div>
+      <div class="col s6">
+        <div input-field>
+            <i class="fa fa-mobile prefix"></i>
+            <input type="text" name="contactPhonenumber" placeholder="Ej. 3214323456" ng-model="headquarters.contactPhonenumber" required>
+            <label>Teléfono contacto</label>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

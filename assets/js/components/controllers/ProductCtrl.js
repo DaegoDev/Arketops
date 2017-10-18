@@ -11,6 +11,7 @@ function($scope, $log, $state, $stateParams, $ngConfirm, ElementSvc, ProductSvc)
 
     ElementSvc.getElementsByUser()
     .then(function (res) {
+      console.log(res.data);
       $scope.elements = res.data;
       $scope.elements.forEach(function (element, i, elements) {
         switch (element.name.toUpperCase()) {
@@ -30,6 +31,10 @@ function($scope, $log, $state, $stateParams, $ngConfirm, ElementSvc, ProductSvc)
             break;
         }
       });
+      console.log($scope.categories);
+      console.log($scope.brands);
+      console.log($scope.taxes);
+      console.log($scope.lines);
     })
     .catch(function (err) {$log.error(err);});
 

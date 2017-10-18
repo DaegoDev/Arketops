@@ -38,7 +38,8 @@ module.exports.policies = {
     getSuppliers: 'isAuthenticated',
     getClients: 'isAuthenticated',
     setDiscountToClient: 'isAuthenticated',
-    getElements: 'isAuthenticated',
+    getByName: 'isValidToDiscounts',
+    searchAll: 'isValidToDiscounts',
     recoverPassword: 'isValidRecovery',
   },
 
@@ -54,8 +55,13 @@ module.exports.policies = {
 
   ProductController: {
     create: 'isAuthenticated',
+    getByCompany: 'isValidToDiscounts',
     getMyProducts: 'isAuthenticated',
   },
+
+  HeadquartersController: {
+    create: 'isAuthenticated'
+  }
 
 
 

@@ -1,0 +1,22 @@
+<div class="container">
+  <div class="supplier-details">
+    <div class="row">
+      <!-- OPTIONS SUPPLIER DETATILS LIST -->
+      <div class="col s2 ">
+        <div class="section">
+          <div  class="collection hoverable z-depth-3 options-list">
+            <a class="collection-item" ng-repeat="option in options" ng-class="{active: option.selected}"
+            ng-click="goToState(option.name, $index)">{{option.name}}</a>
+          </div>
+        </div>
+      </div>
+      <div class="option-content  card col s10">
+        <div class="card-content header-supplier-details">
+            <h5 class="center"><strong>Detalles del proveedor: {{supplier.name | capitalize}}</strong></h5>
+        </div>
+        <div ui-view>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

@@ -11,7 +11,15 @@ function ($http, $log) {
       });
       return elements;
     },
-
+    // Service to get all elements discount by client.
+    getClientDiscounts: function(params) {
+      var clientDiscount = $http({
+        url: '/element/getClientDiscounts',
+        method: 'GET',
+        params: params
+      });
+      return clientDiscount;
+    },
     // Service to get all elements of a specific user with their element data.
     getElementsByUser: function () {
       var elements = $http({

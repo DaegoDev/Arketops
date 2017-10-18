@@ -56,12 +56,38 @@ arketops.config(['$stateProvider', '$urlRouterProvider',
         controller: 'PortfolioCtrl'
       })
 
+      // Routes for supplier
       .state('suppliersList', {
         url: '/suppliers',
-        templateUrl: 'templates/private/company/suppliers-list.html',
+        templateUrl: 'templates/private/company/supplier/suppliers-list.html',
         controller: 'SuppliersListCtrl'
       })
 
+      .state('supplierDetails', {
+        url: '/supplierDetails',
+        templateUrl: 'templates/private/company/supplier/supplier-details.html',
+        controller: 'SupplierDetailsCtrl'
+      })
+
+      .state('supplierDetails.personalData', {
+        url: '/supplierData',
+        templateUrl: 'templates/private/company/supplier/supplier-data.html',
+        controller: 'SupplierDataCtrl'
+      })
+
+      .state('supplierDetails.products', {
+        url: '/supplierProducts',
+        templateUrl: 'templates/private/company/supplier/supplier-products.html',
+        controller: 'SupplierProductsCtrl'
+      })
+
+      .state('supplierDetails.discounts', {
+        url: '/supplierDiscounts',
+        templateUrl: 'templates/private/company/supplier/supplier-discounts.html',
+        controller: 'SupplierDiscountsCtrl'
+      })
+
+      // Routes for client
       .state('clientsList', {
         url: '/clients',
         templateUrl: 'templates/private/company/client/clients-list.html',
@@ -91,5 +117,6 @@ arketops.config(['$stateProvider', '$urlRouterProvider',
         templateUrl: 'templates/private/company/client/client-discounts.html',
         controller: 'ClientDiscountsCtrl'
       })
+
 
   }]);

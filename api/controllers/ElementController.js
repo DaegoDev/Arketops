@@ -6,6 +6,40 @@
 */
 
 module.exports = {
+ /**
+  * Función para obtener los elementos con descuentos para un cliente.
+  * @param  {Object} req Request object
+  * @param  {Object} res Response object
+  */
+ getClientDiscounts: function(req, res) {
+   // Declaración de variables.
+   var clientSupplierId = null;
+
+   clientSupplierId = parseInt(req.param('clientSupplierId'))
+
+   if (!clientSupplierId) {
+     return res.badRequest('Id de clientSupplier requerido')
+   }
+
+   ClientSupplier.findOne({
+       where: {
+         id: clientSupplierId,
+       }
+     })
+     .then((clientSupplier) => {
+       return clientSupplier.getElementData({
+         include: [{
+           model: Element
+         }]
+       })
+     })
+     .then(function(resElement) {
+       return res.ok(resElement);
+     })
+     .catch(function(err) {
+       return res.serverError(err);
+     })
+   },
   /**
   * Función para crear un elemento de un producto.
   * @param  {Object} req Request object

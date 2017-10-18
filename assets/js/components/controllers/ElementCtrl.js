@@ -121,8 +121,8 @@ arketops.controller('ElementCtrl', ['$scope', '$log', '$state', '$stateParams',
         dataParentId: $scope.elementData.parent.id
       }
 
-      $scope.isRequesting = true;
-      // Block the requests until this one finish
+      $scope.isRequesting = true; // Blocks the requests until this one finish
+
       // Call the linked data element create service and save it into both the element
       // data list and the parent children when created.
       ElementSvc.createLinkedElementData(elementData)

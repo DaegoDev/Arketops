@@ -6,11 +6,11 @@
           <img id="image-avatar" ng-src="{{company.imageURI}}" height="85" width="85">
         </div>
         <div class="col s10 company-data">
-          <h5>{{company.name | capitalize}}</h5>
-          <div class="col s7 business-overview-field">
+          <div class="col s7 business-overview-section">
+            <h5>{{company.name | capitalize}}</h5>
             <p>{{company.businessOverview}}</p>
           </div>
-          <div class="col s5">
+          <div class="main-data-section col s5">
             <div class="row">
               <div class="col s3">
                 <label for="email">Correo: </label>
@@ -24,7 +24,7 @@
                 <label for="address">Dirección: </label>
               </div>
               <div class="col s9">
-                <strong id="address">{{company.Headquarters[0].nomenclature  + ', ' + company.Headquarters[0].city + ', ' + company.Headquarters[0].department}}</strong><br>
+                <strong id="address">{{mainHeadquarters.nomenclature  + ', ' + mainHeadquarters.city + ', ' + mainHeadquarters.department}}</strong><br>
               </div>
             </div>
             <div class="row field-data">
@@ -32,7 +32,7 @@
                 <label for="phonenumber">Teléfono: </label>
               </div>
               <div class="col s9">
-                <strong id="phonenumber">{{company.Headquarters[0].phonenumber}}</strong><br>
+                <strong id="phonenumber">{{mainHeadquarters.phonenumber}}</strong><br>
               </div>
             </div>
             <div class="row field-data">
@@ -43,6 +43,10 @@
                 <strong id="website">{{company.website}}</strong><br>
               </div>
             </div>
+          </div>
+          <div ng-if="otherHeadquarters.length != 0" class="headquarters">
+            <label for="">Otras sedes: </label>
+            <span ng-repeat="headquarters in otherHeadquarters">{{headquarters.nomenclature}} &nbsp; {{headquarters.city}}, &nbsp; {{headquarters.department}}; &nbsp; &nbsp;</span>
           </div>
         </div>
       </div>

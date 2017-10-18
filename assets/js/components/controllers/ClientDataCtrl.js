@@ -5,5 +5,14 @@ arketops.controller('ClientDataCtrl', ['$scope', '$log', '$state', '$stateParams
     // Declaration of variables
     $scope.client = JSON.parse(StorageSvc.get('clientSelected', 'session'));
     console.log($scope.client);
+
+    $scope.otherHeadquarters = [];
+    $scope.client.Headquarters.forEach((headquarters, index, headquartersList) => {
+      if (headquarters.main) {
+        $scope.mainHeadquarters = headquarters;
+      } else {
+        $scope.otherHeadquarters.push(headquarters);
+      }
+    })
   }
 ]);
