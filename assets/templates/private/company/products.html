@@ -33,7 +33,7 @@
 
             <div class="col l3 m6 s12">
               <div input-field>
-                <select watch material-select ng-model="product.line" ng-options="data.name for data in lines.ElementData">
+                <select watch material-select ng-model="product.line" ng-options="data.name for data in lines.ElementData | linkedElementFilter:product.category:true">
                   <option value="">Linea</option>
                 </select>
                 <label>Linea</label>

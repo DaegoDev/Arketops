@@ -84,22 +84,15 @@ module.exports = {
     user = req.user;
     imageDataURI = req.param('imageDataURI');
 
-    var relativePath = "/assets/images/products/";
+    var relativePath = "/resources/images/products/";
     var appPath = sails.config.appPath;
-    var imagePath = null;
 
     return sequelize.transaction(function(t) {
       var imageURI;
       var company;
       var product;
 
-      return Company.findAll({
-          where: {
-            userId: user.id
-          },
-          transaction: t
-        })
-
+      return Company.findAll({where: {userId: user.id}, transaction: t})
         .then(function(company) {
           return Promise.all = [
             company[0],
@@ -113,12 +106,11 @@ module.exports = {
         })
 
         .spread(function(companyInst, products) {
+          var absolutePath = null;
           if (products.length == 0) {
             company = companyInst;
-            relativePath = path.join(relativePath, company.nit + "-" + code + "-" + Date.now());
-            imagePath = path.join(appPath, relativePath);
-            sails.log.debug(imagePath);
-            return ImageDataURIService.decodeAndSave(imageDataURI, imagePath)
+            absolutePath = path.join(appPath, relativePath, company.nit + "-" + code + "-" + Date.now());
+            return ImageDataURIService.decodeAndSave(imageDataURI, absolutePath)
           }
           throw "Ya existe un producto con ese código";
         })
@@ -126,12 +118,12 @@ module.exports = {
         .then(function(resUpload) {
           if (resUpload) {
             imageURI = resUpload;
-            relativePath = imageURI.replace(appPath, "");
+            relativePath = relativePath + path.basename(resUpload);
 
             // Se valida que el archivo tenga el formato y la resolución deseada.
-            var dimensions = sizeOf(imageURI);
+            var dimensions = sizeOf(resUpload);
             if (dimensions.type != "png" && dimensions.type != "jpeg" && dimensions.type != "jpg") {
-              fs.unlink(imageURI, (err) => {
+              fs.unlink(resUpload, (err) => {
                 sails.log.debug('Se borró la imagen');
               });
               throw new Error("La configuración del archivo no es valida");
@@ -163,11 +155,9 @@ module.exports = {
           });
         })
         .then(function(result) {
-          sails.log.debug(product);
           return product.addElementData(result);
         })
         .then(function(finalProduct) {
-          sails.log.debug(finalProduct)
           return res.ok(finalProduct);
         })
         .catch(function(err) {

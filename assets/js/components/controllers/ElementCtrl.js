@@ -262,31 +262,3 @@ arketops.controller('ElementCtrl', ['$scope', '$log', '$state', '$stateParams',
 
   }
 ]);
-
-// Angular filters
-arketops.filter('linkedElementFilter', function() {
-  return function(dataElements, parentElement) {
-    var filteredDataElements = null;
-
-    if (!dataElements) {
-      return null;
-    }
-
-    if (!parentElement) {
-      return dataElements;
-    }
-
-    filteredDataElements = [];
-
-    angular.forEach(dataElements, function (dataElement) {
-      for (var i in dataElement.ElementParent) {
-        if (dataElement.ElementParent[i].id === parentElement.id ) {
-          filteredDataElements.push(dataElement);
-          break;
-        }
-      }
-    });
-
-    return filteredDataElements;
-  }
-});
