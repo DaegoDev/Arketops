@@ -60,6 +60,10 @@ module.exports.policies = {
 
   HeadquartersController: {
     create: 'isAuthenticated'
+  },
+
+  QuotationController: {
+    createToClient: 'isAuthenticated',
   }
 
 

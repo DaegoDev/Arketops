@@ -80,17 +80,14 @@ module.exports = {
       addedProducts.push(JSON.parse(products).id)
     }
 
-    //  user = req.user;
-    user = {
-      id: 1
-    }
+    user = req.user;
 
     date = TimeZoneService.getDateNow({
       offset: -5
     }, null);
 
     // Ruta donde se guarda el pdf de la cotización en el servidor.
-    quotationFilePath = sails.config.appPath + '/assets/documents/quotations/confirmed/' + date + '.pdf';
+    quotationFilePath = sails.config.appPath + '/assets/documents/quotations/confirmed/' + clientId + date + '.pdf';
 
     // Se verifica que el usuario definido como proveedor exista. En caso de que exista se
     // es pasado a la variable supplier y se busca la vinculación con el cliente.
@@ -467,6 +464,22 @@ module.exports = {
       .catch((err) => {
         res.serverError(err);
       })
+  },
+
+  /**
+   * Function to get the payment forms for a quotation.
+   * @param  {Object} req Request object
+   * @param  {Object} res Response object
+   */
+  getPaymentforms: function (req, res) {
+    PaymentForm.findAll()
+    .then((paymentForms) => {
+        res.ok(paymentForms)
+    })
+    .catch((err) => {
+      sails.log.debug(err)
+      res.serverError()
+    })
   },
 
   emailTest: function (req, res) {

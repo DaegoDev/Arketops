@@ -1,4 +1,4 @@
-<nav class="white">
+<nav class="white" id="menubar">
   <div class="navbar">
     <ul id="nav-mobile" class="center hide-on-med-and-down">
       <li><a ui-sref="companyProfile">Perfil</a></li>
@@ -27,3 +27,9 @@
     <li><a ui-sref="clientsList">Ver clientes</a></li>
     <li><a ui-sref="suppliersList">Ver proveedores</a></li>
 </ul>
+
+<div class="fixed-action-btn ">
+  <a ng-click="scrollUp()" class="btn-floating btn-large yellow">
+      <ng-md-icon style="margin-left: -35px; margin-top: -40px; fill: black;"  icon="keyboard_arrow_up" size="60"></ng-md-icon>
+  </a>
+</div>

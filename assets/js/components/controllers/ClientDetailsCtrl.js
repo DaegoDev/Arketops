@@ -36,9 +36,9 @@ arketops.controller('ClientDetailsCtrl', ['$scope', '$log', '$state', '$statePar
       } else if (option == 'Descuentos') {
         $state.go('clientDetails.discounts');
       } else if (option == 'Cotizaciones') {
-        console.log('Coti');
+
       } else if (option == 'Cotizar') {
-        console.log('Cotizar');
+        $state.go('clientDetails.quotationCreate')
       }
     }
 
