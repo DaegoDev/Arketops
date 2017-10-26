@@ -83,7 +83,7 @@ module.exports.connections = {
       host: process.env.DB_HOST,
       dialect: 'postgres'
     }
-  }
+  },
 
   herokuPG: {
     url: 'postgres://ocmfukgywrckon:f37a71a3ae13d5f3bd4de1a9b0de50604484ea61f7e3ea1ffc627f15c5f36b70@ec2-204-236-239-225.compute-1.amazonaws.com:5432/d2u5f21lvbea47',
