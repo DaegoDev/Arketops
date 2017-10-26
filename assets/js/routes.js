@@ -44,9 +44,9 @@ arketops.config(['$stateProvider', '$urlRouterProvider',
         controller: 'ElementCtrl'
       })
 
-      .state('products', {
-        url: '/products',
-        templateUrl: 'templates/private/company/products.html',
+      .state('productCreation', {
+        url: '/product-create',
+        templateUrl: 'templates/private/company/product-create.html',
         controller: 'ProductCtrl'
       })
 

@@ -363,6 +363,7 @@ module.exports = {
     user = req.user;
 
     Company.findAll({
+        order: [[Product,ElementData, Element, 'id', 'ASC']],
         include: [{
           model: Product,
           include: [{
@@ -378,7 +379,19 @@ module.exports = {
       })
       .then(function(company) {
         sails.log.debug(company[0]);
-        res.ok(company[0]);
+        company[0].Products.forEach(function(product, index, productsList) {
+          ImageDataURIService.encode(path.resolve(sails.config.appPath + product.imageURI))
+            .then((imageDataURI) => {
+              product.imageURI = imageDataURI;
+            })
+            .catch((err) => {
+              sails.log.debug(err)
+            })
+        });
+        setTimeout(function() {
+          // sails.log.debug(products);
+          res.ok(company[0]);
+        }, 10);
       })
       .catch(function(err) {
         res.serverError(err);
@@ -535,7 +548,8 @@ module.exports = {
             .catch((err) => {
               sails.log.debug(err)
             })
-        })
+        });
+
         setTimeout(function() {
           // sails.log.debug(products);
           res.ok(products);
