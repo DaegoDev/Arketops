@@ -55,6 +55,7 @@ module.exports.policies = {
 
   ProductController: {
     create: 'isAuthenticated',
+    delete: 'isAuthenticated',
     getByCompany: 'isValidToDiscounts',
     getMyProducts: 'isAuthenticated',
   },

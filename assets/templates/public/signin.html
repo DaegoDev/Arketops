@@ -2,95 +2,89 @@
   <form ng-submit="signinUser()" name="signin" novalidate>
     <div class="row">
       <div input-field>
-        <div ng-class="{'has-error': signin.email.$invalid && (!signin.$pristine || signin.$submitted || signin.email.$touched),
+        <div
+          ng-class="{'has-error': signin.email.$invalid && (!signin.$pristine || signin.$submitted || signin.email.$touched),
         'has-success': signin.email.$valid}">
           <ng-md-icon icon="email" class="prefix" style="fill: black" size="30"></ng-md-icon>
-          <input type="email" name="email" placeholder="Email de la empresa" ng-model="user.email" length="150" required>
+          <input
+            type="email"
+            name="email"
+            placeholder="Email de la empresa"
+            ng-model="user.email"
+            length="150"
+            required>
           <label>Email</label>
           <!-- VALIDACIONES DE NOMBRE DE USUARIO -->
-          <div ng-messages="signin.email.$error" ng-if="signin.email.$touched || signin.$submitted" ng-messages-multiple>
-            <p ng-message="required" class="help-block"><b>Debe ingresar un email.</b></p>
-            <p ng-message="email" class="help-block"><b>Debe ingresar una email válido.</b></p>
+          <div
+            ng-messages="signin.email.$error"
+            ng-if="signin.email.$touched || signin.$submitted"
+            ng-messages-multiple>
+            <p ng-message="required" class="help-block">
+              <b>Debe ingresar un email.</b>
+            </p>
+            <p ng-message="email" class="help-block">
+              <b>Debe ingresar una email válido.</b>
+            </p>
           </div>
         </div>
       </div>
       <div input-field>
-        <div ng-class="{'has-error': signin.password.$invalid && (!signin.$pristine || signin.$submitted || signin.password.$touched),
+        <div
+          ng-class="{'has-error': signin.password.$invalid && (!signin.$pristine || signin.$submitted || signin.password.$touched),
         'has-success': signin.password.$valid}">
           <ng-md-icon icon="lock" class="prefix" style="fill: black" size="30"></ng-md-icon>
-          <input type="password" name="password" placeholder="Contraseña" ng-model="user.password" required>
+          <input
+            type="password"
+            name="password"
+            placeholder="Contraseña"
+            ng-model="user.password"
+            required>
           <label>Contraseña</label>
           <!-- VALIDACIONES DE CONTRASEÑA -->
-          <div ng-messages="signin.password.$error" ng-if="signin.password.$touched || signin.$submitted" ng-messages-multiple>
-            <p ng-message="required" class="help-block"><b>Debe ingresar una contraseña.</b></p>
+          <div
+            ng-messages="signin.password.$error"
+            ng-if="signin.password.$touched || signin.$submitted"
+            ng-messages-multiple>
+            <p ng-message="required" class="help-block">
+              <b>Debe ingresar una contraseña.</b>
+            </p>
           </div>
         </div>
       </div>
       <!-- INFORMACIÓN DE ERRORES -->
-      <div class="alert" ng-class="{'alert-success': !loginError, 'alert-danger': loginError}" ng-show="loginError">
+      <div
+        class="alert"
+        ng-class="{'alert-success': !loginError, 'alert-danger': loginError}"
+        ng-show="loginError">
         <button type="button" class="close" ng-click="switchError('loginError')">×</button>
-        <strong> {{errorMessage}} </strong>
+        <strong>
+          {{errorMessage}}
+        </strong>
       </div>
       <p class="center">
         <a ng-click="toFormRecoverPws()" style="cursor: pointer;">¿Olvidaste tu contraseña?</a>
       </p>
-      <div class="center">
+
+      <div class="center" ng-show="!user.loading">
         <button class="btn waves-effect waves-light" type="submit" name="submit">Iniciar sesión
         </button>
       </div>
-      <!-- <div class="center">
-        <button ng-click="closeModal()" class="btn waves-effect waves-light">Cerrar
-        </button>
-      </div> -->
+
+      <div class="center" ng-show="user.loading">
+        <div class="preloader-wrapper big active">
+          <div class="spinner-layer spinner-yellow-only">
+            <div class="circle-clipper left">
+              <div class="circle"></div>
+            </div>
+            <div class="gap-patch">
+              <div class="circle"></div>
+            </div>
+            <div class="circle-clipper right">
+              <div class="circle"></div>
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
   </form>
 </div>
-<div ng-if="signing" class="preloader-wrapper big active">
-  <div class="spinner-layer spinner-blue">
-    <div class="circle-clipper left">
-      <div class="circle"></div>
-    </div>
-    <div class="gap-patch">
-      <div class="circle"></div>
-    </div>
-    <div class="circle-clipper right">
-      <div class="circle"></div>
-    </div>
-  </div>
-
-  <div class="spinner-layer spinner-red">
-    <div class="circle-clipper left">
-      <div class="circle"></div>
-    </div>
-    <div class="gap-patch">
-      <div class="circle"></div>
-    </div>
-    <div class="circle-clipper right">
-      <div class="circle"></div>
-    </div>
-  </div>
-
-  <div class="spinner-layer spinner-yellow">
-    <div class="circle-clipper left">
-      <div class="circle"></div>
-    </div>
-    <div class="gap-patch">
-      <div class="circle"></div>
-    </div>
-    <div class="circle-clipper right">
-      <div class="circle"></div>
-    </div>
-  </div>
-
-  <div class="spinner-layer spinner-green">
-    <div class="circle-clipper left">
-      <div class="circle"></div>
-    </div>
-    <div class="gap-patch">
-      <div class="circle"></div>
-    </div>
-    <div class="circle-clipper right">
-      <div class="circle"></div>
-    </div>
-  </div>
-<!-- </div> -->

@@ -24,6 +24,10 @@ arketops.controller('signinCtrl', ['$scope', '$state', '$cookieStore', '$log', '
 
   // Función para el inicio de sesión de un usuario.
   $scope.signinUser = function() {
+    if ($scope.user.loading) {
+      return;
+    }
+
     //Definición de variables.
     var email = null;
     var password = null;
@@ -49,25 +53,19 @@ arketops.controller('signinCtrl', ['$scope', '$state', '$cookieStore', '$log', '
       password: password
     };
 
-    $scope.signing = true;
+    $scope.user.loading = true;
 
     //Llamado al servicio de signin de usuario.
     AuthSvc.signinUser(credentials)
       .then(function(result) {
-        $scope.signing = false;
         $scope.closeModal();
         $scope.user = {};
-        console.log($scope.closeModal);
-        // $state.go('home');
+        $scope.user.loading = false;
       })
       .catch(function(err) {
         Materialize.toast('No se ha podido iniciar sesión, verifique su nombre de usuario o contraseña.', 4000,'rounded')
-        $scope.signing = false;
         $scope.user.password = '';
-        //$scope.closeModal();
-        // $scope.signing = false;
-        // $scope.loginError = true;
-        // $scope.errorMessage = "No se ha podido iniciar sesión, verifique su nombre de usuario o contraseña.";
+        $scope.user.loading = false;
       });
   };
 

@@ -21,6 +21,21 @@ angular.module('arketops')
           return product;
         },
 
+        // Servicio para eliminar un producto propio del usuario que llama el servicio.
+        delete: function (productId) {
+          productCredentials = {
+            productId: productId
+          };
+
+          var product = $http({
+            url: 'product/delete',
+            method: 'DELETE',
+            params: productCredentials
+          });
+
+          return product;
+        },
+
         // Servicio para obtener productos dado su nombre.
         getByName: function(params) {
           var products = $http({
@@ -30,7 +45,7 @@ angular.module('arketops')
           });
           return products;
         },
-        
+
         //Service to get the products by company id.
         getByCompany: function(params) {
           var products = $http({
