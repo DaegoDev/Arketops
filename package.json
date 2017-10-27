@@ -2,6 +2,10 @@
   "name": "arketops",
   "private": true,
   "version": "0.0.0",
+  "engines": {
+    "node": "6.11.4",
+    "npm": "3.10.10"
+  },
   "description": "a Sails application",
   "keywords": [],
   "dependencies": {
@@ -45,7 +49,7 @@
   },
   "scripts": {
     "debug": "node debug app.js",
-    "start": "sails lift",
+    "start": "node app.js",
     "postinstall": "./node_modules/bower/bin/bower install -f"
   },
   "main": "app.js",
