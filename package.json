@@ -2,10 +2,6 @@
   "name": "arketops",
   "private": true,
   "version": "0.0.0",
-  "engines": {
-    "node": "6.11.4",
-    "npm": "3.10.10"
-  },
   "description": "a Sails application",
   "keywords": [],
   "dependencies": {
