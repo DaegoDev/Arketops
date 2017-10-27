@@ -23,7 +23,6 @@ arketops.controller('ClientDetailsCtrl', ['$scope', '$log', '$state', '$statePar
     }]
 
     $scope.goToState = function(option, index) {
-      console.log($scope.lastOption);
       if (typeof $scope.lastOption == 'number') {
         var lastOption = $scope.lastOption;
         $scope.options[lastOption].selected = false;
@@ -31,7 +30,6 @@ arketops.controller('ClientDetailsCtrl', ['$scope', '$log', '$state', '$statePar
       $scope.lastOption = index;
       $scope.options[index].selected = true;
       if (option == 'Datos personales') {
-        console.log("Datos");
         $state.go('clientDetails.personalData')
       } else if (option == 'Productos') {
         $state.go('clientDetails.products');

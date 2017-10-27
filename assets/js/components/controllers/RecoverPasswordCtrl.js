@@ -58,6 +58,8 @@ arketops.controller('RecoverPasswordCtrl', ['$scope', '$log', '$ngConfirm', '$st
           $ngConfirm({
             title: 'Se recuperó la contraseña.',
             content: "Se ha enviado la nueva contraseña a su correo electronico.",
+            boxWidth: '30%',
+            useBootstrap: false,
             type: 'green',
             typeAnimated: true,
             theme: 'light',

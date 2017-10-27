@@ -12,3 +12,103 @@ main {
 .theme-color-1 {
   background-color: @theme-color-1;
 }
+
+.btn {
+  background-color: @theme-color-1;
+  color: @color-black-lighten-1;
+
+  &:hover, &:focus {
+    background-color: @theme-color-hover-1 !important;
+    color: @color-black;
+  }
+}
+
+ul li a {
+  color: @color-black-lighten-1;
+
+  &:hover {
+    background-color: @theme-color-hover-1;
+    color: @color-black;
+  }
+
+  &.active {
+    background-color: @theme-color-1;
+  }
+}
+
+.dropdown-content li a {
+  color: @color-black-lighten-1;
+
+  &:hover {
+    background-color: @theme-color-hover-1;
+    color: @color-black;
+  }
+}
+
+.collection .collection-item {
+  color: @color-black-lighten-1 !important;
+  cursor: pointer;
+
+  &:hover {
+    background-color: @theme-color-hover-1 !important;
+    color: @color-black !important;
+  }
+
+  &.active {
+    background-color: @theme-color-1 !important;
+    color: @color-black !important;
+  }
+}
+
+// CSS for changing materialize's input's color.
+
+/* label color */
+.input-field label {
+  color: #000;
+  font-weight: bold;
+
+}
+/* label focus color */
+.input-field input:focus + label, textarea:focus + label {
+  color: @theme-input-color !important;
+  font-weight: bold;
+
+}
+/* label underline focus color */
+.input-field input:focus, textarea:focus {
+  border-bottom: 1px solid @theme-input-color !important;
+  box-shadow: 0 1px 0 0 @theme-input-color !important;
+}
+/* valid color */
+// .input-field input.valid, textarea.valid {
+//   border-bottom: 1px solid @theme-input-color !important;
+//   box-shadow: 0 1px 0 0 @theme-input-color !important;
+// }
+// /* invalid color */
+// .input-field input.invalid, textarea.invalid {
+//   border-bottom: 1px solid @theme-input-color !important;
+//   box-shadow: 0 1px 0 0 @theme-input-color !important;
+// }
+/* icon prefix focus color */
+.input-field .prefix.active {
+  color: @theme-input-color !important;
+}
+
+.dropdown-content li span {
+    color: @color-black-lighten-1 !important;
+    &:hover {
+      background-color: @theme-color-hover-1;
+      color: @color-black !important;
+    }
+}
+
+.card-panel label {
+  color: @color-black !important;
+  font-weight: bold;
+}
+
+.invalid {
+  & p {
+    color: #F44336;
+  }
+}

@@ -63,9 +63,9 @@ arketops.controller('topbarCtrl', ['$scope', '$cookieStore', '$ngConfirm', 'Auth
         return;
       }
       $scope.closeSearchNav();
-      $state.go('showResults');
       StorageSvc.set('searchValue', searchValue, 'session');
       StorageSvc.set('filter', filter, 'session');
+      $state.go('showResults', {}, {reload: true});
     }
 
     // Enfoca el formulario para el registro.

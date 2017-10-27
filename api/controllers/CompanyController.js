@@ -10,6 +10,8 @@ var promise = require('bluebird');
 var fs = require('fs');
 var sizeOf = require('image-size');
 var imageDataURIModule = require('image-data-uri');
+var path = require('path');
+const maxSize = 10000000; // Tamaño maximo en bytes
 
 module.exports = {
   /**
@@ -29,6 +31,7 @@ module.exports = {
     // variables necesarias para cargar la imagen.
     var imageDataURI = null;
     var tempLocation = null;
+    var absolutePath = null;
 
     var country = null;
     var department = null;
@@ -40,7 +43,6 @@ module.exports = {
 
     var email = null;
     var password = null;
-
 
     // Definición de variables apartir de los parametros de la solicitud y validaciones.
     name = req.param('name');
@@ -142,9 +144,8 @@ module.exports = {
     website = req.param('website');
     imageDataURI = req.param('imageDataURI');
 
-
-    var pathAvatars = sails.config.appPath + "/assets/images/avatars/" + nit + "_1";
-    var tmpPathAvatars = sails.config.appPath + '/.tmp/public/images/uploads/';
+    var relativePath = "/resources/images/avatars/";
+    var appPath = sails.config.appPath;
 
     User.findOne({
         where: {
@@ -170,23 +171,26 @@ module.exports = {
           throw new Error("La compañia ya existe");
         }
         if (imageDataURI) {
-          // return imageDataURIModule.outputFile(imageDataURI, pathAvatars)
-          return ImageDataURIService.decodeAndSave(imageDataURI, pathAvatars)
+          absolutePath = path.join(appPath, relativePath, nit + "-" + Date.now());
+          return ImageDataURIService.decodeAndSave(imageDataURI, absolutePath);
         }
         return null;
       })
       .then(function(resUpload) {
-        sails.log.debug(resUpload)
         if (resUpload) {
-          imageURI = resUpload;
+          absolutePath = resUpload;
           // Se valida que el archivo tenga el formato y la resolución deseada.
-          var dimensions = sizeOf(imageURI);
-          if (dimensions.type != "png" && dimensions.type != "jpeg" && dimensions.type != "jpg") {
-            fs.unlink(imageURI, (err) => {
+          var dimensions = sizeOf(absolutePath);
+          var imageFile = fs.statSync(absolutePath)
+          var fileSize = imageFile.size;
+
+          if (fileSize > maxSize || (dimensions.type != "png" && dimensions.type != "jpeg" && dimensions.type != "jpg")) {
+            fs.unlink(absolutePath, (err) => {
               sails.log.debug('Se borró la imagen');
             });
             throw new Error("La configuración del archivo no es valida");
           }
+          imageURI = relativePath + path.basename(resUpload);
         }
 
         // Organización de credenciales y cifrado de la contraseña del usuario.
@@ -221,8 +225,8 @@ module.exports = {
         })
       })
       .catch(function(err) {
-        if (imageURI) {
-          fs.unlink(imageURI, (err) => {
+        if (absolutePath) {
+          fs.unlink(absolutePath, (err) => {
             if (err) throw err;
             sails.log.debug('Se borró la imagen');
           });
@@ -230,7 +234,6 @@ module.exports = {
         // Transaction has been rolled back
         res.serverError(err);
       })
-
   },
   /**
    * Función para obtener el perfil de una empresa.
@@ -249,9 +252,6 @@ module.exports = {
     Company.findOne({
         include: [{
           model: Headquarters,
-          where: {
-            main: true
-          }
         }, {
           model: User,
           where: {
@@ -261,9 +261,8 @@ module.exports = {
       })
       .then(function(companyQuery) {
         company = companyQuery;
-        delete company.User.password;
         if (company.imageURI) {
-          return ImageDataURIService.encode(company.imageURI);
+          return ImageDataURIService.encode(path.resolve(sails.config.appPath + company.imageURI));
         } else {
           return null;
         }
@@ -439,7 +438,8 @@ module.exports = {
           });
           return Headquarters.update(headquartersCredentials, {
             where: {
-              companyId: company.id
+              companyId: company.id,
+              main: true
             },
             transaction: t
           });
@@ -463,6 +463,7 @@ module.exports = {
     var user = null;
     var imageURI = null;
     var imageURIDB = null;
+    var absolutePath = null;
     // variables necesarias para cargar la imagen.
     var imageDataURI = null;
     // var tempLocation = null;
@@ -474,6 +475,8 @@ module.exports = {
     }
     user = req.user;
 
+    var relativePath = "/resources/images/avatars/";
+    var appPath = sails.config.appPath;
 
     Company.findOne({
         where: {
@@ -481,37 +484,30 @@ module.exports = {
         }
       })
       .then(function(company) {
-        sails.log.debug(company);
         var newNameImage = null;
         if (company.imageURI) {
-          imageURIDB = company.imageURI;
-          var arrayImageURIDB = imageURIDB.split("/");
-          var fileNameDB = arrayImageURIDB[arrayImageURIDB.length - 1];
-          var imageNameDB = fileNameDB.split(".")[0];
-          var numNewImage = parseInt(imageNameDB.substring(imageNameDB.length - 1)) + 1;
+          imageURIDB = appPath + company.imageURI;
         }
-        newNameImage = company.imageURI ? company.nit + "_" + numNewImage : company.nit + "_1";
-        sails.log.debug(newNameImage);
-        var pathAvatars = sails.config.appPath + "/assets/images/avatars/" + newNameImage;
-        //   var tmpPathAvatars = sails.config.appPath + '/.tmp/public/images/uploads/';
-        return Promise.all = [company, ImageDataURIService.decodeAndSave(imageDataURI, pathAvatars)]
-
+        absolutePath = path.join(appPath, relativePath, company.nit + "-" + Date.now());
+        return Promise.all = [company, ImageDataURIService.decodeAndSave(imageDataURI, absolutePath)]
       })
       .spread((company, resUpload) => {
         if (resUpload) {
           imageURI = resUpload;
           // Se valida que el archivo tenga el formato y la resolución deseada.
           var dimensions = sizeOf(imageURI);
-          if (dimensions.type != "png" && dimensions.type != "jpeg" && dimensions.type != "jpg") {
+          var imageFile = fs.statSync(resUpload)
+          var fileSize = imageFile.size;
+
+          if (fileSize > maxSize || (dimensions.type != "png" && dimensions.type != "jpeg" && dimensions.type != "jpg")) {
             fs.unlink(imageURI, (err) => {
               sails.log.debug('Se borró la imagen');
             });
             throw new Error("La configuración del archivo no es valida");
           }
         }
-        return company.update({
-          imageURI: imageURI
-        })
+        relativePath = relativePath + path.basename(resUpload);
+        return company.update({imageURI: relativePath});
       })
       .then(function(AmountRowsAffected) {
         if (imageURIDB) {
@@ -635,6 +631,55 @@ module.exports = {
       })
   },
   /**
+   * Función para buscar a una empresa por su id.
+   * @param  {Object} req Request object
+   * @param  {Object} res Response object
+   */
+  getById: function(req, res) {
+    // Declaración de variables.
+    var companyId = null;
+
+    // Definición de variables y validaciones.
+    companyId = parseInt(req.param('companyId'));
+    if (!companyId) {
+      return res.badRequest({
+        code: 1,
+        msg: 'Se debe ingresar un id.'
+      });
+    }
+
+    Company.findOne({
+        include: [{
+          model: Headquarters,
+        }, {
+          model: User,
+          attributes: {
+            exclude: ['password']
+          },
+          where: {
+            state: true
+          }
+        }],
+        where: {
+          id: companyId
+        }
+      })
+      .then(function(company) {
+        ImageDataURIService.encode(path.resolve(sails.config.appPath + company.imageURI))
+          .then((imageDataURI) => {
+            company.imageURI = imageDataURI;
+            res.ok(company);
+          })
+          .catch((err) => {
+            sails.log.debug(err)
+          })
+      })
+      .catch(function(err) {
+        sails.log.debug(err);
+        res.serverError(err);
+      })
+  },
+  /**
    * Función para buscar a una empresa por su nombre.
    * @param  {Object} req Request object
    * @param  {Object} res Response object
@@ -642,6 +687,7 @@ module.exports = {
   getByName: function(req, res) {
     // Declaración de variables.
     var name = null;
+    var user = null;
 
     // Definición de variables y validaciones.
     name = req.param('name');
@@ -652,16 +698,20 @@ module.exports = {
       });
     }
 
+    user = req.user;
+
     Company.findAll({
         include: [{
           model: Headquarters,
-          where: {
-            main: true
-          }
         }, {
           model: User,
           attributes: {
             exclude: ['password']
+          },
+          where : {
+            id: {
+              $ne: user ? user.id : 0
+            }
           }
         }],
         where: {
@@ -674,8 +724,7 @@ module.exports = {
         var numberCompanies = companies.length;
         companies.forEach(function(company, index, companiesList) {
           company.dataValues.type = 1;
-          delete company.User.password;
-          ImageDataURIService.encode(company.imageURI)
+          ImageDataURIService.encode(path.resolve(sails.config.appPath + company.imageURI))
             .then((imageDataURI) => {
               company.imageURI = imageDataURI;
             })
@@ -703,6 +752,7 @@ module.exports = {
     var keyword = null;
     var result = {};
     var products = [];
+    var user = null;
 
     // Definición de variables y validaciones.
     keyword = req.param('keyword');
@@ -712,6 +762,8 @@ module.exports = {
         msg: 'Se debe ingresar alguna palabra.'
       });
     }
+
+    user = req.user;
 
     Product.findAll({
         where: {
@@ -739,7 +791,7 @@ module.exports = {
         products = productsQuery;
         products.forEach(function(product, index, productsList) {
           product.dataValues.type = 2;
-          ImageDataURIService.encode(product.imageURI)
+          ImageDataURIService.encode(path.resolve(sails.config.appPath + product.imageURI))
             .then((imageDataURI) => {
               product.imageURI = imageDataURI;
             })
@@ -750,13 +802,16 @@ module.exports = {
         return Company.findAll({
           include: [{
             model: Headquarters,
-            where: {
-              main: true
-            }
           }, {
             model: User,
             attributes: {
               exclude: ['password']
+            },
+            where : {
+              id: {
+                $ne: user ? user.id : 0
+              },
+              state: true
             }
           }],
           where: {
@@ -775,7 +830,7 @@ module.exports = {
       .then(function(companies) {
         companies.forEach(function(company, index, companiesList) {
           company.dataValues.type = 1;
-          ImageDataURIService.encode(company.imageURI)
+          ImageDataURIService.encode(path.resolve(sails.config.appPath + company.imageURI))
             .then((imageDataURI) => {
               company.imageURI = imageDataURI;
             })
@@ -818,13 +873,16 @@ module.exports = {
             model: User,
             attributes: {
               exclude: ['password']
+            },
+            where: {
+              state: true
             }
           }]
         })
       })
       .then(function(clients) {
         clients.forEach(function(client, index, clientsList) {
-          ImageDataURIService.encode(client.imageURI)
+          ImageDataURIService.encode(sails.config.appPath + client.imageURI)
             .then((imageDataURI) => {
               client.imageURI = imageDataURI;
             })
@@ -860,20 +918,20 @@ module.exports = {
         return company.getSuppliers({
           include: [{
             model: Headquarters,
-            where: {
-              main: true
-            }
           }, {
             model: User,
             attributes: {
               exclude: ['password']
+            },
+            where: {
+              state: true
             }
           }]
         })
       })
       .then(function(suppliers) {
         suppliers.forEach(function(supplier, index, suppliersList) {
-          ImageDataURIService.encode(supplier.imageURI)
+          ImageDataURIService.encode(sails.config.appPath + supplier.imageURI)
             .then((imageDataURI) => {
               supplier.imageURI = imageDataURI;
             })
@@ -987,6 +1045,36 @@ module.exports = {
       })
       .then(function(clientDiscount) {
         res.ok(clientDiscount);
+      })
+      .catch(function(err) {
+        res.serverError(err);
+      })
+  },
+  /**
+   * Función para eliminar un descuento a un elemento para un cliente.
+   * @param  {Object} req Request object
+   * @param  {Object} res Response object
+   */
+  deleteDiscountToClient: function(req, res) {
+    // Declaración de variables.
+    var clientDiscountId = null;
+
+    // Definición de variables y validaciones;
+    clientDiscountId = parseInt(req.param('clientDiscountId'));
+    if (!clientDiscountId) {
+      return res.badRequest('Id del descuento para el cliente vacío');
+    }
+
+    // Se verifica que el descuento con id clientDiscountId para el cliente exista.
+    ClientDiscount.findById(clientDiscountId)
+      .then(function(clientDiscount) {
+        if (clientDiscount) {
+          return clientDiscount.destroy();
+        }
+        throw "El cliente no tiene asignado un descuento con ese id";
+      })
+      .then(function() {
+        res.ok();
       })
       .catch(function(err) {
         res.serverError(err);

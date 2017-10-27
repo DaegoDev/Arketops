@@ -9,6 +9,7 @@
 var promise = require('bluebird');
 var fs = require('fs');
 var sizeOf = require('image-size');
+var path = require('path');
 
 module.exports = {
   /**
@@ -35,30 +36,29 @@ module.exports = {
 
     // Definición de las variables y validaciones.
     elements = req.param("elements");
-    if (typeof elements == 'string') {
+    if (!elements) {
       return res.badRequest({
         code: 1,
         msg: 'There are no enough elements'
       });
-    } else {
+    }
+    if (typeof elements != 'string') {
       elements.forEach(function(element, i, elementsList) {
-        element = JSON.parse(element)
-        elementsList[i] = element;
-        index = addedElements.indexOf(elementsList[i].name.toUpperCase().trim());
+        index = addedElements.indexOf(element);
         if (index != -1) {
           return res.badRequest({
             code: 2,
             msg: 'There are repeated elements.'
-          })
+          });
         } else {
-          addedElements.push(elementsList[i].name.toUpperCase().trim());
+          addedElements.push(element);
         }
       })
     }
 
     code = req.param('code');
     if (!code) {
-      return res.badRequest('Códio del producto vacío');
+      return res.badRequest('Código del producto vacío');
     }
 
     name = req.param('name');
@@ -81,90 +81,84 @@ module.exports = {
       return res.badRequest('Id del estado vacío');
     }
 
-    //  user = req.user;
-    user = {
-      id: 1
-    }
-    imageFile = req.file('imageFile');
+    user = req.user;
+    imageDataURI = req.param('imageDataURI');
 
-    var pathAvatars = sails.config.appPath + "/assets/images/products/";
-    // var tmpPathAvatars = sails.config.appPath + '/.tmp/public/images/uploads/';
+    var relativePath = "/resources/images/products/";
+    var appPath = sails.config.appPath;
 
-    // Cargar la imagen en el directorio images/avatars
-    imageFile.upload({
-      dirname: pathAvatars
-    }, function onUploadComplete(err, uploadedImage) {
-      if (err) return res.serverError(err);
-      imageURI = uploadedImage[0].fd;
+    return sequelize.transaction(function(t) {
+      var imageURI;
+      var company;
+      var product;
 
-      //Copy the file to the temp folder so that it becomes available immediately
-      // fs.createReadStream(imageURI).pipe(fs.createWriteStream(tempLocation));
-
-      // Se valida que el archivo tenga el formato y la resolución deseada.
-      var dimensions = sizeOf(imageURI);
-      sails.log.debug(dimensions);
-      if (dimensions.width > 800 || dimensions.height > 800 || (dimensions.type != "png" && dimensions.type != "jpeg" && dimensions.type != "jpg")) {
-        fs.unlink(imageURI, (err) => {
-          if (err) throw err;
-          sails.log.debug('Se borró la imagen');
-        });
-        return res.badRequest("La configuración del archivo no es valida");
-      }
-
-      return sequelize.transaction(function(t) {
-          return Company.findAll({
+      return Company.findAll({where: {userId: user.id}, transaction: t})
+        .then(function(company) {
+          return Promise.all = [
+            company[0],
+            company[0].getProducts({
               where: {
-                userId: user.id
+                code: code
               },
               transaction: t
             })
-            .then(function(company) {
-              // sails.log.debug(company[0]);
-              return Promise.all = [company[0], company[0].getProducts({
-                where: {
-                  code: code
-                },
-                transaction: t
-              })];
-            })
-            .spread(function(company, products) {
-              if (products.length == 0) {
-                // Creación de las credenciales para crear un producto.
-                productCredentials = {
-                  code: code,
-                  name: name,
-                  description: description,
-                  price: price,
-                  stateId: stateId,
-                  imageURI: imageURI,
-                  companyId: company.id
-                }
-                return Product.create(productCredentials, {
-                  transaction: t
-                });
+          ];
+        })
+
+        .spread(function(companyInst, products) {
+          var absolutePath = null;
+          if (products.length == 0) {
+            company = companyInst;
+            absolutePath = path.join(appPath, relativePath, company.nit + "-" + code + "-" + Date.now());
+            return ImageDataURIService.decodeAndSave(imageDataURI, absolutePath)
+          }
+          throw "Ya existe un producto con ese código";
+        })
+
+        .then(function(resUpload) {
+          if (resUpload) {
+            imageURI = resUpload;
+            relativePath = relativePath + path.basename(resUpload);
+
+            // Se valida que el archivo tenga el formato y la resolución deseada.
+            var dimensions = sizeOf(resUpload);
+            if (dimensions.type != "png" && dimensions.type != "jpeg" && dimensions.type != "jpg") {
+              fs.unlink(resUpload, (err) => {
+                sails.log.debug('Se borró la imagen');
+              });
+              throw new Error("La configuración del archivo no es valida");
+            }
+          }
+
+          // Creación de las credenciales para crear un producto.
+          productCredentials = {
+            code: code,
+            name: name,
+            description: description,
+            price: price,
+            stateId: stateId,
+            imageURI: relativePath,
+            companyId: company.id
+          }
+          return Product.create(productCredentials, {
+            transaction: t
+          });
+        })
+        .then(function(newProduct) {
+          product = newProduct;
+          return ElementData.findAll({
+            where: {
+              id: {
+                $in: elements
               }
-              throw "Ya existe un producto con ese código";
-            })
-            .then(function(newProduct) {
-              if (elements.length >= 3) {
-                elements.forEach(function(element, i, elementsList) {
-                  var elementProduct = {
-                    elementId: element.id,
-                    productId: newProduct.id,
-                    main: element.main,
-                  }
-                  elements[i] = elementProduct;
-                })
-                return ElementProduct.bulkCreate(elements, {
-                  transaction: t
-                })
-              } else {
-                throw "No hay elementos";
-              }
-            })
+            }
+          });
         })
         .then(function(result) {
-          res.ok(result);
+          return product.addElementData(result);
+        })
+        .then(function(finalProduct) {
+          return res.ok(finalProduct);
         })
         .catch(function(err) {
           fs.unlink(imageURI, (err) => {
@@ -173,10 +167,7 @@ module.exports = {
           });
           sails.log.debug(err);
         })
-
     });
-
-
   },
   /**
    * Función para editar un producto o servicio.
@@ -369,10 +360,7 @@ module.exports = {
     var user = null;
 
     // Definición de variables.
-    // user = req.user;
-    user = {
-      id: 1
-    }
+    user = req.user;
 
     Company.findAll({
         include: [{
@@ -380,7 +368,7 @@ module.exports = {
           include: [{
             model: ElementData,
             include: [{
-              model: Element,
+              model: Element
             }]
           }]
         }],
@@ -427,14 +415,24 @@ module.exports = {
           }]
         }, {
           model: Company,
-          attributes: ['name']
+          attributes: ['name', 'id'],
+          include: [{
+            model: User,
+            attributes: {
+              exclude: ['password']
+            },
+            where: {
+              state: true
+            }
+          }]
         }]
       })
       .then(function(products) {
         var numberProducts = products.length;
         products.forEach(function(product, index, productsList) {
-          product.dataValues.type= 2;
-          ImageDataURIService.encode(product.imageURI)
+          product.dataValues.type = 2;
+          sails.log.debug(path.resolve(sails.config.appPath + product.imageURI))
+          ImageDataURIService.encode(path.resolve(sails.config.appPath + product.imageURI))
             .then((imageDataURI) => {
               product.imageURI = imageDataURI;
             })
@@ -460,6 +458,8 @@ module.exports = {
   getByCompany: function(req, res) {
     // Declaración de variables.
     var companyId = null;
+    var isSignedIn = null;
+    var company = null;
 
     // Definición de variables y validaciones.
     companyId = parseInt(req.param('companyId'));
@@ -470,20 +470,65 @@ module.exports = {
       });
     }
 
-    Product.findAll({
-        include: [{
-          model: ElementData,
-          include: [{
-            model: Element,
-          }]
-        }],
+    isSignedIn = req.user ? true : false;
+
+    Company.findOne({
         where: {
-          companyId: companyId
+          id: companyId
         }
+      })
+      .then((companyDB) => {
+        if (!companyDB) {
+          throw new Error("La empresa no existe");
+        } else if (!isSignedIn) {
+          return false;
+        }
+        company = companyDB;
+        // return company.hasClients(req.user.id);
+        return Company.findOne({
+            where: {
+              userId: req.user.id
+            }
+          })
+          .then((userData) => {
+            return ClientSupplier.findOne({
+              where: {
+                clientId: userData.id,
+                supplierId: company.id
+              }
+            })
+          })
+      })
+      .then((clientSupplier) => {
+        return Product.findAll({
+          include: [{
+            model: ElementData,
+            attributes: {
+              exclude: [clientSupplier ? '' : 'discount']
+            },
+            include: [{
+                model: Element,
+              },
+              clientSupplier ? {
+                model: ClientSupplier,
+                // where: {
+                //   id: clientSupplier.id,
+                // },
+                // required: false
+              } : {
+                model: User,
+                exclude: ['password']
+              }
+            ]
+          }],
+          where: {
+            companyId: companyId
+          }
+        })
       })
       .then(function(products) {
         products.forEach(function(product, index, productsList) {
-          ImageDataURIService.encode(product.imageURI)
+          ImageDataURIService.encode(path.resolve(sails.config.appPath + product.imageURI))
             .then((imageDataURI) => {
               product.imageURI = imageDataURI;
             })
@@ -500,5 +545,20 @@ module.exports = {
         res.serverError(err);
       })
   },
+
+  /**
+   * Función para obtener los estados en los que se puede encontrar un productos.
+   * @param  {Object} req Request object
+   * @param  {Object} res Response object
+   */
+  getStates: function(req, res) {
+    State.findAll()
+      .then(function(states) {
+        return res.ok(states);
+      })
+      .catch(function(err) {
+        return res.serverError(err);
+      });
+  }
 
 };

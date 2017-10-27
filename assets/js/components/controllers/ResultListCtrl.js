@@ -18,7 +18,6 @@ arketops.controller('ResultListCtrl', ['$scope', '$log', '$state', '$stateParams
   };
 
   $scope.changePage = function(currentPage) {
-    console.log(currentPage);
     $scope.figureOutResultsToDisplay(currentPage);
   };
 
@@ -49,7 +48,7 @@ arketops.controller('ResultListCtrl', ['$scope', '$log', '$state', '$stateParams
         name: $scope.searchValue
       })
       .then((result) => {
-        console.log(result.data);
+        // console.log(result.data);
         $scope.result = result.data;
         $scope.total = $scope.result.length
         $scope.figureOutResultsToDisplay(1);
@@ -60,7 +59,7 @@ arketops.controller('ResultListCtrl', ['$scope', '$log', '$state', '$stateParams
         keyword: $scope.searchValue
       })
       .then((result) => {
-        console.log(result.data);
+        // console.log(result.data);
         $scope.result = result.data.companies.concat(result.data.products);
         $scope.total = $scope.result.length
         $scope.figureOutResultsToDisplay(1);

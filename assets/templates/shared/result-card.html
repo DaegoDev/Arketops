@@ -12,12 +12,12 @@
   </div>
   <div class="card-action">
     <span ng-if="isCompany"><a ng-click="showProductsByCompany()">Ver productos</a></span>
-    <span ng-if="!isCompany"><a href="#">Ver empresa</a></span>
+    <span ng-if="!isCompany"><a ng-click="showCompanyByProduct()">Ver empresa</a></span>
     <span><a ng-style="followStyle" ng-click="followCompany()">{{followValue}}</a></span>
   </div>
   <div class="card-reveal">
     <span class="card-title grey-text text-darken-4">{{compProd.name | capitalize}}<i class="fa fa-close right"></i></span>
-    <label for="">Descripción:</label>
+    <!-- <label for="">Descripción:</label> -->
     <p ng-if="isCompany">{{compProd.businessOverview | capitalize}}</p>
     <p ng-if="isProduct">{{compProd.description | capitalize}}</p>
     <div ng-if="isCompany">
