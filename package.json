@@ -38,7 +38,7 @@
     "sails": "~0.12.13",
     "sails-disk": "~0.10.9",
     "sails-hook-email": "^0.12.1",
-    "sails-hook-sequelize": "^1.0.1",
+    "sails-hook-sequelize": "^1.1.1",
     "sails-hook-sequelize-blueprints": "^0.3.0",
     "sequelize": "^4.3.0",
     "xoauth2": "^1.2.0"

@@ -81,7 +81,8 @@ module.exports.connections = {
     dialect: 'postgres',
     options: {
       host: process.env.DB_HOST,
-      dialect: 'postgres'
+      dialect: 'postgres',
+      logging: console.log
     }
   }
 
