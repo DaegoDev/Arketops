@@ -85,6 +85,17 @@ module.exports.connections = {
     }
   },
 
+  elephantHeroku : {
+    user: 'frtgpcaf',
+    password: 'g2gzUGQlvdfNy2dLrXFKMpG1M_QCVsyv',
+    database: 'frtgpcaf',
+    dialect: 'postgres',
+    options: {
+      host: 'elmer.db.elephantsql.com',
+      dialect: 'postgres',
+    }
+  },
+
   /***************************************************************************
    *                                                                          *
    * More adapters: https://github.com/balderdashy/sails                      *
