@@ -37,24 +37,17 @@ module.exports = {
     // Definición de las variables y validaciones.
     elements = req.param("elements");
     if (!elements) {
-      return res.badRequest({
-        code: 1,
-        msg: 'There are no enough elements'
-      });
+      return res.badRequest({code: 1, msg: 'There are no enough elements'});
     }
-    if (typeof elements != 'string') {
-      elements.forEach(function(element, i, elementsList) {
-        index = addedElements.indexOf(element);
-        if (index != -1) {
-          return res.badRequest({
-            code: 2,
-            msg: 'There are repeated elements.'
-          });
-        } else {
-          addedElements.push(element);
-        }
-      })
-    }
+
+    elements.forEach(function(element, i, elementsList) {
+      index = addedElements.indexOf(element);
+      if (index != -1) {
+        return res.badRequest({code: 2, msg: 'There are repeated elements.'});
+      } else {
+        addedElements.push(element);
+      }
+    });
 
     code = req.param('code');
     if (!code) {
@@ -92,16 +85,11 @@ module.exports = {
       var company;
       var product;
 
-      return Company.findAll({where: {userId: user.id}, transaction: t})
+      return Company.findOne({where: {userId: user.id}, transaction: t})
       .then(function(company) {
         return Promise.all = [
-          company[0],
-          company[0].getProducts({
-            where: {
-              code: code
-            },
-            transaction: t
-          })
+          company,
+          company.getProducts({where: {code: code}, transaction: t})
         ];
       })
 
@@ -146,13 +134,7 @@ module.exports = {
       })
       .then(function(newProduct) {
         product = newProduct;
-        return ElementData.findAll({
-          where: {
-            id: {
-              $in: elements
-            }
-          }
-        });
+        return ElementData.findAll({where: {id: {$in: elements}}});
       })
       .then(function(result) {
         return product.addElementData(result);

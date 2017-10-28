@@ -100,7 +100,6 @@ arketops.controller('ElementCtrl', ['$scope', '$log', '$state', '$stateParams',
       // when created.
       ElementSvc.createElementData(elementData)
         .then(function(res) {
-          console.log(res);
           $scope.currentElement.ElementData.push(res.data);
           $scope.elementData = {};
           $scope.isRequesting = false;
