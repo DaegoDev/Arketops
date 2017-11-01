@@ -24,7 +24,7 @@ function ($http, $log) {
     getElementsByUser: function () {
       var elements = $http({
         url: '/element/getElementsByUser',
-        method: 'POST'
+        method: 'GET'
       });
       return elements;
     },

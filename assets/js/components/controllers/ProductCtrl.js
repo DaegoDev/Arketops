@@ -88,7 +88,6 @@ arketops.controller('ProductCtrl', ['$scope', '$log', '$state', '$stateParams',
         credentials.elements.push($scope.product.tax.id);
       }
 
-      console.log("log");
       $scope.product.isRequesting = true;
       ProductSvc.create(credentials)
         .then(function(res) {

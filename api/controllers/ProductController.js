@@ -156,42 +156,44 @@ module.exports = {
   * @param  {Object} req Request object
   * @param  {Object} res Response object
   */
-  edit: function(req, res) {
+  update: function(req, res) {
     // Declaración de variables.
+    var productId = null;
     var code = null;
     var name = null;
     var description = null;
     var elements = [];
     var price = null;
     var stateId = null;
-    var productId = null;
     var user = null;
+
     var addedElements = [];
     var elementsToSet = [];
     var mainElement = null;
+
     var productCredentials = null;
+
+    user = req.user;
 
     // Definición de las variables y validaciones.
     elements = req.param("elements");
     if (typeof elements == 'string') {
-      return res.badRequest({
-        code: 1,
-        msg: 'There are no enough elements'
-      });
-    } else {
+      return res.badRequest({code: 1, msg: 'There are no enough elements'});
+    }
+    else {
       elements.forEach(function(element, i, elementsList) {
-        element = JSON.parse(element)
-        elementsList[i] = element;
-        index = addedElements.indexOf(elementsList[i].name.toUpperCase().trim());
+        index = addedElements.indexOf(element);
         if (index != -1) {
-          return res.badRequest({
-            code: 2,
-            msg: 'There are repeated elements.'
-          })
+          return res.badRequest({code: 2, msg: 'There are repeated elements.'})
         } else {
-          addedElements.push(elementsList[i].name.toUpperCase().trim());
+          addedElements.push(element);
         }
       })
+    }
+
+    productId = parseInt(req.param('productId'));
+    if (!productId) {
+      return res.badRequest('Id del producto vacío');
     }
 
     code = req.param('code');
@@ -219,86 +221,63 @@ module.exports = {
       return res.badRequest('Id del estado vacío');
     }
 
-    productId = parseInt(req.param('productId'));
-    if (!productId) {
-      return res.badRequest('Id del producto vacío');
-    }
-
-    //  user = req.user;
-    user = {
-      id: 1
-    }
-
     return sequelize.transaction(function(t) {
-      return Company.findAll({
-        where: {
-          userId: user.id
-        },
-        transaction: t
-      })
+      return Company.findOne({where: {userId: user.id}, transaction: t})
       .then(function(company) {
-        return company[0].getProducts({
-          where: {
-            code: code
-          },
-          transaction: t
-        });
+        return company.getProducts({where: {code: code}, transaction: t});
       })
       .then(function(products) {
-        if (products.length == 0 || products[0].id == productId) {
-          // Creación de las credenciales para crear un producto.
-          productCredentials = {
-            code: code,
-            name: name,
-            description: description,
-            price: price,
-            stateId: stateId,
-            imageURI: "falsdf.com",
-          }
-          return Promise.all = [Product.findById(productId), Product.update(productCredentials, {
-            where: {
-              id: productId
-            },
-            transaction: t
-          })];
+        if (products.length == 1 && products[0].id != productId) {
+          throw "Ya existe un producto con ese código";
         }
-        throw "Ya existe un producto con ese código";
-      })
-      .spread(function(product, amountProductsUpdated) {
-        sails.log.debug(elements);
-        if (elements.length >= 3) {
-          elements.forEach(function(element, i, elementsList) {
-            if (element.main == 'true') {
-              mainElement = element.id;
-            } else {
-              elementsToSet.push(element.id);
-            }
-          })
-          return Promise.all = [product, ElementData.findById(mainElement, {
-            transaction: t
-          })];
-        } else {
-          throw "No hay elementos";
+        else if (products.lenth > 1) {
+          throw "La petición es invalida.";
         }
-      })
-      .spread(function(product, element) {
-        element.ElementProduct = {
-          main: true
-        }
-        elementsToSet.push(element);
-        return product.setElementData(elementsToSet, {
-          transaction: t
-        })
 
+        return Product.findOne({
+          where: {
+            id: productId
+          },
+          include: [
+            {model: Company, where: {userId: user.id}}
+          ]
+        });
       })
+      .then(function(product) {
+        if (!product) {
+          throw "El producto no ha sido encontrado."
+        }
+        // Creación de las credenciales para crear un producto.
+        productCredentials = {
+          code: code,
+          name: name,
+          description: description,
+          price: price,
+          stateId: stateId,
+        };
+        return product.update(productCredentials, {where: {id: productId}, transaction: t});
+      })
+      .then(function (product) {
+        if (!product) {
+          throw "El producto no ha sido actualizado";
+        }
+
+        return Promise.all = [
+          product,
+          ElementData.findAll({where: {id: {$in: elements}}})
+        ];
+      })
+      .spread(function (product, elementData) {
+        return product.setElementData(elementData, {transaction: t});
+      });
     })
     .then(function(result) {
-      sails.log.debug(result[1]);
-      res.ok(result[1]);
+      return res.ok(result);
     })
     .catch(function(err) {
+      return res.serverError(err);
       sails.log.debug(err);
-    })
+    });
   },
   /**
   * Función para eliminar un producto o servicio.
