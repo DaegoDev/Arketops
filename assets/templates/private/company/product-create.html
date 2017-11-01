@@ -28,7 +28,7 @@
               <div input-field>
                 <i
                   class="fa fa-plus-square prefix new-element"
-                  ng-click="createElementModal(categories)"></i>
+                  ng-click="createElementModal(categories)" tooltipped data-position="top" data-delay="50" data-tooltip="Añadir categoría"></i>
                 <select
                   watch
                   material-select
@@ -44,7 +44,7 @@
               <div input-field>
                 <i
                   class="fa fa-plus-square prefix new-element"
-                  ng-click="createLinkedElementModal(lines, categories)"></i>
+                  ng-click="createLinkedElementModal(lines, categories)" tooltipped data-position="top" data-delay="50" data-tooltip="Añadir linea"></i>
                 <select
                   watch
                   material-select
@@ -60,7 +60,7 @@
               <div input-field>
                 <i
                   class="fa fa-plus-square prefix new-element"
-                  ng-click="createElementModal(brands)"></i>
+                  ng-click="createElementModal(brands)" tooltipped data-position="top" data-delay="50" data-tooltip="Añadir marca"></i>
                 <select
                   watch
                   material-select
@@ -76,7 +76,7 @@
               <div input-field>
                 <i
                   class="fa fa-plus-square prefix new-element"
-                  ng-click="createElementModal(taxes)"></i>
+                  ng-click="createElementModal(taxes)" tooltipped data-position="top" data-delay="50" data-tooltip="Añadir impuesto"></i>
                 <select
                   watch
                   material-select
@@ -120,6 +120,7 @@
             <div class="col l4 s12">
               <div input-field>
                 <select
+                  watch
                   name="state"
                   material-select
                   data-beloworigin="true"
