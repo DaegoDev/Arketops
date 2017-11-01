@@ -30,7 +30,7 @@ angular.module('arketops')
           });
           return products;
         },
-        
+
         //Service to get the products by company id.
         getByCompany: function(params) {
           var products = $http({
@@ -46,6 +46,16 @@ angular.module('arketops')
           var portfolio = $http({
             url: '/product/getMyProducts',
             method: 'GET'
+          });
+          return portfolio;
+        },
+
+        // Servicio para obtener todos los productos con los descuentos para un cliente.
+        getMyPortfolioToQuote: function (params) {
+          var portfolio = $http({
+            url: '/product/getMyProductsToQuote',
+            method: 'GET',
+            params: params
           });
           return portfolio;
         },

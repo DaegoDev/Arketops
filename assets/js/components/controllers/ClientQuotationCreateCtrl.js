@@ -1,11 +1,13 @@
 var arketops = angular.module('arketops');
 arketops.controller('ClientQuotationCreateCtrl', ['$scope', '$filter', '$log', '$state', '$stateParams',
-  '$ngConfirm', 'StorageSvc', 'QuotationSvc',
-  function($scope, $filter, $log, $state, $stateParams, $ngConfirm, StorageSvc, QuotationSvc) {
+  '$ngConfirm', 'StorageSvc', 'QuotationSvc', 'ProductSvc',
+  function($scope, $filter, $log, $state, $stateParams, $ngConfirm, StorageSvc,
+    QuotationSvc, ProductSvc) {
     // Declaration of variables
     $scope.client = JSON.parse(StorageSvc.get('clientSelected', 'session'));
     console.log($scope.client);
     $scope.quotation = {};
+    $scope.selectList = [];
 
     $scope.otherHeadquarters = [];
     $scope.client.Headquarters.forEach((headquarters, index, headquartersList) => {
@@ -34,14 +36,41 @@ arketops.controller('ClientQuotationCreateCtrl', ['$scope', '$filter', '$log', '
 
     // Call the service to get the payment forms.
     QuotationSvc.getPaymentforms()
-    .then((res) => {
-      $scope.quotation.paymentForms = {
-        choices: res.data
-      }
-    })
-    .catch((err) => {
+      .then((res) => {
+        $scope.quotation.paymentForms = {
+          choices: res.data
+        }
+      })
+      .catch((err) => {
 
-    })
+      })
+
+    ProductSvc.getMyPortfolioToQuote({
+        clientId: $scope.client.ClientSupplier.id
+      })
+      .then((res) => {
+        console.log(res.data);
+        $scope.products = res.data;
+      })
+      .catch((err) => {
+        console.log(err);
+      })
+
+
+    $scope.showPortfolio = function() {
+      $ngConfirm({
+        title: 'Lista de productos',
+        contentUrl: 'templates/shared/load-product-table.html',
+        scope: $scope,
+        theme: 'modern',
+        buttons: {
+          cancel: {
+            text: 'Cancelar',
+            btnClass: 'btn-red'
+          }
+        }
+      })
+    }
 
 
 
