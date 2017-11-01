@@ -7,7 +7,7 @@
 </div>
 
 <ul class="collapsible popout" data-collapsible="accordion" watch>
-  <li ng-repeat="product in products | filter:searchText">
+  <li ng-repeat="product in products | filter:searchText" on-finish-render>
 
     <div class="collapsible-header">
       <ng-md-icon class="prefix" icon="blur_on" style="fill: blue darken-1" size="20"></ng-md-icon>
@@ -36,7 +36,8 @@
               class="btn col s6 m12"
               style="margin-top:5px"
               name="button"
-              ng-if="isPrivate()">Editar</button>
+              ng-if="isPrivate()"
+              ng-click="updateProduct(product)">Editar</button>
             <button
               type="button"
               class="btn col s6 m12"
@@ -56,7 +57,7 @@
               </span>
 
               <span>
-                <strong id="elementData">{{elementData.name | capitalize}}</strong>
+                <strong>{{elementData.name | capitalize}}</strong>
               </span>
 
               <span>
@@ -71,7 +72,7 @@
             <div class="col s12 m12 ">
               <label for="description">Descripción:
               </label><br>
-              <strong id="description">{{product.description | capitalize}}</strong>
+              <textarea class="materialize-textarea" readonly>{{product.description | capitalize}}</textarea>
             </div>
           </div>
         </div>

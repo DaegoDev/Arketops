@@ -38,12 +38,8 @@ arketops.controller('ProductCtrl', ['$scope', '$log', '$state', '$stateParams',
 
       // Gets all the states a product can be.
       ProductSvc.getStates()
-        .then(function(res) {
-          $scope.states = res.data;
-        })
-        .catch(function(err) {
-          $log.error(err);
-        });
+        .then(function(res) {$scope.states = res.data;})
+        .catch(function(err) {  $log.error(err);});
     }
     $scope.init();
 

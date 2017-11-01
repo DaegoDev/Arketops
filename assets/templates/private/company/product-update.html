@@ -1,0 +1,228 @@
+<div class="container">
+  <div class="row">
+    <form novalidate>
+      <div class="row">
+        <div class="col s12 m8">
+
+          <div class="col l9 s12">
+            <div input-field>
+              <input
+                type="text"
+                name="name"
+                class="validate"
+                ng-model="product.name"
+                required>
+              <label>Nombre</label>
+            </div>
+          </div>
+
+          <div class="col l3 s12">
+            <div input-field>
+              <input
+                type="text"
+                name="code"
+                class="validate"
+                ng-model="product.code"
+                required>
+              <label>Código</label>
+            </div>
+          </div>
+
+          <div class="col s12 m6">
+            <div input-field>
+              <select
+                watch
+                material-select
+                ng-model="product.category"
+                ng-options="data.name for data in categories.ElementData">
+                <option value="">Categoria</option>
+              </select>
+              <label>Categoria</label>
+            </div>
+          </div>
+
+          <div class="col s12 m6">
+            <div input-field>
+              <select
+                watch
+                material-select
+                ng-model="product.line"
+                ng-options="data.name for data in lines.ElementData | linkedElementFilter:product.category:true">
+                <option value="">Linea</option>
+              </select>
+              <label>Linea</label>
+            </div>
+          </div>
+
+          <div class="col s12 m6">
+            <div input-field>
+              <select
+                watch
+                material-select
+                ng-model="product.brand"
+                ng-options="data.name for data in brands.ElementData">
+                <option value="">Marca</option>
+              </select>
+              <label>Marca</label>
+            </div>
+          </div>
+
+          <div class="col s12 m6">
+            <div input-field>
+              <select
+                watch
+                material-select
+                ng-model="product.tax"
+                ng-options="data.name for data in taxes.ElementData">
+                <option value="">Impuesto</option>
+              </select>
+              <label>Impuesto</label>
+            </div>
+          </div>
+
+          <div class="col l12 s12 ">
+            <div input-field>
+              <textarea
+                class="materialize-textarea validate"
+                type="text"
+                name="description"
+                ng-model="product.description"
+                required></textarea>
+              <label>Descripción</label>
+            </div>
+          </div>
+
+          <div class="col l4 s12">
+            <div input-field>
+              <input
+                type="number"
+                name="price"
+                class="validate"
+                ng-model="product.price"
+                min="0"
+                required>
+              <label>Precio</label>
+            </div>
+          </div>
+
+          <div class="col l4 s12">
+            <div input-field>
+              <select
+                name="state"
+                material-select
+                data-beloworigin="true"
+                ng-model="product.state"
+                ng-options="state.name for state in states"
+                class="validate"
+                required>
+                <option value="">Estado</option>
+              </select>
+              <label>Estado</label>
+            </div>
+          </div>
+        </div>
+
+        <div class="col s12 m4">
+          <img
+            class="responsive-img section col s12"
+            ng-style="imgAvatarStyle"
+            ng-src="{{product.imageURI}}">
+        </div>
+      </div>
+
+      <div class="row">
+        <!-- NAME VALIDATIONS -->
+        <div
+          class="col s12 invalid"
+          ng-messages="productForm.name.$error"
+          ng-if="product.hasErrors"
+          ng-messages-multiple>
+          <p ng-message="required">
+            <b>Debe ingresar un nombre al producto.</b>
+          </p>
+        </div>
+
+        <!-- CODE VALIDATIONS -->
+        <div
+          class="col s12 invalid"
+          ng-messages="productForm.code.$error"
+          ng-if="product.hasErrors"
+          ng-messages-multiple>
+          <p ng-message="required">
+            <b>Debe ingresar un código al producto.</b>
+          </p>
+        </div>
+
+        <!-- DESCRIPTION VALIDATIONS -->
+        <div
+          class="col s12 invalid"
+          ng-messages="productForm.description.$error"
+          ng-if="product.hasErrors"
+          ng-messages-multiple>
+          <p ng-message="required">
+            <b>Debe ingresar una descripción al producto.</b>
+          </p>
+        </div>
+
+        <!-- PRICE VALIDATIONS -->
+        <div
+          class="col s12 invalid"
+          ng-messages="productForm.price.$error"
+          ng-if="product.hasErrors"
+          ng-messages-multiple>
+          <p ng-message="required">
+            <b>Debe ingresar el precio del producto.</b>
+          </p>
+          <p ng-message="number">
+            <b>El precio del producto debe ser un valor númerico.</b>
+          </p>
+          <p ng-message="min">
+            <b>El precio no puede ser menor a 0.</b>
+          </p>
+        </div>
+
+        <!-- STATE VALIDATIONS -->
+        <div
+          class="col s12 invalid"
+          ng-messages="productForm.state.$error"
+          ng-if="product.hasErrors"
+          ng-messages-multiple>
+          <p ng-message="required">
+            <b>Debe ingresar el estado del producto.</b>
+          </p>
+        </div>
+
+        <!-- IMAGE VALIDATIONS -->
+        <div
+          class="col s12 invalid"
+          ng-messages="productForm.imageFile.$error"
+          ng-if="product.hasErrors"
+          ng-messages-multiple>
+          <p ng-message="required">
+            <b>Debe ingresar una imagen del producto.</b>
+          </p>
+        </div>
+      </div>
+
+      <div class="row" ng-show="!product.isRequesting">
+        <button type="submit" class="btn waves-effect waves-light" name="button">Guardar</button>
+      </div>
+
+      <div class="center" ng-show="product.isRequesting">
+        <div class="preloader-wrapper big active">
+          <div class="spinner-layer spinner-yellow-only">
+            <div class="circle-clipper left">
+              <div class="circle"></div>
+            </div>
+            <div class="gap-patch">
+              <div class="circle"></div>
+            </div>
+            <div class="circle-clipper right">
+              <div class="circle"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </form>
+  </div>
+</div>
