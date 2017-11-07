@@ -4,7 +4,8 @@
       <div class="row">
         <div class="col s4">
           <label for="element">Elemento</label>
-          <select id="element" ng-model="elements.selected" ng-options="element.name | capitalize for element in elements.choices" ng-change="getElementData(elements.selected,0)" material-select watch></select>
+          <select id="element" ng-model="elements.selected" ng-options="element.name | capitalize for element in elements.choices"
+          ng-change="getElementData(elements.selected,0)" material-select watch></select>
         </div>
         <div class="col s4">
           <label for="elementData">Valores</label>

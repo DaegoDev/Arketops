@@ -8,8 +8,12 @@ arketops.directive('menubar', function() {
   }
 })
 
-arketops.controller('menubarCtrl', ['$scope', '$cookieStore', '$ngConfirm', 'AuthSvc', '$interval', function($scope, $cookieStore, $ngConfirm, AuthSvc, $interval) {
+arketops.controller('menubarCtrl', ['$scope', '$cookieStore', '$ngConfirm', 'AuthSvc', '$interval', 'AnchorSmoothScroll',
+  function($scope, $cookieStore, $ngConfirm, AuthSvc, $interval, AnchorSmoothScroll) {
 
+    $scope.scrollUp = function () {
+      AnchorSmoothScroll.scrollTo('navbar');
+    }
 
-
-}]);
+  }
+]);

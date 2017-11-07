@@ -51,7 +51,7 @@ module.exports = {
   buildContentSupplier: function(supplier, codePdf) {
     var firstSection = [{
         columns: [{
-            image: supplier.imageURI,
+            image: sails.config.appPath + supplier.imageURI,
             width: 110,
             height: 90,
           },
@@ -222,13 +222,13 @@ module.exports = {
    * @param  {Object} productsQuery Contiene la información de los productos obtenida de la base de datos.
    * @param  {Object} objectProduct Contiene la información de los productos ingresada por el usuario, como cantidad a cotizar.
    */
-  buildTableProducts: function(productsQuery, objectProduct) {
+  buildTableProducts: function(productsQuery, objectProduct, elementsDiscountClient) {
     var thirdSection = [{
       style: 'tableProducts',
       table: {
         widths: ['5,5%', '8,5%', '23%', '12%', '15%', '12,5%', '12%', '14%'],
         headerRows: 1,
-        body: createTableBodyProducts(productsQuery, objectProduct),
+        body: createTableBodyProducts(productsQuery, objectProduct,elementsDiscountClient),
       },
       layout: {
         fillColor: function(i, node) {
@@ -401,6 +401,7 @@ function createTableBodyProducts(productsQuery, objectProduct, elementsDiscountC
       style: 'tableHeader'
     }]
   ];
+  // sails.log.debug(productsQuery)
   productsQuery.forEach(function(product, index, productsList) {
     var elements = product.ElementData;
     var amountElements = elements.length;
@@ -417,34 +418,41 @@ function createTableBodyProducts(productsQuery, objectProduct, elementsDiscountC
     var indexElementMain = null;
     for (i = 0; i < amountElements; i++) {
       var isDiscountClient = false;
-      if (elements[i].Element.name == "marca") {
+      if (elements[i].Element.name.toUpperCase() == "MARCA") {
         trademark = elements[i].name;
-      } else if (elements[i].Element.name == "impuesto") {
+      } else if (elements[i].Element.name.toUpperCase() == "IMPUESTO") {
         taxName = elements[i].name;
         taxValue = elements[i].discount;
         continue;
       }
       for (var j = 0; j < elementsDiscountLenght; j++) {
-        if (element[i].id == elementsDiscountClient[j].id) {
+        if (elements[i].id == elementsDiscountClient[j].id) {
           discountsList[i] = elementsDiscountClient[j].ClientDiscount.discount;
           especialDiscount = true;
-          isDiscountClient = true;
+          // isDiscountClient = true;
           break;
         }
 
       }
-      // if (!mainFound && !especialDiscount) {
-        if (elements[i].ElementProduct.main) {
-          indexElementMain = i;
-          // discount = elements[i].discount;
-          // mainFound = true;
-        }
-        if (!isDiscountClient) {
-          discountsList[i] = elements[i].discount;
-          // discount += elements[i].discount;
-        }
-      // }else if (true) {
 
+      if (especialDiscount) {
+        discount += elementsDiscountClient[j].ClientDiscount.discount;
+        break;
+      }
+      discount += elements[i].discount;
+
+      // if (!mainFound && !especialDiscount) {
+      //   if (elements[i].ElementProduct.main) {
+      //     indexElementMain = i;
+      //     discount = elements[i].discount;
+      //     mainFound = true;
+      //   }
+      //   if (!isDiscountClient) {
+      //     discountsList[i] = elements[i].discount;
+      //     discount += elements[i].discount;
+      //   }
+      // }else if (true) {
+      //
       // }
     }
     amount = objectProduct[product.id].amount;
@@ -466,7 +474,7 @@ function createTableBodyProducts(productsQuery, objectProduct, elementsDiscountC
       text: amount,
       style: 'tableBody'
     }, {
-      text: price,
+      text: '$ ' + price.toLocaleString(),
       style: 'tableBody'
     }, {
       text: discount + "%",
@@ -475,7 +483,7 @@ function createTableBodyProducts(productsQuery, objectProduct, elementsDiscountC
       text: taxName + " " + taxValue + "%",
       style: 'tableBody'
     }, {
-      text: "$ " + total.toFixed(2),
+      text: "$ " + total.toLocaleString(),
       style: 'tableBody'
     }];
     contentTableProducts.push(productToPdf);
@@ -487,7 +495,7 @@ function createTableBodyProducts(productsQuery, objectProduct, elementsDiscountC
     text: "Total",
     style: 'tableBody'
   }, {
-    text: "$ " + totalQuotation.toFixed(2),
+    text: "$ " + totalQuotation.toLocaleString(),
     style: 'tableBody'
   }]
   contentTableProducts.push(lastColumn);

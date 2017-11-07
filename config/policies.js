@@ -58,10 +58,15 @@ module.exports.policies = {
     delete: 'isAuthenticated',
     getByCompany: 'isValidToDiscounts',
     getMyProducts: 'isAuthenticated',
+    getMyProductsToQuote: 'isAuthenticated'
   },
 
   HeadquartersController: {
     create: 'isAuthenticated'
+  },
+
+  QuotationController: {
+    createToClient: 'isAuthenticated',
   }
 
 

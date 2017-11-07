@@ -210,7 +210,7 @@
             $scope.forms.formSignup.$setUntouched();
             $ngConfirm({
               title: 'Registro exitoso',
-              content: 'Se ha enviado un correo de bienvenida a su correo electronico.',
+              content: 'Se ha enviado un mensaje de bienvenida a su correo electronico.',
               type: 'green',
               typeAnimated: true,
               boxWidth: '40%',

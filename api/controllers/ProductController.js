@@ -381,10 +381,59 @@ module.exports = {
   },
 
   /**
-  * Función para obtener los productos o servicios por nombre.
-  * @param  {Object} req Request object
-  * @param  {Object} res Response object
-  */
+   * Función para obtener los productos o servicios de un usuario atenticado.
+   * @param  {Object} req Request object
+   * @param  {Object} res Response object
+   */
+  getMyProductsToQuote: function(req, res) {
+    // Declaración de variables.
+    var user = null;
+    var clientId = null;
+
+    clientId = parseInt(req.param('clientId'));
+    if (!clientId) {
+      return res.badRequest('ClientId required')
+    }
+
+    // Definición de variables.
+    user = req.user;
+
+    Product.findAll({
+      where: {enabled: true},
+      include: [
+        {
+          model: ElementData,
+          include: [{model: Element},{model: ClientSupplier, where: {id: clientId}, required: false}]
+        },
+        {
+          model: Company,
+          where: {userId: user.id}
+        }
+      ],
+      order: [[ElementData, Element, 'id', 'ASC']]
+    })
+    .then(function (products) {
+      // products.forEach(function (product, index, productList) {
+      //   ImageDataURIService.encode(path.resolve(sails.config.appPath + product.imageURI))
+      //   .then((imageDataURI) => {
+      //     product.imageURI = imageDataURI;
+      //   })
+      //   .catch((err) => {
+      //     sails.log.debug(err)
+      //   })
+      // });
+      // setTimeout(function() {return res.ok(products);}, 10);
+      return res.ok(products)
+    })
+    .catch(function(err) {
+      return res.serverError(err);
+    });
+  },
+  /**
+   * Función para obtener los productos o servicios por nombre.
+   * @param  {Object} req Request object
+   * @param  {Object} res Response object
+   */
   getByName: function(req, res) {
     // Declaración de variables.
     var name = null;

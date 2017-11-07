@@ -1,0 +1,36 @@
+
+<table class="highlight bordered responsive-table">
+  <thead>
+    <tr>
+      <th>Código</th>
+      <th>Nombre</th>
+      <th>Marca</th>
+      <th>Categoría</th>
+      <th>Línea</th>
+      <th>Impuesto</th>
+      <th>Opciones</th>
+      <th style="width:100px"></th>
+    </tr>
+  </thead>
+
+  <tbody>
+    <tr ng-repeat="product in products">
+      <td>{{product.code}}</td>
+      <td>{{product.name}}</td>
+      <td ng-repeat="elementData in product.ElementData">
+        <div ng-if="elementData.Element.name === 'Marca'">{{elementData.name}}</div>
+        <div ng-if="elementData.Element.name === 'Categoria'">{{elementData.name}}</div>
+        <div ng-if="elementData.Element.name === 'Linea'">{{elementData.name}}</div>
+        <div ng-if="elementData.Element.name === 'Impuesto'">{{elementData.name}}</div>
+      </td>
+      <td style="width:100px">
+        <a class="waves-effect waves-light btn" ng-click="addProductToList(product, $index)">Añadir</a>
+      </td>
+      <td style="width:100px" ng-if="product.added">
+        <ng-md-icon  icon="check" style="fill: green" size="40"></ng-md-icon>
+        <ng-md-icon ng-click="removeProductOfList($index, product)" icon="remove_circle" style="fill: red; margin-left: 10px; cursor: pointer"
+        size="40" tooltipped data-position="top" data-delay="50" data-tooltip="Remover"></ng-md-icon>
+      </td>
+    </tr>
+  </tbody>
+</table>

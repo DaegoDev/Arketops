@@ -118,5 +118,11 @@ arketops.config(['$stateProvider', '$urlRouterProvider',
         controller: 'ClientDiscountsCtrl'
       })
 
+      .state('clientDetails.quotationCreate', {
+        url: '/clientQuotationCreate',
+        templateUrl: 'templates/private/company/client/client-quotation-create.html',
+        controller: 'ClientQuotationCreateCtrl'
+      })
+
 
   }]);
