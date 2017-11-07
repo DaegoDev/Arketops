@@ -92,18 +92,29 @@
     </thead>
 
     <tbody>
-      <tr ng-repeat="product in selectList">
+      <tr ng-repeat="product in selectList" ng-init="sumToTotal(product.subtotal)">
         <td>{{product.code}}</td>
         <td>{{product.name}}</td>
         <td>{{product.brand}}</td>
         <!-- <td>{{product.category}}</td>
         <td>{{product.line}}</td> -->
-        <td>{{product.imposed}}</td>
-        <td style="width:100px"><input style="text-align: center; margin-bottom: -17px; height: 2rem;" type="number" name="amount" ng-model="product.amount"></td>
+        <td>{{product.tax.name }} ({{product.tax.discount}}%) </td>
+        <td style="width:100px"><input style="text-align: center; margin-bottom: -17px; height: 2rem;" type="number" name="amount" ng-change="calculateSubtotal($index)" ng-model="product.amount"></td>
         <td>{{product.price | currency: '$' : '0'}}</td>
         <td>{{product.totalDiscount}}%</td>
-        <td>{{((product.amount * product.price) * ((product.totalDiscount / 100) + 1))}}</td>
+        <td>{{product.subtotal | currency: '$' : '0'}}</td>
+        <!-- <td>{{((product.amount * product.price) * ((product.tax.discount / 100) + 1)) * (1 - (product.totalDiscount / 100)) | currency: '$' : '0'}}</td> -->
+        <td>
+          <ng-md-icon ng-click="removeProductOfList(product.indexProductList, $index)" icon="remove_circle" style="fill: red; cursor: pointer; margin-top:-10px" size="30" tooltipped data-position="top" data-delay="50" data-tooltip="Remover"></ng-md-icon>
+        </td>
       </tr>
     </tbody>
   </table>
+  <div class="right total-quotation">
+    <label for="">Total: </label>
+    <span>{{total | currency : '$' : '0'}}</span>
+  </div>
+</div>
+<div class="center">
+  <button class="btn waves-effect waves-light" type="button" ng-click="createQuotation()" name="button">Crear</button>
 </div>

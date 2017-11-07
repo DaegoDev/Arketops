@@ -7,49 +7,53 @@ arketops.directive('productTable', function() {
     scope: {
       products: '=',
       selectList: '=?',
+      ctrlFn: '&'
     },
     controller: 'productTableCtrl',
   }
 })
 
-arketops.controller('productTableCtrl', ['$scope', '$log', 'AuthSvc', '$state', 'StorageSvc', productTableCtrl]);
+arketops.controller('productTableCtrl', ['$scope', '$log', '$ngConfirm', 'AuthSvc', '$state',
+  'StorageSvc', productTableCtrl
+]);
 
-function productTableCtrl($scope, $log, AuthSvc, $state, StorageSvc) {
+function productTableCtrl($scope, $log, $ngConfirm, AuthSvc, $state, StorageSvc) {
 
-  // console.log($scope.products);
+  // console.log($scope);
 
-  $scope.addProductToList = function(productSelected) {
+  $scope.addProductToList = function(productSelected, index) {
     var productToQuote = buildProduct(productSelected);
-    console.log(productToQuote);
     if (productToQuote) {
-      var index = $scope.selectList.indexOf(productToQuote);
-      if (index == -1) {
-        $scope.selectList.push(productToQuote);
+      if ($scope.products[index].added) {
+        $ngConfirm('Ya se añadió el producto.');
+        return;
       }
+      productToQuote.indexProductList = index;
+      $scope.selectList.push(productToQuote);
+      $scope.products[index].added = true;
     }
   }
 
   function buildProduct(productSelected) {
-    console.log(productSelected);
     var totalDiscount = 0;
     var brand = null;
     var category = null;
     var line = null;
-    var imposed = null;
-    productSelected.ElementData.forEach(function (elementData, index, elementDataList) {
+    var tax = null;
+    var amount = 1;
+    productSelected.ElementData.forEach(function(elementData, index, elementDataList) {
       if (elementData.ClientSuppliers.length === 0) {
         var discount = elementData.discount
-      }else {
+      } else {
         var discount = elementData.ClientSuppliers[0].ClientDiscount.discount;
       }
-      console.log(elementData.Element.name.toUpperCase());
       switch (elementData.Element.name.toUpperCase()) {
         case 'MARCA':
           brand = elementData.name;
           totalDiscount += discount;
           break;
         case 'CATEGORIA':
-          category =  elementData.name;
+          category = elementData.name;
           totalDiscount += discount;
           break;
         case 'LINEA':
@@ -57,23 +61,41 @@ function productTableCtrl($scope, $log, AuthSvc, $state, StorageSvc) {
           totalDiscount += discount;
           break;
         case 'IMPUESTO':
-          imposed = elementData.name + ' (' + discount + '%)';
+          tax = {
+            name: elementData.name,
+            discount: discount
+          };
 
       }
     })
-    console.log('Bye');
-    var productBuilt = {
-      code: productSelected.code,
-      name: productSelected.name,
-      brand: brand,
-      category: category,
-      line: line,
-      imposed: imposed,
-      price: productSelected.price,
-      totalDiscount: totalDiscount,
-      amount: 1
-    }
-    return productBuilt;
+    productSelected.brand = brand;
+    productSelected.tax = tax;
+    productSelected.totalDiscount = totalDiscount;
+    productSelected.amount = amount;
+    productSelected.subtotal = ((amount * productSelected.price) * ((tax.discount / 100) + 1)) * (1 - (totalDiscount / 100));
+
+    return productSelected;
+    // var productBuilt = {
+    //   id: productSelected.id,
+    //   code: productSelected.code,
+    //   name: productSelected.name,
+    //   brand: brand,
+    //   category: category,
+    //   line: line,
+    //   tax: tax,
+    //   price: productSelected.price,
+    //   totalDiscount: totalDiscount,
+    //   amount: amount,
+    //   subtotal: ((amount * productSelected.price) * ((tax.discount / 100) + 1)) * (1 - (totalDiscount / 100))
+    // }
+    // return productBuilt;
+  }
+
+  $scope.removeProductOfList = function (indexProductList, product) {
+    var indexSelectList = $scope.selectList.indexOf(product);
+    $scope.selectList.splice(indexSelectList, 1);
+    $scope.products[indexProductList].added = false;
+    $scope.ctrlFn();
   }
 
 }

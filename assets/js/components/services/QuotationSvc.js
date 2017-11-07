@@ -8,6 +8,14 @@ angular.module('arketops')
             method: 'GET',
           });
           return paymentForms;
+        },
+        createToClient: function (params) {
+          var quotation = $http({
+            url: '/quotation/createToClient',
+            method: 'POST',
+            data: params
+          });
+          return quotation;
         }
       };
     }

@@ -54,10 +54,9 @@ module.exports = {
     }
 
     products = req.param("products");
-    if (typeof products != 'string') {
       if (products) {
+        sails.log.debug(products)
         products.forEach(function(product, i, productsList) {
-          product = JSON.parse(product);
           objectProduct[product.id] = product;
           productsList[i] = product;
           index = addedProducts.indexOf(productsList[i].id);
@@ -76,9 +75,7 @@ module.exports = {
           msg: 'There are no enough products'
         });
       }
-    } else {
-      addedProducts.push(JSON.parse(products).id)
-    }
+
 
     user = req.user;
 
@@ -87,7 +84,7 @@ module.exports = {
     }, null);
 
     // Ruta donde se guarda el pdf de la cotización en el servidor.
-    quotationFilePath = sails.config.appPath + '/assets/documents/quotations/confirmed/' + clientId + date + '.pdf';
+    quotationFilePath = sails.config.appPath + '/resources/documents/quotations/confirmed/' + clientId + date + '.pdf';
 
     // Se verifica que el usuario definido como proveedor exista. En caso de que exista se
     // es pasado a la variable supplier y se busca la vinculación con el cliente.
@@ -100,6 +97,9 @@ module.exports = {
           where: {
             main: true
           }
+        },{
+          model: User,
+          attributes: ['email']
         }]
       })
       .then(function(supplierRaw) {
@@ -183,10 +183,10 @@ module.exports = {
         if (!productsValid) {
           throw "Los productos no pertenecen al proveedor"
         }
-        return res.ok({
-          products: productsQuery,
-          elementsDiscount: elementsDiscountClient
-        });
+        // return res.ok({
+        //   products: productsQuery,
+        //   elementsDiscount: elementsDiscountClient
+        // });
         // Construye la tabla de productos para la cotización.
         QuotationPDFService.buildTableProducts(productsQuery, objectProduct, elementsDiscountClient);
 
@@ -197,7 +197,7 @@ module.exports = {
         var quotationCredentials = {
           code: code,
           date: date,
-          state: "confirmado",
+          state: "creado",
           clientSupplierId: clientSupplier.id,
           fileURI: quotationFilePath,
           quotationValidityPeriod: quotationValidityPeriod,
@@ -209,6 +209,8 @@ module.exports = {
       .then(function(quotation) {
         // Guarda el documento pdf en la ruta pasada como parametro.
         QuotationPDFService.saveDocument(quotationFilePath);
+        MailService.sendQuotationToClient(supplier, client, quotationFilePath);
+        MailService.sendQuotationToSupplier(supplier, client, quotationFilePath);
         res.created(quotation);
       })
       .catch(function(err) {
@@ -279,7 +281,7 @@ module.exports = {
     }, null);
 
     // Ruta donde se guarda el pdf de la cotización en el servidor.
-    quotationFilePath = sails.config.appPath + '/assets/documents/quotations/pending/' + date + '.pdf';
+    quotationFilePath = sails.config.appPath + '/resources/documents/quotations/pending/' + date + '.pdf';
 
     // Se verifica que el cliente y proveedor existan. En caso de que exista
     // es pasado a la variable supplier y se busca la vinculación con el cliente.
