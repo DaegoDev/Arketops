@@ -36,6 +36,26 @@ angular.module('arketops')
           return product;
         },
 
+        // Servicio que actualiza los datos de un producto de un cliente.
+        update: function (credentials) {
+          productCredentials = {
+            productId: credentials.productId,
+            code: credentials.code,
+            name: credentials.name,
+            description: credentials.description,
+            price: credentials.price,
+            stateId: credentials.stateId,
+            elements: credentials.elements
+          };
+
+          var product = $http({
+            url: '/product/update',
+            method: 'PUT',
+            data: productCredentials
+          });
+          return product;
+        },
+
         // Servicio para obtener productos dado su nombre.
         getByName: function(params) {
           var products = $http({

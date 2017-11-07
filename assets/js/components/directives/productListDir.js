@@ -101,14 +101,14 @@ function productListCtrl($scope, $log, $ngConfirm, AuthSvc, $state, StorageSvc, 
 
   // Function to update a product.
   $scope.updateProduct = function(product) {
-    console.log(product);
     $scope.product = {
+      id: product.id,
       name: product.name,
       code: product.code,
       description: product.description,
       price: product.price,
       imageURI: product.imageURI
-    }
+    };
 
     angular.forEach(product.ElementData, function (elementData, index) {
       for (var i in $scope.categories.ElementData) {
@@ -147,8 +147,9 @@ function productListCtrl($scope, $log, $ngConfirm, AuthSvc, $state, StorageSvc, 
     }
 
     $ngConfirm({
-      title: 'Editar producto.',
+      title: 'EDITAR PRODUCTO.',
       theme: 'material',
+      type: 'orange',
       contentUrl: 'templates/private/company/product-update.html',
       scope: $scope,
       backgroundDismiss: true,
@@ -159,7 +160,38 @@ function productListCtrl($scope, $log, $ngConfirm, AuthSvc, $state, StorageSvc, 
           btnClass: 'btn',
           text: 'Guardar',
           action: function (scope, button) {
+            console.log(scope.product);
+            credentials = {
+              productId: scope.product.id,
+              code: scope.product.code,
+              name: scope.product.name,
+              description: scope.product.description,
+              price: scope.product.price,
+              stateId: scope.product.state.id,
+              elements: []
+            };
 
+            if (scope.product.category) {
+              credentials.elements.push(scope.product.category.id);
+            }
+            if ($scope.product.line) {
+              credentials.elements.push(scope.product.line.id);
+            }
+            if ($scope.product.brand) {
+              credentials.elements.push(scope.product.brand.id);
+            }
+            if ($scope.product.tax) {
+              credentials.elements.push(scope.product.tax.id);
+            }
+
+            ProductSvc.update(credentials)
+            .then(function (product) {
+              $log.log(product);
+            })
+            .catch(function (err) {
+              $log.log(err)
+            });
+            return false;
           }
         },
         exit: {

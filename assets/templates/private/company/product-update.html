@@ -1,4 +1,4 @@
-<div class="container">
+<div class="container" style="overflow-y: auto; overflow-x: hidden">
   <div class="row">
     <form novalidate>
       <div class="row">
@@ -205,11 +205,7 @@
         </div>
       </div>
 
-      <div class="row" ng-show="!product.isRequesting">
-        <button type="submit" class="btn waves-effect waves-light" name="button">Guardar</button>
-      </div>
-
-      <div class="center" ng-show="product.isRequesting">
+      <!-- <div class="center" ng-show="product.isRequesting">
         <div class="preloader-wrapper big active">
           <div class="spinner-layer spinner-yellow-only">
             <div class="circle-clipper left">
@@ -223,7 +219,7 @@
             </div>
           </div>
         </div>
-      </div>
+      </div> -->
     </form>
   </div>
 </div>
