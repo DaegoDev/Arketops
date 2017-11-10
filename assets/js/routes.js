@@ -87,6 +87,12 @@ arketops.config(['$stateProvider', '$urlRouterProvider',
         controller: 'SupplierDiscountsCtrl'
       })
 
+      .state('supplierDetails.quotationRequest', {
+        url: '/supplierQuotationRequest',
+        templateUrl: 'templates/private/company/supplier/supplier-quotation-request.html',
+        controller: 'SupplierQuotationRequestCtrl'
+      })
+
       // Routes for client
       .state('clientsList', {
         url: '/clients',

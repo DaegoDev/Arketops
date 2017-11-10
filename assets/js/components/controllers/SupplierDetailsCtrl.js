@@ -31,16 +31,15 @@ arketops.controller('SupplierDetailsCtrl', ['$scope', '$log', '$state', '$stateP
       $scope.lastOption = index;
       $scope.options[index].selected = true;
       if (option == 'Datos personales') {
-        // console.log("Datos");
         $state.go('supplierDetails.personalData')
       } else if (option == 'Productos') {
         $state.go('supplierDetails.products');
       } else if (option == 'Descuentos') {
         $state.go('supplierDetails.discounts');
       } else if (option == 'Cotizaciones') {
-        // console.log('Coti');
+
       } else if (option == 'Cotizar') {
-        // console.log('Cotizar');
+        $state.go('supplierDetails.quotationRequest');
       }
     }
 

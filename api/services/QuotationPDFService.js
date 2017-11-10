@@ -228,7 +228,7 @@ module.exports = {
       table: {
         widths: ['5,5%', '8,5%', '23%', '12%', '15%', '12,5%', '12%', '14%'],
         headerRows: 1,
-        body: createTableBodyProducts(productsQuery, objectProduct,elementsDiscountClient),
+        body: createTableBodyProducts(productsQuery, objectProduct, elementsDiscountClient),
       },
       layout: {
         fillColor: function(i, node) {
@@ -403,8 +403,8 @@ function createTableBodyProducts(productsQuery, objectProduct, elementsDiscountC
   ];
   // sails.log.debug(productsQuery)
   productsQuery.forEach(function(product, index, productsList) {
-    var elements = product.ElementData;
-    var amountElements = elements.length;
+    var elementData = product.ElementData;
+    var amountElements = elementData.length;
     var discount = 0;
     var trademark = null;
     var amount = null;
@@ -413,43 +413,44 @@ function createTableBodyProducts(productsQuery, objectProduct, elementsDiscountC
     var taxValue = null;
     var total = null;
     var mainFound = false;
-    var especialDiscount = false;
+    var isSpecialDiscount = false;
     var discountsList = [];
     var indexElementMain = null;
-    for (i = 0; i < amountElements; i++) {
-      var isDiscountClient = false;
-      if (elements[i].Element.name.toUpperCase() == "MARCA") {
-        trademark = elements[i].name;
-      } else if (elements[i].Element.name.toUpperCase() == "IMPUESTO") {
-        taxName = elements[i].name;
-        taxValue = elements[i].discount;
+    var specialDiscount = null;
+
+    for (var i = 0; i < amountElements; i++) {
+      // var isDiscountClient = false;
+      if (elementData[i].Element.name.toUpperCase() == "MARCA") {
+        trademark = elementData[i].name;
+      } else if (elementData[i].Element.name.toUpperCase() == "IMPUESTO") {
+        taxName = elementData[i].name;
+        taxValue = elementData[i].discount;
         continue;
       }
       for (var j = 0; j < elementsDiscountLenght; j++) {
-        if (elements[i].id == elementsDiscountClient[j].id) {
-          discountsList[i] = elementsDiscountClient[j].ClientDiscount.discount;
-          especialDiscount = true;
+        if (elementData[i].id == elementsDiscountClient[j].id) {
+          specialDiscount = elementsDiscountClient[j].ClientDiscount.discount;
+          isSpecialDiscount = true;
           // isDiscountClient = true;
           break;
         }
-
       }
 
-      if (especialDiscount) {
-        discount += elementsDiscountClient[j].ClientDiscount.discount;
-        break;
+      if (isSpecialDiscount) {
+        discount += specialDiscount;
+      } else {
+        discount += elementData[i].discount;
       }
-      discount += elements[i].discount;
 
       // if (!mainFound && !especialDiscount) {
-      //   if (elements[i].ElementProduct.main) {
+      //   if (elementData[i].ElementProduct.main) {
       //     indexElementMain = i;
-      //     discount = elements[i].discount;
+      //     discount = elementData[i].discount;
       //     mainFound = true;
       //   }
       //   if (!isDiscountClient) {
-      //     discountsList[i] = elements[i].discount;
-      //     discount += elements[i].discount;
+      //     discountsList[i] = elementData[i].discount;
+      //     discount += elementData[i].discount;
       //   }
       // }else if (true) {
       //

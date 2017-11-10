@@ -55,7 +55,6 @@ module.exports = {
 
     products = req.param("products");
       if (products) {
-        sails.log.debug(products)
         products.forEach(function(product, i, productsList) {
           objectProduct[product.id] = product;
           productsList[i] = product;
@@ -183,10 +182,7 @@ module.exports = {
         if (!productsValid) {
           throw "Los productos no pertenecen al proveedor"
         }
-        // return res.ok({
-        //   products: productsQuery,
-        //   elementsDiscount: elementsDiscountClient
-        // });
+
         // Construye la tabla de productos para la cotización.
         QuotationPDFService.buildTableProducts(productsQuery, objectProduct, elementsDiscountClient);
 
@@ -245,10 +241,8 @@ module.exports = {
     }
 
     products = req.param("products");
-    if (typeof products != 'string') {
       if (products) {
         products.forEach(function(product, i, productsList) {
-          product = JSON.parse(product);
           objectProduct[product.id] = product;
           productsList[i] = product;
           index = addedProducts.indexOf(productsList[i].id);
@@ -267,14 +261,8 @@ module.exports = {
           msg: 'There are no enough products'
         });
       }
-    } else {
-      addedProducts.push(JSON.parse(products).id)
-    }
 
-    //  user = req.user;
-    user = {
-      id: 5
-    }
+    user = req.user;
 
     date = TimeZoneService.getDateNow({
       offset: -5
@@ -323,9 +311,12 @@ module.exports = {
               where: {
                 main: true
               }
+            },{
+              model: User,
+              attributes: ['email']
             }]
           }), Quotation.findAll({
-            order: 'code DESC',
+            order: 'id DESC',
             include: [{
               model: ClientSupplier,
               where: {
@@ -353,7 +344,6 @@ module.exports = {
         var zeros = "00000";
         var codePdf = zeros.substring(0, zeros.length - code.toString().length) + code.toString();
 
-
         // Construye la configuración inicial para el documento.
         QuotationPDFService.builInitialConfig('LETTER', 20, 50, 20, 50);
 
@@ -375,14 +365,14 @@ module.exports = {
               model: Element,
             }]
           }]
-        })]
+        }), clientSupplier.getElementData()]
       })
-      .spread(function(clientSupplier, productsValid, productsQuery) {
+      .spread(function(clientSupplier, productsValid, productsQuery, elementsDiscountClient) {
         if (!productsValid) {
           throw "Los productos no pertenecen al proveedor"
         }
         // Construye la tabla de productos para la cotización.
-        QuotationPDFService.buildTableProducts(productsQuery, objectProduct);
+        QuotationPDFService.buildTableProducts(productsQuery, objectProduct, elementsDiscountClient);
 
         // Construye la ultima sección con información complementaria del proveedor.
         QuotationPDFService.buildComplementDataSupplier(supplier);
@@ -400,6 +390,8 @@ module.exports = {
       .then(function(quotation) {
         // Guarda el documento pdf en la ruta pasada como parametro.
         QuotationPDFService.saveDocument(quotationFilePath);
+        MailService.sendQuotationToClient(supplier, client, quotationFilePath);
+        MailService.sendQuotationToSupplier(supplier, client, quotationFilePath);
         res.created(quotation);
       })
       .catch(function(err) {
@@ -449,7 +441,6 @@ module.exports = {
         return Promise.all = [quotation, PaymentForm.findById(paymentFormId)];
       })
       .spread((quotation, paymentFormRaw) => {
-        sails.log.debug(paymentFormRaw);
         if (!paymentFormRaw) {
           throw "No existe el registro de forma de pago";
         }
@@ -484,7 +475,4 @@ module.exports = {
     })
   },
 
-  emailTest: function (req, res) {
-    MailService.sendTest("jrios328@gmail.com")
-  }
 };
