@@ -1,0 +1,73 @@
+<div class="row">
+    <div class="col s12">
+        <ul tabs reload="allTabContentLoaded">
+            <li class="tab col s4"><a class="active" href="#quotationsCreated">Cotizaciones creadas</a></li>
+            <li class="tab col s4"><a href="#quotationsRequested">Cotizaciones solicitadas</a></li>
+        </ul>
+    </div>
+    <div id="quotationsCreated" class="col s12">
+        <table class="highlight bordered responsive-table">
+          <thead>
+            <tr>
+              <th>Código</th>
+              <th>Fecha</th>
+              <th>Validez</th>
+              <th>Forma de pago</th>
+              <th>Ver cotización</th>
+            </tr>
+          </thead>
+          <tbody>
+              <tr ng-repeat="quotation in quotations.created">
+                <td>{{quotation.code}}</td>
+                <td>{{quotation.date | date:'mediumDate' | capitalize}}</td>
+                <td>{{quotation.quotationValidityPeriod}} Días</td>
+                <td>{{quotation.PaymentForm.name}}</td>
+                <td><ng-md-icon ng-click="showQuotation(quotation)" icon="attach_file" style="fill: black; cursor: pointer;" size="30"
+                  tooltipped data-position="top" data-delay="50" data-tooltip="Mostrar">
+                </ng-md-icon> </td>
+              </tr>
+          </tbody>
+        </table>
+    </div>
+    <div id="quotationsRequested" class="col s12">
+        <table class="highlight bordered responsive-table">
+          <thead>
+            <tr>
+              <th>Código</th>
+              <th>Fecha</th>
+              <th>Validez</th>
+              <th>Forma de pago</th>
+              <th>Estado</th>
+              <th>Ver cotización</th>
+            </tr>
+          </thead>
+          <tbody>
+              <tr ng-repeat="quotation in quotations.requested">
+                <td>{{quotation.code}}</td>
+                <td>{{quotation.date | date:'mediumDate' | capitalize}}</td>
+                <td>{{quotation.quotationValidityPeriod ? quotation.quotationValidityPeriod + ' Días' : 'Sin definir'}}</td>
+                <td>{{quotation.PaymentForm.name ? quotation.PaymentForm.name : 'Sin definir'}}</td>
+                <td>{{quotation.state | capitalize}}</td>
+                <td><ng-md-icon ng-click="showQuotation(quotation)" icon="attach_file" style="fill: black; cursor: pointer;" size="30"
+                  tooltipped data-position="top" data-delay="50" data-tooltip="Mostrar">
+                </ng-md-icon></td>
+              </tr>
+          </tbody>
+        </table>
+    </div>
+</div>
+<div id="preloader-overlay" class="center" ng-show="quotations.loading">
+  <div id="preloader" class="preloader-wrapper active">
+    <div class="spinner-layer spinner-yellow-only">
+      <div class="circle-clipper left">
+        <div class="circle"></div>
+      </div>
+      <div class="gap-patch">
+        <div class="circle"></div>
+      </div>
+      <div class="circle-clipper right">
+        <div class="circle"></div>
+      </div>
+    </div>
+  </div>
+</div>

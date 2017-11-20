@@ -18,7 +18,7 @@ arketops.controller('SupplierDetailsCtrl', ['$scope', '$log', '$state', '$stateP
       name: 'Cotizaciones',
       selected: false
     }, {
-      name: 'Cotizar',
+      name: 'Pedir cotización',
       selected: false
     }]
 
@@ -30,15 +30,15 @@ arketops.controller('SupplierDetailsCtrl', ['$scope', '$log', '$state', '$stateP
       }
       $scope.lastOption = index;
       $scope.options[index].selected = true;
-      if (option == 'Datos personales') {
+      if (option.toUpperCase() == 'DATOS PERSONALES') {
         $state.go('supplierDetails.personalData')
-      } else if (option == 'Productos') {
+      } else if (option.toUpperCase() == 'PRODUCTOS') {
         $state.go('supplierDetails.products');
-      } else if (option == 'Descuentos') {
+      } else if (option.toUpperCase() == 'DESCUENTOS') {
         $state.go('supplierDetails.discounts');
-      } else if (option == 'Cotizaciones') {
-
-      } else if (option == 'Cotizar') {
+      } else if (option.toUpperCase() == 'COTIZACIONES') {
+        $state.go('supplierDetails.quotationsList');
+      } else if (option.toUpperCase() == 'PEDIR COTIZACIÓN') {
         $state.go('supplierDetails.quotationRequest');
       }
     }

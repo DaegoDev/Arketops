@@ -51,6 +51,9 @@ var jsFilesToInject = [
   'bower_components/angular-permission/dist/angular-permission-ui.js',
   'bower_components/angular-tooltips/dist/angular-tooltips.min.js',
   'bower_components/angular-base64-upload/dist/angular-base64-upload.min.js',
+  'bower_components/angular-pdf/dist/angular-pdf.min.js',
+  'bower_components/pdfjs-dist/build/pdf.worker.js',
+  'bower_components/pdfjs-dist/build/pdf.js',
   // All of the rest of your client-side js files
   // will be injected here in no particular order.
   'js/main.js',
