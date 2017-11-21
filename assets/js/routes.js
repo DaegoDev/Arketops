@@ -44,9 +44,9 @@ arketops.config(['$stateProvider', '$urlRouterProvider',
         controller: 'ElementCtrl'
       })
 
-      .state('products', {
-        url: '/products',
-        templateUrl: 'templates/private/company/products.html',
+      .state('productCreation', {
+        url: '/product-create',
+        templateUrl: 'templates/private/company/product-create.html',
         controller: 'ProductCtrl'
       })
 
@@ -87,6 +87,18 @@ arketops.config(['$stateProvider', '$urlRouterProvider',
         controller: 'SupplierDiscountsCtrl'
       })
 
+      .state('supplierDetails.quotationRequest', {
+        url: '/supplierQuotationRequest',
+        templateUrl: 'templates/private/company/supplier/supplier-quotation-request.html',
+        controller: 'SupplierQuotationRequestCtrl'
+      })
+
+      .state('supplierDetails.quotationsList', {
+        url: '/supplierQuotationsList',
+        templateUrl: 'templates/private/company/supplier/supplier-quotations-list.html',
+        controller: 'SupplierQuotationsListCtrl'
+      })
+
       // Routes for client
       .state('clientsList', {
         url: '/clients',
@@ -122,6 +134,12 @@ arketops.config(['$stateProvider', '$urlRouterProvider',
         url: '/clientQuotationCreate',
         templateUrl: 'templates/private/company/client/client-quotation-create.html',
         controller: 'ClientQuotationCreateCtrl'
+      })
+
+      .state('clientDetails.quotationsList', {
+        url: '/clientQuotationsList',
+        templateUrl: 'templates/private/company/client/client-quotations-list.html',
+        controller: 'ClientQuotationsListCtrl'
       })
 
 

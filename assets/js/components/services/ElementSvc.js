@@ -24,7 +24,7 @@ function ($http, $log) {
     getElementsByUser: function () {
       var elements = $http({
         url: '/element/getElementsByUser',
-        method: 'POST'
+        method: 'GET'
       });
       return elements;
     },
@@ -71,6 +71,41 @@ function ($http, $log) {
       });
 
       return create;
+    },
+
+    updateElementData: function (elementData) {
+      var credentials = {
+        elementId: elementData.elementId,
+        elementDataId: elementData.elementDataId,
+        name: elementData.name,
+        discount: elementData.discount,
+      };
+
+      var update = $http({
+        url: '/element/editElementData',
+        method: 'PUT',
+        data: credentials
+      });
+
+      return update;
+    },
+
+    updateLinkedElementData: function (elementData) {
+      var credentials = {
+        elementId: elementData.elementId,
+        elementDataId: elementData.elementDataId,
+        dataParentId: elementData.dataParentId,
+        name: elementData.name,
+        discount: elementData.discount,
+      };
+
+      var update = $http({
+        url: '/element/editLinkedElementData',
+        method: 'PUT',
+        data: credentials
+      });
+
+      return update;
     }
   };
 }]);

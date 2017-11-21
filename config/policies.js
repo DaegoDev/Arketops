@@ -49,11 +49,14 @@ module.exports.policies = {
     createElement: 'isAuthenticated',
     createElementData: 'isAuthenticated',
     createLinkedElementData: 'isAuthenticated',
-    editElementData: 'isAuthenticated'
+    editElementData: 'isAuthenticated',
+    editLinkedElementData: 'isAuthenticated'
   },
 
   ProductController: {
     create: 'isAuthenticated',
+    delete: 'isAuthenticated',
+    update: 'isAuthenticated',
     getByCompany: 'isValidToDiscounts',
     getMyProducts: 'isAuthenticated',
     getMyProductsToQuote: 'isAuthenticated'
@@ -65,6 +68,7 @@ module.exports.policies = {
 
   QuotationController: {
     createToClient: 'isAuthenticated',
+    requestToSupplier: 'isAuthenticated',
   }
 
 

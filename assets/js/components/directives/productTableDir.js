@@ -19,7 +19,7 @@ arketops.controller('productTableCtrl', ['$scope', '$log', '$ngConfirm', 'AuthSv
 
 function productTableCtrl($scope, $log, $ngConfirm, AuthSvc, $state, StorageSvc) {
 
-  // console.log($scope);
+  console.log($scope.products);
 
   $scope.addProductToList = function(productSelected, index) {
     var productToQuote = buildProduct(productSelected);
@@ -108,6 +108,17 @@ function productTableCtrl($scope, $log, $ngConfirm, AuthSvc, $state, StorageSvc)
     $scope.selectList.splice(indexSelectList, 1);
     $scope.products[indexProductList].added = false;
     $scope.ctrlFn();
+  }
+
+
+  $scope.getElementDataName = function (elementDataArray, elementName) {
+    var n = elementDataArray.length
+    for (var i = 0; i < n; i++) {
+      if (elementDataArray[i].Element.name.toUpperCase() === elementName) {
+        return elementDataArray[i].name;
+        break;
+      }
+    }
   }
 
 }

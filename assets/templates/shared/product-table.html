@@ -17,12 +17,12 @@
     <tr ng-repeat="product in products">
       <td>{{product.code}}</td>
       <td>{{product.name}}</td>
-      <td ng-repeat="elementData in product.ElementData">
-        <div ng-if="elementData.Element.name === 'Marca'">{{elementData.name}}</div>
-        <div ng-if="elementData.Element.name === 'Categoria'">{{elementData.name}}</div>
-        <div ng-if="elementData.Element.name === 'Linea'">{{elementData.name}}</div>
-        <div ng-if="elementData.Element.name === 'Impuesto'">{{elementData.name}}</div>
-      </td>
+      <!-- <td ng-repeat="elementData in product.ElementData"> -->
+        <td>{{getElementDataName(product.ElementData, 'MARCA')}}</td>
+        <td>{{getElementDataName(product.ElementData, 'CATEGORIA')}}</td>
+        <td>{{getElementDataName(product.ElementData, 'LINEA')}}</td>
+        <td>{{getElementDataName(product.ElementData, 'IMPUESTO')}}</td>
+      <!-- </td> -->
       <td style="width:100px">
         <a class="waves-effect waves-light btn" ng-click="addProductToList(product, $index)">Añadir</a>
       </td>

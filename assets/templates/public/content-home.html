@@ -5,7 +5,9 @@
     </div>
   </div>
 </div>
+
 <div class="divider"></div>
+
 <div ng-if="!authenticated" class="container section scrollspy" id="signup">
   <div class="section ">
     <br>
@@ -254,41 +256,43 @@
     </div>
   </div>
 </div>
+
 <div class="divider"></div>
+
 <div class="container section scrollspy" id="contactus">
   <div class="section">
-    <br>
-    <br>
-    <h2>Contáctenos</h2>
-    <div class="row">
-      <form class="col s8">
-        <div class="row">
-          <div class="input-field col s6">
-            <input id="name" type="text" class="validate">
-            <label for="name">Tu Nombre</label>
+    <div class="card-panel hoverable z-depth-3">
+      <label><h3>Contáctenos</h3></label>
+      <div class="row">
+        <form class="col s8">
+          <div class="row">
+            <div class="input-field col s6">
+              <input id="name" type="text" class="validate">
+              <label for="name">Tu Nombre</label>
+            </div>
+            <div class="input-field col s6">
+              <input id="email" type="email" class="validate">
+              <label for="email">Tu Correo</label>
+            </div>
           </div>
-          <div class="input-field col s6">
-            <input id="email" type="email" class="validate">
-            <label for="email">Tu Correo</label>
+          <!--row-->
+          <div class="row">
+            <div class="input-field col s12">
+              <input id="message-sub" type="text" class="validate">
+              <label for="message-sub">Asunto del mensaje</label>
+            </div>
           </div>
-        </div>
-        <!--row-->
-        <div class="row">
-          <div class="input-field col s12">
-            <input id="message-sub" type="text" class="validate">
-            <label for="message-sub">Asunto del mensaje</label>
+          <div class="row">
+            <div class="input-field col s12">
+              <textarea id="text_area" class="materialize-textarea"></textarea>
+              <label for="text_area">Tu mensaje</label>
+            </div>
           </div>
-        </div>
-        <div class="row">
-          <div class="input-field col s12">
-            <textarea id="text_area" class="materialize-textarea"></textarea>
-            <label for="text_area">Tu mensaje</label>
+          <div>
+            <a class="waves-effect waves-light btn">Enviar mensaje<i class="mdi-content-send right"></i></a>
           </div>
-        </div>
-        <div>
-          <a class="waves-effect waves-light btn purple lighten-1">Enviar mensaje<i class="mdi-content-send right"></i></a>
-        </div>
-      </form>
+        </form>
+      </div>
     </div>
   </div>
 </div>

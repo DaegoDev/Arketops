@@ -1,123 +1,103 @@
 <div class="container element">
   <div class="section">
-  <div class="row">
-    <!-- ELEMENT TYPE LIST -->
-    <div class="col l2 s3">
-      <div class="section">
-        <div class="collection hoverable z-depth-3 element-type-list">
-          <a class="collection-item test" ng-repeat="element in elements" ng-click="selectElement(element)">
-          {{element.name | capitalize}}
-        </a>
+    <div class="row">
+
+      <!-- ELEMENT TYPE LIST -->
+      <div class="col l2 s3">
+        <div class="section">
+          <div class="collection hoverable z-depth-3 element-type-list">
+            <a class="collection-item test" ng-repeat="element in elements" ng-click="selectElement(element)">
+              {{element.name | capitalize}}
+            </a>
+          </div>
         </div>
       </div>
-    </div>
 
-    <!-- ELEMENT DATA SECTION -->
-    <div class="element-type col l8 s7 offset-l1 offset-s1" ng-show="showElement">
-      <!-- SECTION FOR STANDARD ELEMENTS -->
-      <div class="section" ng-show="elementType != 'LINEA'">
-        <!-- CREATE ELEMENT DATA FORM -->
-        <div class="card-panel hoverable z-depth-3 element-create">
-          <label><h5>{{selectedElement.name | capitalize}}s</h5></label>
-          <div class="row">
-            <form ng-submit="createElementData()" novalidate>
-              <!-- ELEMENT DATA NAME INPUT -->
-              <div class="input-field col l6 s8">
-                <input id="name" type="text" class="validate" ng-model="elementData.name">
-                <label for="name">Nombre</label>
+      <!-- ELEMENT DATA SECTION -->
+      <div class="element-type col l8 s7 offset-l1 offset-s1">
+        <!-- SECTION FOR STANDARD ELEMENTS -->
+        <div class="section" ng-show="currentElement || parentElement">
+
+          <!-- CREATE ELEMENT DATA FORM -->
+          <div class="card-panel hoverable z-depth-3 element-create">
+
+            <form name="elementForm" novalidate>
+              <div class="row" ng-show="isLinked()">
+
+                <div class="col l3 s12">
+                  <label><h5>{{parentElement.name}}</h5></label>
+                </div>
+
+                <!-- PARENT ELEMENT SELECT INPUT -->
+                <div class="col l6 s8" input-field>
+                  <select ng-model="elementData.parent" material-select ng-options="data.name for data in parentElement.ElementData" watch>
+                    <option value="">Seleccionar</option>
+                  </select>
+                </div>
               </div>
 
-              <!-- ELEMENT DATA DISCOUNT INPUT -->
-              <div class="input-field col l3 s4">
-                <input id="discount" type="number" class="validate" ng-model="elementData.discount">
-                <label for="discount">Descuento</label>
+              <div class="row" ng-show="isReadyToCRUD()">
+
+                <div class="col l3 s12">
+                  <label><h5>{{currentElement.name}}</h5></label>
+                </div>
+
+                <!-- ELEMENT DATA NAME INPUT -->
+                <div class="col l6 s8" input-field>
+                  <input id="name" type="text" class="validate" ng-model="elementData.name" name="name"
+                    required maxlength="64">
+                  <label for="name">Nombre</label>
+                </div>
+
+                <!-- ELEMENT DATA DISCOUNT INPUT -->
+                <div class="col l3 s4" input-field>
+                  <input id="discount" type="number" class="validate" ng-model="elementData.discount" name="discount"
+                    min="0" max="100" required>
+                  <label for="discount">Descuento</label>
+                </div>
+
               </div>
 
-              <!-- SUBMIT FORM BUTTOM -->
-              <div class="input-field col l12 s12">
-                <button type="submit" class="waves-effect waves-light btn yellow darken-1">
-                  {{mode == 1 ? 'Guardar':'Actualizar'}}<i class="mdi-content-send right"></i>
-                </button>
-                <button type="submit" class="waves-effect waves-light btn yellow darken-1"
-                  ng-show="mode == 2" ng-click="exitUpdate()">
-                  Cancelar<i class="mdi-content-send right"></i>
-                </button>
-              </div>
+              <!-- BUTTON EVENTS FOR FORM ACTIONS -->
+              <div class="row" ng-show="isReadyToCRUD()">
+                <div class=" col l9 s12 push-l3" input-field>
+                  <button class="waves-effect waves-light btn" ng-show="isCreating()" ng-click="createElementData(elementForm)">Crear</button>
+                  <button class="waves-effect waves-light btn" ng-show="isUpdating()" ng-click="updateElementData(elementForm)">Actualizar</button>
+                  <button class="waves-effect waves-light btn" ng-show="isUpdating()" ng-click="exitUpdate()">Cancelar</button>
+                </div>
 
+                <div class="col l9 s12 push-l3 invalid" ng-messages="elementForm.name.$error" ng-if="elementData.hasErrors" ng-messages-multiple>
+                  <p ng-message="required"><b>Debe ingresar el nombre.</b></p>
+                  <p ng-message="maxlength"><b>El nombre no puede ser mayor a 64 caracteres.</b></p>
+                </div>
+
+                <div class="col l9 s12 push-l3 invalid" ng-messages="elementForm.discount.$error" ng-if="elementData.hasErrors" ng-messages-multiple>
+                  <p ng-message="number"><b>El descuento debe ser un valor númerico.</b></p>
+                  <p ng-message="required"><b>Debe ingresar el valor del descuento.</b></p>
+                  <p ng-message="min"><b>El descuento no puede ser menor a 0%.</b></p>
+                  <p ng-message="max"><b>El descuento no puede ser mayor a 100%.</b></p>
+                </div>
+              </div>
             </form>
           </div>
-        </div>
 
-        <!-- ELEMENT DATA LIST -->
-        <div class="card-panel hoverable z-depth-3 element-list" >
-          <!-- ANGULAR REPEAT FOR EACH ELEMENT DATA -->
-          <label style="width: 100%"><h5>Lista de {{selectedElement.name}}s</h5></label>
-          <div class="element-card" ng-repeat="data in selectedElement.ElementData" ng-click="selectElementData(data)">
-            <div class="card z-depth-1 z-depth-2">
-              <div class="card-content">
-                <p>{{data.name}}</p>
-                <p>{{data.discount}}</p>
+          <!-- ELEMENT DATA LIST -->
+          <div class="card-panel hoverable z-depth-3 element-list" ng-show="isReadyToCRUD()">
+            <!-- ANGULAR REPEAT FOR EACH ELEMENT DATA -->
+            <label style="width: 100%"><h5>Lista de {{currentElement.name}}s</h5></label>
+            <div class="element-card" ng-repeat="data in currentElement.ElementData | linkedElementFilter:elementData.parent" ng-click="selectElementData(data)">
+              <div class="card z-depth-1 z-depth-2">
+                <div class="card-content">
+                  <p><b>{{data.name}}</b></p>
+                  <p>Desc. {{data.discount}}%</p>
+                </div>
               </div>
             </div>
           </div>
-        </div>
 
+        </div>
       </div>
 
-      <!-- SECTION FOR 'LINEA' ELEMENT -->
-      <div class="section" ng-show="elementType == 'LINEA'">
-        <!-- CREATE ELEMENT DATA FORM -->
-        <div class="card-panel hoverable z-depth-3 element-create">
-
-          <div class="row">
-            <label class="col s4"><h5>{{selectedElement.name}}s</h5></label>
-            <div class="input-field col s8">
-              <select material-select ng-model="dataParent" ng-options="data.name for data in parentElement.ElementData">
-                <option value="" >Escoja una categoria </option>
-              </select>
-            </div>
-          </div>
-
-          <div class="row" ng-show="dataParent">
-            <form ng-submit="createLinkedElementData()" novalidate>
-              <!-- ELEMENT DATA NAME INPUT -->
-              <div class="input-field col l6 s8">
-                <input id="name" type="text" class="validate" ng-model="elementData.name">
-                <label for="name">Nombre</label>
-              </div>
-
-              <!-- ELEMENT DATA DISCOUNT INPUT -->
-              <div class="input-field col l3 s4">
-                <input id="discount" type="number" class="validate" ng-model="elementData.discount">
-                <label for="discount">Descuento</label>
-              </div>
-
-              <!-- SUBMIT FORM BUTTOM -->
-              <div class="input-field col l3 s12">
-                <button type="submit" class="waves-effect waves-light btn yellow darken-1">
-                  Guardar<i class="mdi-content-send right"></i>
-                </button>
-              </div>
-
-            </form>
-          </div>
-        </div>
-
-        <!-- ELEMENT DATA LIST -->
-        <div class="card-panel hoverable z-depth-3 element-list" ng-show="dataParent">
-          <!-- ANGULAR REPEAT FOR EACH ELEMENT DATA -->
-          <label style="width: 100%"><h5>Lista de lineas para {{parentData.name}}</h5></label>
-          <div class="element-card" ng-repeat="data in dataParent.ElementChildren" ng-click="selectElementData(data)">
-            <div class="card z-depth-1 z-depth-2">
-              <div class="card-content">
-                <p>{{data.name}}</p>
-                <p>{{data.discount}}</p>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
     </div>
-  </div>
   </div>
 </div>

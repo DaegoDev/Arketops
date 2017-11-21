@@ -21,6 +21,41 @@ angular.module('arketops')
           return product;
         },
 
+        // Servicio para eliminar un producto propio del usuario que llama el servicio.
+        delete: function (productId) {
+          productCredentials = {
+            productId: productId
+          };
+
+          var product = $http({
+            url: 'product/delete',
+            method: 'DELETE',
+            params: productCredentials
+          });
+
+          return product;
+        },
+
+        // Servicio que actualiza los datos de un producto de un cliente.
+        update: function (credentials) {
+          productCredentials = {
+            productId: credentials.productId,
+            code: credentials.code,
+            name: credentials.name,
+            description: credentials.description,
+            price: credentials.price,
+            stateId: credentials.stateId,
+            elements: credentials.elements
+          };
+
+          var product = $http({
+            url: '/product/update',
+            method: 'PUT',
+            data: productCredentials
+          });
+          return product;
+        },
+
         // Servicio para obtener productos dado su nombre.
         getByName: function(params) {
           var products = $http({

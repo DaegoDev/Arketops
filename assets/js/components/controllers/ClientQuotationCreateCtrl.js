@@ -18,7 +18,7 @@ arketops.controller('ClientQuotationCreateCtrl', ['$scope', '$filter', '$log', '
     })
 
     $scope.today = $filter('date')(new Date(), "mediumDate");
-
+    // Function to create the Mont's day
     function buildDaysMonth() {
       $scope.daysMonth = [];
       for (var i = 1; i < 31; i++) {
@@ -44,6 +44,7 @@ arketops.controller('ClientQuotationCreateCtrl', ['$scope', '$filter', '$log', '
 
       })
 
+    // Call the service to get my portfolio to quote to my client.
     ProductSvc.getMyPortfolioToQuote({
         clientId: $scope.client.ClientSupplier.id
       })
@@ -55,7 +56,7 @@ arketops.controller('ClientQuotationCreateCtrl', ['$scope', '$filter', '$log', '
         console.log(err);
       })
 
-
+    // Open the modal with my portfolio.
     $scope.showPortfolio = function() {
       $ngConfirm({
         title: 'Lista de productos',
@@ -172,9 +173,15 @@ arketops.controller('ClientQuotationCreateCtrl', ['$scope', '$filter', '$log', '
     }
 
     function createQuotation(params) {
+      if ($scope.quotation.loading) {
+        return false;
+      }
+
+      $scope.quotation.loading = true;
       QuotationSvc.createToClient(params)
         .then((res) => {
           console.log(res.data);
+          $scope.quotation.loading = false;
           $ngConfirm({
             title: 'Cotización creada exitosamente',
             content: 'Se ha enviado un correo electrónico al cliente con la cotización creada.',
@@ -194,12 +201,14 @@ arketops.controller('ClientQuotationCreateCtrl', ['$scope', '$filter', '$log', '
             }
           });
           $scope.selectList = [];
+          $scope.calculateTotal();
           // $scope.quotation.validityPeriod.selected = '';
           // $scope.quotation.paymentForms.selected = '';
           $scope.removeMarkAdded();
         })
         .catch((err) => {
           console.log(err);
+          $scope.quotation.loading = false;
           $ngConfirm({
             title: 'Error',
             content: 'No se pudo generar la cotización. Intente más tarde.',
@@ -218,10 +227,12 @@ arketops.controller('ClientQuotationCreateCtrl', ['$scope', '$filter', '$log', '
 
     $scope.total = 0;
 
+    // Function to sum the subtotals of each product.
     $scope.sumToTotal = function (subtotal) {
       $scope.total += subtotal;
     }
 
+    // Function to calculate the total in the quotation.
     $scope.calculateTotal = function () {
       var total = 0;
       $scope.selectList.forEach(function (product, index, selectList) {
@@ -246,7 +257,7 @@ arketops.controller('ClientQuotationCreateCtrl', ['$scope', '$filter', '$log', '
       $scope.calculateTotal();
     }
 
-
+    // Function to remove the products selected.
     $scope.removeProductOfList = function(indexProductList, indexSelectList) {
       // console.log(indexProductList);
       $scope.selectList.splice(indexSelectList, 1);

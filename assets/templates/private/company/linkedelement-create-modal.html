@@ -1,0 +1,88 @@
+<div class="container">
+  <div class="section">
+    <form name="elementForm" novalidate>
+
+      <div class="row" style="overflow-y: auto; overflow-x: hidden">
+        <!-- PARENT ELEMENT SELECT INPUT -->
+        <div class="col s12" input-field>
+          <select
+            name="parent"
+            ng-model="elementData.parent"
+            required
+            material-select
+            ng-options="data.name for data in parent.ElementData">
+            <option value="">Seleccionar</option>
+          </select>
+          <label>{{parent.name}}</label>
+        </div>
+
+        <div class="col s12" input-field>
+          <input
+            id="name"
+            type="text"
+            class="validate"
+            ng-model="elementData.name"
+            name="name"
+            required
+            maxlength="64">
+          <label for="name">Nombre</label>
+        </div>
+
+        <div class="col s12" input-field>
+          <input
+            id="discount"
+            type="number"
+            class="validate"
+            ng-model="elementData.discount"
+            name="discount"
+            min="0"
+            max="100"
+            required>
+          <label for="discount">Descuento</label>
+        </div>
+
+        <div
+          class="col s12 invalid"
+          ng-messages="elementForm.parent.$error"
+          ng-if="elementData.hasErrors"
+          ng-messages-multiple>
+          <p ng-message="required">
+            <b>Debe escoger una opción en el campo {{parent.name}}.</b>
+          </p>
+        </div>
+
+        <div
+          class="col s12 invalid"
+          ng-messages="elementForm.name.$error"
+          ng-if="elementData.hasErrors"
+          ng-messages-multiple>
+          <p ng-message="required">
+            <b>Debe ingresar el nombre.</b>
+          </p>
+          <p ng-message="maxlength">
+            <b>El nombre no puede ser mayor a 64 caracteres.</b>
+          </p>
+        </div>
+
+        <div
+          class="col s12 invalid"
+          ng-messages="elementForm.discount.$error"
+          ng-if="elementData.hasErrors"
+          ng-messages-multiple>
+          <p ng-message="number">
+            <b>El descuento debe ser un valor númerico.</b>
+          </p>
+          <p ng-message="required">
+            <b>Debe ingresar el valor del descuento.</b>
+          </p>
+          <p ng-message="min">
+            <b>El descuento no puede ser menor a 0%.</b>
+          </p>
+          <p ng-message="max">
+            <b>El descuento no puede ser mayor a 100%.</b>
+          </p>
+        </div>
+      </div>
+    </form>
+  </div>
+</div>
