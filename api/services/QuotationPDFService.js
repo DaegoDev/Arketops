@@ -341,13 +341,13 @@ module.exports = {
     var context = pageModifier.startContext().getContext();
     sails.log.debug(context);
     context.cm(1, 0, 0, -1, 0, 792);
-    context.writeText(paymentForm, 455, 550, {
+    context.writeText(paymentForm, 455, 560, {
       font: pdfWriter.getFontForFile(sails.config.appPath + '/assets/fonts/arial.ttf'),
       size: 10,
       colorspace: 'gray',
       color: 0x00
     });
-    context.writeText(quotationValidityPeriod + " días", 535, 550, {
+    context.writeText(quotationValidityPeriod + " días", 535, 560, {
       font: pdfWriter.getFontForFile(sails.config.appPath + '/assets/fonts/arial.ttf'),
       size: 10,
       colorspace: 'gray',

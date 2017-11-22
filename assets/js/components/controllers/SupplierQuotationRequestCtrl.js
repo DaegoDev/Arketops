@@ -195,9 +195,9 @@ arketops.controller('SupplierQuotationRequestCtrl', ['$scope', '$filter', '$log'
 
     $scope.total = 0;
 
-    $scope.sumToTotal = function (subtotal) {
-      $scope.total += subtotal;
-    }
+    // $scope.sumToTotal = function (subtotal) {
+    //   $scope.total += subtotal;
+    // }
 
     $scope.calculateTotal = function () {
       var total = 0;

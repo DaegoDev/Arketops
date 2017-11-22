@@ -24,5 +24,9 @@ arketops.controller('ProductsByCompanyCtrl', ['$scope', '$log', '$ngConfirm', '$
       console.log(err);
     })
 
+    $scope.options = {
+      mode: 'other'
+    }
+
   }
 ]);

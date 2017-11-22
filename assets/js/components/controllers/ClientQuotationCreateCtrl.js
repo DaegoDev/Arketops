@@ -64,16 +64,28 @@ arketops.controller('ClientQuotationCreateCtrl', ['$scope', '$filter', '$log', '
         scope: $scope,
         theme: 'modern',
         buttons: {
-          cancel: {
-            text: 'Cancelar',
-            btnClass: 'btn-red'
+          removeAll: {
+            text: 'Remover todo',
+            btnClass: 'btn-red',
+            action: function (scope, button) {
+              $scope.selectList = [];
+              $scope.removeMarkAdded();
+              $scope.calculateTotal();
+              $scope.$apply();
+            }
+          },
+          confirm: {
+            text: 'Confirmar',
+            btnClass: 'btn-orange',
+            action: function (scope, button) {
+
+            }
           }
         }
       })
     }
 
-    // Organize data and create a quotation.
-    $scope.createQuotation = function() {
+    $scope.showResumeQuotation = function() {
       var clientId = null;
       var quotationValidityPeriod = null;
       var paymentFormId = null;
@@ -102,13 +114,30 @@ arketops.controller('ClientQuotationCreateCtrl', ['$scope', '$filter', '$log', '
 
       paymentFormId = paymentFormObject.id;
 
-      $scope.selectList.forEach(function(product, index, selectList) {
+      var n = $scope.selectList.length;
+      for (var i = 0; i < n; i++) {
+        if (!$scope.selectList[i].amount) {
+          $ngConfirm({
+            title: 'Error',
+            content: 'Debe ingresar al menos una cantidad en todos los productos.',
+            type: 'red',
+            boxWidth: '30%',
+            useBootstrap: false,
+            backgroundDismiss: true,
+            buttons: {
+              accept: {
+                text: 'Aceptar'
+              }
+            }
+          });
+          return;
+        }
         var productToAdd = {
-          id: product.id,
-          amount: product.amount
+          id: $scope.selectList[i].id,
+          amount: $scope.selectList[i].amount
         }
         products.push(productToAdd);
-      })
+      }
 
       params = {
         clientId: clientId,
@@ -117,9 +146,42 @@ arketops.controller('ClientQuotationCreateCtrl', ['$scope', '$filter', '$log', '
         products: products
       }
 
+      $ngConfirm({
+        title: 'Resumen de la cotización',
+        contentUrl: 'templates/private/company/resume-quotation.html',
+        scope: $scope,
+        theme: 'modern',
+        boxWidth: '60%',
+        useBootstrap: false,
+        buttons: {
+          cancel: {
+            text: 'Cancelar',
+            btnClass: 'btn-red',
+            action: function (scope, button) {
+
+            }
+          },
+          confirm: {
+            text: 'Confirmar',
+            btnClass: 'btn-orange',
+            action: function (scope, button) {
+              createQuotation(params)
+            }
+          }
+        }
+      })
+    }
+
+    function createQuotation(params) {
+      if ($scope.quotation.loading) {
+        return false;
+      }
+
+      $scope.quotation.loading = true;
       QuotationSvc.createToClient(params)
         .then((res) => {
           console.log(res.data);
+          $scope.quotation.loading = false;
           $ngConfirm({
             title: 'Cotización creada exitosamente',
             content: 'Se ha enviado un correo electrónico al cliente con la cotización creada.',
@@ -139,24 +201,36 @@ arketops.controller('ClientQuotationCreateCtrl', ['$scope', '$filter', '$log', '
             }
           });
           $scope.selectList = [];
+          $scope.calculateTotal();
           // $scope.quotation.validityPeriod.selected = '';
           // $scope.quotation.paymentForms.selected = '';
-          $scope.products.forEach(function (product) {
-            product.added = false;
-          })
+          $scope.removeMarkAdded();
         })
         .catch((err) => {
           console.log(err);
+          $scope.quotation.loading = false;
+          $ngConfirm({
+            title: 'Error',
+            content: 'No se pudo generar la cotización. Intente más tarde.',
+            type: 'red',
+            boxWidth: '30%',
+            useBootstrap: false,
+            backgroundDismiss: true,
+            buttons: {
+              accept: {
+                text: 'Aceptar'
+              }
+            }
+          });
         })
-
     }
 
     $scope.total = 0;
 
     // Function to sum the subtotals of each product.
-    $scope.sumToTotal = function (subtotal) {
-      $scope.total += subtotal;
-    }
+    // $scope.sumToTotal = function (subtotal) {
+    //   $scope.total += subtotal;
+    // }
 
     // Function to calculate the total in the quotation.
     $scope.calculateTotal = function () {
@@ -167,9 +241,16 @@ arketops.controller('ClientQuotationCreateCtrl', ['$scope', '$filter', '$log', '
       $scope.total = total;
     }
 
-    // Calculate the subtotal for each product.
-    $scope.calculateSubtotal = function (indexSelectList) {
-      var product = $scope.selectList[indexSelectList];
+    $scope.calculateSubtotal = function (product) {
+      console.log(product.amount);
+      if (product.amount < 0 || isNaN(parseFloat(product.amount)) && !isFinite(product.amount)) {
+        product.amount = 1;
+      }
+      if (product.amount != null) {
+        if (product.amount.toString() == '0') {
+          product.amount = 1;
+        }
+      }
       var priceWithTax = (product.amount * product.price) * ((product.tax.discount / 100) + 1);
       var discountPercent = (1 - (product.totalDiscount / 100))
       product.subtotal = priceWithTax * discountPercent;
@@ -182,6 +263,12 @@ arketops.controller('ClientQuotationCreateCtrl', ['$scope', '$filter', '$log', '
       $scope.selectList.splice(indexSelectList, 1);
       $scope.products[indexProductList].added = false;
       $scope.calculateTotal();
+    }
+
+    $scope.removeMarkAdded = function () {
+      $scope.products.forEach(function (product) {
+        product.added = false;
+      })
     }
 
 

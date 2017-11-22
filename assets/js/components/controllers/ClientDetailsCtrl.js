@@ -31,13 +31,13 @@ arketops.controller('ClientDetailsCtrl', ['$scope', '$log', '$state', '$statePar
       $scope.options[index].selected = true;
       if (option == 'Datos personales') {
         $state.go('clientDetails.personalData')
-      } else if (option == 'Productos') {
+      } else if (option.toUpperCase() == 'PRODUCTOS') {
         $state.go('clientDetails.products');
-      } else if (option == 'Descuentos') {
+      } else if (option.toUpperCase() == 'DESCUENTOS') {
         $state.go('clientDetails.discounts');
-      } else if (option == 'Cotizaciones') {
-
-      } else if (option == 'Cotizar') {
+      } else if (option.toUpperCase() == 'COTIZACIONES') {
+        $state.go('clientDetails.quotationsList');
+      } else if (option.toUpperCase() == 'COTIZAR') {
         $state.go('clientDetails.quotationCreate')
       }
     }

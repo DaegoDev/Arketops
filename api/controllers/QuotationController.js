@@ -10,7 +10,7 @@ var PdfPrinter = require('pdfmake/src/printer');
 var watermark = require('image-watermark');
 var hummus = require('hummus');
 var fs = require('fs');
-
+const Datauri = require('datauri');
 
 module.exports = {
   /**
@@ -31,6 +31,7 @@ module.exports = {
     var products = [];
     var addedProducts = [];
     var objectProduct = {};
+    var relativeFilePath = null;
     var quotationFilePath = null;
     var quotationCredentials = {};
 
@@ -54,26 +55,26 @@ module.exports = {
     }
 
     products = req.param("products");
-      if (products) {
-        products.forEach(function(product, i, productsList) {
-          objectProduct[product.id] = product;
-          productsList[i] = product;
-          index = addedProducts.indexOf(productsList[i].id);
-          if (index != -1) {
-            return res.badRequest({
-              code: 2,
-              msg: 'There are repeated products.'
-            })
-          } else {
-            addedProducts.push(productsList[i].id);
-          }
-        })
-      } else {
-        return res.badRequest({
-          code: 1,
-          msg: 'There are no enough products'
-        });
-      }
+    if (products) {
+      products.forEach(function(product, i, productsList) {
+        objectProduct[product.id] = product;
+        productsList[i] = product;
+        index = addedProducts.indexOf(productsList[i].id);
+        if (index != -1) {
+          return res.badRequest({
+            code: 2,
+            msg: 'There are repeated products.'
+          })
+        } else {
+          addedProducts.push(productsList[i].id);
+        }
+      })
+    } else {
+      return res.badRequest({
+        code: 1,
+        msg: 'There are no enough products'
+      });
+    }
 
 
     user = req.user;
@@ -82,8 +83,9 @@ module.exports = {
       offset: -5
     }, null);
 
+    relativeFilePath = '/resources/documents/quotations/confirmed/' + clientId + date + '.pdf';
     // Ruta donde se guarda el pdf de la cotización en el servidor.
-    quotationFilePath = sails.config.appPath + '/resources/documents/quotations/confirmed/' + clientId + date + '.pdf';
+    quotationFilePath = sails.config.appPath + relativeFilePath;
 
     // Se verifica que el usuario definido como proveedor exista. En caso de que exista se
     // es pasado a la variable supplier y se busca la vinculación con el cliente.
@@ -96,7 +98,7 @@ module.exports = {
           where: {
             main: true
           }
-        },{
+        }, {
           model: User,
           attributes: ['email']
         }]
@@ -130,7 +132,7 @@ module.exports = {
               attributes: ['email']
             }]
           }), Quotation.findAll({
-            order: 'code DESC',
+            order: 'id DESC',
             include: [{
               model: ClientSupplier,
               where: {
@@ -195,7 +197,7 @@ module.exports = {
           date: date,
           state: "creado",
           clientSupplierId: clientSupplier.id,
-          fileURI: quotationFilePath,
+          fileURI: relativeFilePath,
           quotationValidityPeriod: quotationValidityPeriod,
           paymentFormId: paymentForm.id
         }
@@ -230,6 +232,7 @@ module.exports = {
     var products = [];
     var addedProducts = [];
     var objectProduct = {};
+    var relativeFilePath = null;
     var quotationFilePath = null;
 
     var supplier = null;
@@ -241,26 +244,26 @@ module.exports = {
     }
 
     products = req.param("products");
-      if (products) {
-        products.forEach(function(product, i, productsList) {
-          objectProduct[product.id] = product;
-          productsList[i] = product;
-          index = addedProducts.indexOf(productsList[i].id);
-          if (index != -1) {
-            return res.badRequest({
-              code: 2,
-              msg: 'There are repeated products.'
-            })
-          } else {
-            addedProducts.push(productsList[i].id);
-          }
-        })
-      } else {
-        return res.badRequest({
-          code: 1,
-          msg: 'There are no enough products'
-        });
-      }
+    if (products) {
+      products.forEach(function(product, i, productsList) {
+        objectProduct[product.id] = product;
+        productsList[i] = product;
+        index = addedProducts.indexOf(productsList[i].id);
+        if (index != -1) {
+          return res.badRequest({
+            code: 2,
+            msg: 'There are repeated products.'
+          })
+        } else {
+          addedProducts.push(productsList[i].id);
+        }
+      })
+    } else {
+      return res.badRequest({
+        code: 1,
+        msg: 'There are no enough products'
+      });
+    }
 
     user = req.user;
 
@@ -268,8 +271,9 @@ module.exports = {
       offset: -5
     }, null);
 
+    relativeFilePath = '/resources/documents/quotations/pending/' + date + '.pdf';
     // Ruta donde se guarda el pdf de la cotización en el servidor.
-    quotationFilePath = sails.config.appPath + '/resources/documents/quotations/pending/' + date + '.pdf';
+    quotationFilePath = sails.config.appPath + relativeFilePath;
 
     // Se verifica que el cliente y proveedor existan. En caso de que exista
     // es pasado a la variable supplier y se busca la vinculación con el cliente.
@@ -311,7 +315,7 @@ module.exports = {
               where: {
                 main: true
               }
-            },{
+            }, {
               model: User,
               attributes: ['email']
             }]
@@ -383,7 +387,7 @@ module.exports = {
           date: date,
           state: "pendiente",
           clientSupplierId: clientSupplier.id,
-          fileURI: quotationFilePath,
+          fileURI: relativeFilePath,
         }
         return Quotation.create(quotationCredentials);
       })
@@ -411,6 +415,7 @@ module.exports = {
     var quotationValidityPeriod = null;
     var fileToModify = null;
     var paymentForm = null;
+    var relativeOutPath = null;
 
     // Definición de variables y validaciones.
     quotationId = parseInt(req.param('quotationId'));
@@ -437,7 +442,8 @@ module.exports = {
         if (!quotation) {
           throw "Cotización no encontrada"
         }
-        fileToModify = quotation.fileURI;
+        relativeOutPath = quotation.fileURI.replace("pending", "confirmed");
+        fileToModify = sails.config.appPath + quotation.fileURI;
         return Promise.all = [quotation, PaymentForm.findById(paymentFormId)];
       })
       .spread((quotation, paymentFormRaw) => {
@@ -445,6 +451,7 @@ module.exports = {
           throw "No existe el registro de forma de pago";
         }
         paymentForm = paymentFormRaw;
+        fieldsToUpdate.fileURI = relativeOutPath;
         return quotation.update(fieldsToUpdate);
       })
       .then((quotationsUpdated) => {
@@ -452,7 +459,10 @@ module.exports = {
           throw "No se actualizó ningún registro";
         }
         QuotationPDFService.modify(fileToModify, quotationValidityPeriod, paymentForm.name);
-        res.ok();
+        return Quotation.findById(quotationId);
+      })
+      .then((quotation) => {
+        res.ok(quotation);
       })
       .catch((err) => {
         res.serverError(err);
@@ -464,15 +474,115 @@ module.exports = {
    * @param  {Object} req Request object
    * @param  {Object} res Response object
    */
-  getPaymentforms: function (req, res) {
+  getPaymentforms: function(req, res) {
     PaymentForm.findAll()
-    .then((paymentForms) => {
+      .then((paymentForms) => {
         res.ok(paymentForms)
-    })
-    .catch((err) => {
-      sails.log.debug(err)
-      res.serverError()
-    })
+      })
+      .catch((err) => {
+        sails.log.debug(err)
+        res.serverError()
+      })
   },
 
+  /**
+   * Function to get the quotations registered with a client supplier id.
+   * @param  {Object} req Request object
+   * @param  {Object} res Response object
+   */
+
+  getByClientSupplierId: function(req, res) {
+    // Variables
+    var clientSupplierId = null;
+    var created = [];
+    var requested = [];
+    var response = {};
+
+    // Definition of the variables.
+    clientSupplierId = parseInt(req.param("clientSupplierId"));
+    if (!clientSupplierId) {
+      return res.badRequest('Client supplier id required');
+    }
+
+    Quotation.findAll({
+        include: [{
+          model: PaymentForm
+        }],
+        where: {
+          clientSupplierId: clientSupplierId,
+        }
+      })
+      .then((quotations) => {
+        if (quotations.length == 0) {
+          return res.serverError('Quotations not found');
+        }
+
+        quotations.forEach((quotation, index, quotationsList) => {
+          //  quotation.fileURI = new Uint8Array(fs.readFileSync(sails.config.appPath + quotation.fileURI));
+          // quotation.fileURI = fs.readFileSync(sails.config.appPath + quotation.fileURI);
+          if (quotation.state.toUpperCase() === 'CREADO') {
+            created.push(quotation);
+          } else {
+            requested.push(quotation);
+          }
+        })
+        response.created = created;
+        response.requested = requested;
+        res.ok(response);
+        // response = new Uint8Array(fs.readFileSync(sails.config.appPath + quotations[0].fileURI));
+        // response = new Datauri(sails.config.appPath + quotations[0].fileURI);
+        // sails.log.debug(response);
+        // res.ok(response)
+        // res.sendfile(sails.config.appPath + quotations[0].fileURI);
+      })
+      .catch((err) => {
+        sails.log.error(err)
+        res.serverError()
+      })
+
+  },
+
+  /**
+   * Function to get a quotation file.
+   * @param  {Object} req Request object
+   * @param  {Object} res Response object
+   */
+  getQuotationFile: function(req, res) {
+    var quotationId = null;
+
+    quotationId = parseInt(req.param('quotationId'));
+    if (!quotationId) {
+      return res.badRequest('Quotation id required.')
+    }
+
+    Quotation.findById(quotationId)
+      .then((quotation) => {
+        if (quotation.state.toUpperCase() === 'PENDIENTE') {
+          var tmpRelativePath = quotation.fileURI.replace("pending", "tmp");
+          var tmpFilePath = sails.config.appPath + tmpRelativePath;
+          // var readStream = fs.createReadStream(sails.config.appPath + quotation.fileURI);
+          // readStream.pipe(fs.createWriteStream(tmpFilePath));
+          var options = {
+            'text': 'SIN CONFIRMAR',
+            'color': 'rgb(160, 162, 152)',
+            'dstPath': tmpFilePath,
+            'resize': '100%',
+            'font': '/assets/fonts/ALGERIA.TTF'
+          };
+          watermark.embedWatermarkWithCb(sails.config.appPath + quotation.fileURI, options, function() {
+            res.sendfile(tmpFilePath)
+            setTimeout(function() {
+              fs.unlink(tmpFilePath, (err) => {
+                if (err) throw err;
+                sails.log.debug('Se borró el archivo de pendiente');
+              });
+            }, 500);
+          });
+        } else {
+          res.sendfile(sails.config.appPath + quotation.fileURI)
+        }
+
+      })
+
+  }
 };

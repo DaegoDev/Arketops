@@ -28,6 +28,34 @@ angular.module('arketops')
           });
           return quotation;
         },
+        // Service to get the quotations by client supplier id.
+        getByClientSupplierId: function (params) {
+          var quotations = $http({
+            url: '/quotation/getByClientSupplierId',
+            method: 'GET',
+            params: params,
+          });
+          return quotations;
+        },
+        // Service to get the file of the corresponding quotation.
+        getQuotationFile: function (params) {
+          var quotationFile = $http({
+            url: '/quotation/getQuotationFile',
+            method: 'GET',
+            params: params,
+            responseType: 'arraybuffer'
+          });
+          return quotationFile;
+        },
+        // Service to confirm a quotation requested.
+        confirmToClient: function (params) {
+          var confirmed = $http({
+            url: '/quotation/confirmToClient',
+            method: 'PUT',
+            data: params,
+          });
+          return confirmed;
+        }
       };
     }
   ]);

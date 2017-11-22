@@ -25,7 +25,19 @@ function productTableCtrl($scope, $log, $ngConfirm, AuthSvc, $state, StorageSvc)
     var productToQuote = buildProduct(productSelected);
     if (productToQuote) {
       if ($scope.products[index].added) {
-        $ngConfirm('Ya se añadió el producto.');
+        $ngConfirm({
+          title: 'Error',
+          content: 'Ya se añadió el producto.',
+          type: 'red',
+          boxWidth: '30%',
+          useBootstrap: false,
+          backgroundDismiss: true,
+          buttons: {
+            accept: {
+              text: 'Aceptar'
+            }
+          }
+        });
         return;
       }
       productToQuote.indexProductList = index;

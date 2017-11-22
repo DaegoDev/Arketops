@@ -37,7 +37,7 @@ arketops.controller('SupplierDetailsCtrl', ['$scope', '$log', '$state', '$stateP
       } else if (option.toUpperCase() == 'DESCUENTOS') {
         $state.go('supplierDetails.discounts');
       } else if (option.toUpperCase() == 'COTIZACIONES') {
-
+        $state.go('supplierDetails.quotationsList');
       } else if (option.toUpperCase() == 'PEDIR COTIZACIÓN') {
         $state.go('supplierDetails.quotationRequest');
       }
