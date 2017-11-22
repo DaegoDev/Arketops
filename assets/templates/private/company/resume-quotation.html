@@ -7,13 +7,13 @@
   seleccione cancelar.</strong>
     </div>
   </div>
-  <div class="">
+  <div ng-if="quotation.validityPeriod" class="">
     <label style="font-size: 16px;" for="validityPeriod">Validez de la oferta: </label>
     <strong id="validityPeriod">{{quotation.validityPeriod.selected}} Días</strong><br>
     <label style="font-size: 16px;" for="paymentForm">Forma de pago: </label>
     <strong id="paymentForm">{{quotation.paymentForms.selected.name}}</strong>
+    <hr>
   </div>
-  <hr>
   <table class="highlight bordered responsive-table centered">
     <thead>
       <tr>

@@ -92,7 +92,7 @@
     </thead>
 
     <tbody>
-      <tr ng-repeat="product in selectList" ng-init="sumToTotal(product.subtotal)">
+      <tr ng-repeat="product in selectList" ng-init="calculateTotal()">
         <td>{{product.code}}</td>
         <td>{{product.name}}</td>
         <!-- <td>{{product.brand}}</td> -->

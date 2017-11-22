@@ -63,7 +63,7 @@
       <tr>
         <th>Código</th>
         <th>Nombre</th>
-        <th>Marca</th>
+        <!-- <th>Marca</th> -->
         <!-- <th>Categoría</th>
         <th>Línea</th> -->
         <th>Impuesto</th>
@@ -75,14 +75,14 @@
     </thead>
 
     <tbody>
-      <tr ng-repeat="product in selectList" ng-init="sumToTotal(product.subtotal)">
+      <tr ng-repeat="product in selectList" ng-init="calculateTotal()">
         <td>{{product.code}}</td>
         <td>{{product.name}}</td>
-        <td>{{product.brand}}</td>
+        <!-- <td>{{product.brand}}</td> -->
         <!-- <td>{{product.category}}</td>
         <td>{{product.line}}</td> -->
         <td>{{product.tax.name }} ({{product.tax.discount}}%) </td>
-        <td style="width:100px"><input style="text-align: center; margin-bottom: -17px; height: 2rem;" type="number" name="amount" ng-change="calculateSubtotal($index)" ng-model="product.amount"></td>
+        <td style="width:100px"><input style="text-align: center; margin-bottom: -17px; height: 2rem;" type="number" name="amount" ng-change="calculateSubtotal(product)" ng-model="product.amount"></td>
         <td>{{product.price | currency: '$' : '0'}}</td>
         <td>{{product.totalDiscount}}%</td>
         <td>{{product.subtotal | currency: '$' : '0'}}</td>
@@ -98,5 +98,21 @@
   </div>
 </div>
 <div class="center">
-  <button class="btn waves-effect waves-light" type="button" ng-click="createQuotation()" name="button">Crear</button>
+  <button class="btn waves-effect waves-light" type="button" ng-click="showResumeQuotation()" name="button">Crear</button>
+</div>
+
+<div id="preloader-overlay" class="center" ng-show="quotation.loading">
+  <div id="preloader" class="preloader-wrapper active">
+    <div class="spinner-layer spinner-yellow-only">
+      <div class="circle-clipper left">
+        <div class="circle"></div>
+      </div>
+      <div class="gap-patch">
+        <div class="circle"></div>
+      </div>
+      <div class="circle-clipper right">
+        <div class="circle"></div>
+      </div>
+    </div>
+  </div>
 </div>

@@ -228,9 +228,9 @@ arketops.controller('ClientQuotationCreateCtrl', ['$scope', '$filter', '$log', '
     $scope.total = 0;
 
     // Function to sum the subtotals of each product.
-    $scope.sumToTotal = function (subtotal) {
-      $scope.total += subtotal;
-    }
+    // $scope.sumToTotal = function (subtotal) {
+    //   $scope.total += subtotal;
+    // }
 
     // Function to calculate the total in the quotation.
     $scope.calculateTotal = function () {

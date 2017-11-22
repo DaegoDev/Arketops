@@ -43,6 +43,6 @@ arketops.controller('SupplierDetailsCtrl', ['$scope', '$log', '$state', '$stateP
       }
     }
 
-    $scope.goToState('Datos personales', 0);
+    $scope.goToState('DATOS PERSONALES', 0);
   }
 ]);
