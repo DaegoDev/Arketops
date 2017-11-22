@@ -64,8 +64,8 @@ arketops.controller('ClientQuotationCreateCtrl', ['$scope', '$filter', '$log', '
         scope: $scope,
         theme: 'modern',
         buttons: {
-          cancel: {
-            text: 'Cancelar',
+          removeAll: {
+            text: 'Remover todo',
             btnClass: 'btn-red',
             action: function (scope, button) {
               $scope.selectList = [];
