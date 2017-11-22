@@ -18,7 +18,7 @@ arketops.controller('SupplierDetailsCtrl', ['$scope', '$log', '$state', '$stateP
       name: 'Cotizaciones',
       selected: false
     }, {
-      name: 'Cotizar',
+      name: 'Pedir cotización',
       selected: false
     }]
 
@@ -36,9 +36,9 @@ arketops.controller('SupplierDetailsCtrl', ['$scope', '$log', '$state', '$stateP
         $state.go('supplierDetails.products');
       } else if (option.toUpperCase() == 'DESCUENTOS') {
         $state.go('supplierDetails.discounts');
-      } else if (option.toUpperCase() == 'PEDIR COTIZACIÓN') {
+      } else if (option.toUpperCase() == 'COTIZACIONES') {
 
-      } else if (option == 'COTIZAR') {
+      } else if (option.toUpperCase() == 'PEDIR COTIZACIÓN') {
         $state.go('supplierDetails.quotationRequest');
       }
     }

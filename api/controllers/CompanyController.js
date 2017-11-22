@@ -944,6 +944,7 @@ module.exports = {
         }, 15);
       })
       .catch(function(err) {
+        sails.log.debug(err)
         res.serverError(err);
       })
   },
