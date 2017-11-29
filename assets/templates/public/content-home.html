@@ -81,10 +81,8 @@
               </div>
             </div>
             <div class="col s4 image-upload">
-              <input type="file" id="file-input" name="imageFile" ng-model="imageFile" maxsize="10000" do-not-parse-if-oversize
-              base-sixty-four-input required onloadend="onLoad" ng-click="setFlagImageDataURI()" accept="image/jpg, image/jpeg, image/png">
-              <img class="image-avatar" ng-style="imgAvatarStyle" id="image-avatar"
-              ng-src="{{user.imageDataURI}}" height="300" width="300">
+              <input type="file" id="file-input" name="imageFile" ng-model="imageFile" maxsize="10000" do-not-parse-if-oversize base-sixty-four-input required onloadend="onLoad" ng-click="setFlagImageDataURI()" accept="image/jpg, image/jpeg, image/png">
+              <img class="image-avatar" ng-style="imgAvatarStyle" id="image-avatar" ng-src="{{user.imageDataURI}}" height="300" width="300">
               <div class="icon-upload">
                 <label for="file-input">
                     <img class="add-image" id="add-image" ng-src="../../images/uploadIcon.png" >
@@ -111,19 +109,42 @@
                 </div>
                 <div class="col s4">
                   <div input-field>
+                    <div ng-class="{'has-error': forms.formSignup.department.$invalid && (!forms.formSignup.department.$pristine || forms.formSignup.$submitted || forms.formSignup.department.$touched),
+                      'has-success': forms.formSignup.department.$valid}">
+                      <i class="fa fa-map-signs prefix"></i>
+                      <input type="text" name="department" placeholder="Ej. Antioquia" ng-model="user.department" required>
+                      <label>Departamento</label>
+                      <!-- VALIDACIONES DE DEPARTMENT -->
+                      <div ng-messages="forms.formSignup.department.$error" ng-if="forms.formSignup.department.$touched || forms.formSignup.$submitted" ng-messages-multiple>
+                        <p ng-message="required" class="help-block"><b>Debe ingresar un departamento.</b></p>
+                      </div>
+                    </div>
+                  </div>
+                  <!-- <div input-field>
                     <i class="fa fa-map-signs prefix"></i>
                     <select class="" ng-model="departments.selected" ng-options="department.adminName1 for department in departments.choices" ng-change="getCities(departments.selected.adminCode1)" material-select watch></select>
                     <label>Departamento</label>
-                  </div>
+                  </div> -->
                 </div>
                 <div class="col s4">
                   <div input-field>
+                    <div ng-class="{'has-error': forms.formSignup.city.$invalid && (!forms.formSignup.city.$pristine || forms.formSignup.$submitted || forms.formSignup.city.$touched),
+                      'has-success': forms.formSignup.city.$valid}">
+                      <ng-md-icon icon="location_city" class="prefix" style="fill: black" size="30"></ng-md-icon>
+                      <input type="text" name="city" placeholder="Ej. Medellín" ng-model="user.city" required>
+                      <label>Ciudad</label>
+                      <!-- VALIDACIONES DE CIUDAD -->
+                      <div ng-messages="forms.formSignup.city.$error" ng-if="forms.formSignup.city.$touched || forms.formSignup.$submitted" ng-messages-multiple>
+                        <p ng-message="required" class="help-block"><b>Debe ingresar una ciudad.</b></p>
+                      </div>
+                    </div>
+                  </div>
+                  <!-- <div input-field>
                     <ng-md-icon icon="location_city" class="prefix" style="fill: black" size="30"></ng-md-icon>
                     <select class="" ng-model="cities.selected" ng-options="city.name for city in cities.choices" material-select watch>
                         </select>
-                    <!-- <input type="text" ng-model="user.city" length="150"> -->
                     <label>Ciudad</label>
-                  </div>
+                  </div> -->
                 </div>
               </div>
               <div class="row">
@@ -240,13 +261,12 @@
 
           <div class="container">
             <div class="row ">
-                <input type="checkbox" class="filled-in" id="filled-in-box" checked="termsAndConditions"
-                ng-model="termsAndConditions" ng-click="switchValueCheckbox()"/>
-                <label for="filled-in-box">Aceptar terminos y condiciones.</label>
+              <input type="checkbox" class="filled-in" id="filled-in-box" checked="termsAndConditions" ng-model="termsAndConditions" ng-click="switchValueCheckbox()" />
+              <label for="filled-in-box">Aceptar terminos y condiciones.</label>
             </div>
 
             <div class="row center">
-              <button class="btn waves-effect waves-light" type="submit"  name="signup">Enviar
+              <button class="btn waves-effect waves-light" type="submit" name="signup">Enviar
                 <i class="fa fa-send right"></i>
               </button>
             </div>

@@ -21,47 +21,47 @@
             choices: res.data,
             selected: res.data[51]
           };
-          $scope.getDepartments($scope.countries.selected.alpha2Code);
+          // $scope.getDepartments($scope.countries.selected.alpha2Code);
         })
 
       // Se obtiene las primeras divisiones administrativas de un país.
-      $scope.getDepartments = function(countryCode) {
-        $scope.countryCode = countryCode;
-        GeographicSvc.getDepartmentsByCountry({
-            country: countryCode,
-            featureCode: 'ADM1',
-            land: 'es',
-            username: 'jonnatan328'
-          })
-          .then((res) => {
-            var departments = orderBy(res.data.geonames, 'adminName1');
-            departments.unshift({
-              adminName1: 'Seleccione...',
-              adminCode1: -1
-            });
-            $scope.departments = {
-              choices: departments,
-              selected: departments[0]
-            }
-          })
-      }
+      // $scope.getDepartments = function(countryCode) {
+      //   $scope.countryCode = countryCode;
+      //   GeographicSvc.getDepartmentsByCountry({
+      //       country: countryCode,
+      //       featureCode: 'ADM1',
+      //       land: 'es',
+      //       username: 'jonnatan328'
+      //     })
+      //     .then((res) => {
+      //       var departments = orderBy(res.data.geonames, 'adminName1');
+      //       departments.unshift({
+      //         adminName1: 'Seleccione...',
+      //         adminCode1: -1
+      //       });
+      //       $scope.departments = {
+      //         choices: departments,
+      //         selected: departments[0]
+      //       }
+      //     })
+      // }
 
       // Se obtienen las segundas divisiones administrativas de un país.
-      $scope.getCities = function(adminCode1) {
-        GeographicSvc.getCitiesByDepartment({
-            country: $scope.countryCode,
-            featureCode: 'ADM2',
-            adminCode1: adminCode1,
-            username: 'jonnatan328'
-          })
-          .then((res) => {
-            var cities = orderBy(res.data.geonames, 'name');
-            $scope.cities = {
-              choices: cities,
-              selected: cities[0]
-            }
-          })
-      }
+      // $scope.getCities = function(adminCode1) {
+      //   GeographicSvc.getCitiesByDepartment({
+      //       country: $scope.countryCode,
+      //       featureCode: 'ADM2',
+      //       adminCode1: adminCode1,
+      //       username: 'jonnatan328'
+      //     })
+      //     .then((res) => {
+      //       var cities = orderBy(res.data.geonames, 'name');
+      //       $scope.cities = {
+      //         choices: cities,
+      //         selected: cities[0]
+      //       }
+      //     })
+      // }
 
       // Verifica si el usuario está autenticado.
       $scope.authenticated = AuthSvc.isAuthenticated();
@@ -145,8 +145,10 @@
         password = $scope.user.password;
         rePassword = $scope.user.rePassword
         country = $scope.countries.selected.name;
-        department = $scope.departments.selected;
-        city = $scope.cities.selected;
+        department = $scope.user.department;
+        city = $scope.user.city;
+        // department = $scope.departments.selected;
+        // city = $scope.cities.selected;
         nomenclature = $scope.user.nomenclature;
         phonenumber = $scope.user.phonenumber;
         contact = $scope.user.contact;
@@ -154,11 +156,13 @@
         termsAndConditions = $scope.termsAndConditions;
         imageFile = $scope.user.imageFile;
         imageDataURI = $scope.user.imageDataURI;
-
+        console.log(city);
+        console.log(department);
 
         // Validación de los datos ingresados.
+        // department.adminCode1 == -1
         if (!name || !nit || !businessOverview || !email || !password || !rePassword || !country ||
-          department.adminCode1 == -1 || !city || !nomenclature || !phonenumber || !contact || !contactPhonenumber) {
+           !department || !city || !nomenclature || !phonenumber || !contact || !contactPhonenumber) {
           Materialize.toast('Verifique que todos los datos se hayan ingresado correctamente.', 4000, 'red darken-1 rounded')
           return;
         }
@@ -168,8 +172,8 @@
           return;
         }
 
-        city = city.name;
-        department = department.adminName1;
+        // city = city.name;
+        // department = department.adminName1;
 
         if (password.length < 6 || password !== rePassword) {
           Materialize.toast('Verifique la contraseña y confirmela.', 4000, 'red darken-1 rounded')

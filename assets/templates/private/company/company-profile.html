@@ -166,18 +166,37 @@
               </div>
               <div class="col s4">
                 <div input-field>
-                  <i class="fa fa-map-signs prefix"></i>
+                  <div ng-class="{'has-error': forms.formUpdate.department.$invalid && (!forms.formUpdate.department.$pristine || forms.formUpdate.$submitted || forms.formUpdate.department.$touched),
+                    'has-success': forms.formUpdate.department.$valid}">
+                    <i class="fa fa-map-signs prefix"></i>
+                    <input type="text" name="department" placeholder="Ej. Antioquia" ng-model="mainHeadquarters.department" required>
+                    <label>Departamento</label>
+                    <!-- VALIDACIONES DE DEPARTMENT -->
+                    <div ng-messages="forms.formUpdate.department.$error" ng-if="forms.formUpdate.department.$touched || forms.formUpdate.$submitted" ng-messages-multiple>
+                      <p ng-message="required" class="help-block"><b>Debe ingresar un departamento.</b></p>
+                    </div>
+                  </div>
+                  <!-- <i class="fa fa-map-signs prefix"></i>
                   <select class="" ng-model="departments.selected" ng-options="department.adminName1 for department in departments.choices" ng-change="getCities(departments.selected.adminCode1)" material-select watch></select>
-                  <label>Departamento</label>
+                  <label>Departamento</label> -->
                 </div>
               </div>
               <div class="col s4">
                 <div input-field>
-                  <ng-md-icon icon="location_city" class="prefix" style="fill: black" size="30"></ng-md-icon>
+                  <div ng-class="{'has-error': forms.formUpdate.city.$invalid && (!forms.formUpdate.city.$pristine || forms.formUpdate.$submitted || forms.formUpdate.city.$touched),
+                    'has-success': forms.formUpdate.city.$valid}">
+                    <ng-md-icon icon="location_city" class="prefix" style="fill: black" size="30"></ng-md-icon>
+                    <input type="text" name="city" placeholder="Ej. Medellín" ng-model="mainHeadquarters.city" required>
+                    <label>Ciudad</label>
+                    <!-- VALIDACIONES DE CIUDAD -->
+                    <div ng-messages="forms.formUpdate.city.$error" ng-if="forms.formUpdate.city.$touched || forms.formUpdate.$submitted" ng-messages-multiple>
+                      <p ng-message="required" class="help-block"><b>Debe ingresar una ciudad.</b></p>
+                    </div>
+                  </div>
+                  <!-- <ng-md-icon icon="location_city" class="prefix" style="fill: black" size="30"></ng-md-icon>
                   <select class="" ng-model="cities.selected" ng-options="city.name for city in cities.choices" material-select watch>
                   </select>
-                  <!-- <input type="text" ng-model="user.city" length="150"> -->
-                  <label>Ciudad</label>
+                  <label>Ciudad</label> -->
                 </div>
               </div>
             </div>
