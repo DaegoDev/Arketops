@@ -39,6 +39,7 @@
               <th>Forma de pago</th>
               <th>Estado</th>
               <th>Ver cotización</th>
+              <th></th>
             </tr>
           </thead>
           <tbody>
@@ -47,15 +48,17 @@
                 <td>{{quotation.date | date:'mediumDate' | capitalize}}</td>
                 <td>{{quotation.quotationValidityPeriod ? quotation.quotationValidityPeriod + ' Días' : 'Sin definir'}}</td>
                 <td>{{quotation.PaymentForm.name ? quotation.PaymentForm.name : 'Sin definir'}}</td>
+                <td>{{quotation.state | capitalize}}</td>
                 <td>
-                  {{quotation.state | capitalize}}
+                  <ng-md-icon ng-click="showQuotation(quotation)" icon="attach_file" style="fill: black; cursor: pointer;" size="30"
+                  tooltipped data-position="top" data-delay="50" data-tooltip="Mostrar">
+                  </ng-md-icon>
+                </td>
+                <td>
                   <ng-md-icon ng-if="quotation.state.toUpperCase() == 'CONFIRMADO'" icon="check" style="fill: green" size="30"></ng-md-icon>
                   <ng-md-icon ng-if="quotation.state.toUpperCase() == 'PENDIENTE'" tooltipped data-position="top" data-delay="50" data-tooltip="Confirmar"
                   ng-click="openFormToConfirm(quotation, $index)" icon="hourglass_empty" style="fill: blue; cursor: pointer;" size="30"></ng-md-icon>
                 </td>
-                <td><ng-md-icon ng-click="showQuotation(quotation)" icon="attach_file" style="fill: black; cursor: pointer;" size="30"
-                  tooltipped data-position="top" data-delay="50" data-tooltip="Mostrar">
-                </ng-md-icon></td>
               </tr>
           </tbody>
         </table>

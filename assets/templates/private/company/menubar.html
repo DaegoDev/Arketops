@@ -10,30 +10,11 @@
       </li>
 
       <li>
-        <a
-          dropdown
-          data-activates='productOptions'
-          data-hover="true"
-          data-beloworigin="true"
-          href="">Productos</a>
+        <a dropdown data-activates='productOptions' data-hover="true" data-beloworigin="true" href="">Productos</a>
       </li>
 
       <li>
-        <a
-          dropdown
-          data-activates='quotationOptions'
-          data-hover="true"
-          data-beloworigin="true"
-          href="">Cotizaciones</a>
-      </li>
-
-      <li>
-        <a
-          dropdown
-          data-activates='clientSupplierOptions'
-          data-hover="true"
-          data-beloworigin="true"
-          href="">Clientes y proveedores
+        <a dropdown data-activates='clientSupplierOptions' data-hover="true" data-beloworigin="true" href="">Clientes y proveedores
         </a>
       </li>
     </ul>
@@ -45,11 +26,6 @@
   <li><a ui-sref="productCreation">Crear</a></li>
 </ul>
 
-<ul id='quotationOptions' class='dropdown-content'>
-  <li><a href="javascript:void(0);">Crear</a></li>
-  <li><a href="javascript:void(0);">Listar</a></li>
-</ul>
-
 <ul id='clientSupplierOptions' class='dropdown-content'>
   <li><a ui-sref="clientsList">Ver clientes</a></li>
   <li><a ui-sref="suppliersList">Ver proveedores</a></li>
@@ -57,6 +33,6 @@
 
 <div class="fixed-action-btn ">
   <a ng-click="scrollUp()" class="btn-floating btn-large yellow">
-      <ng-md-icon style="margin-left: -35px; margin-top: -40px; fill: black;"  icon="keyboard_arrow_up" size="60"></ng-md-icon>
+    <ng-md-icon style="margin-left: -35px; margin-top: -40px; fill: black;" icon="keyboard_arrow_up" size="60"></ng-md-icon>
   </a>
 </div>
