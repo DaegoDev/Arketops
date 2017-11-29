@@ -15,10 +15,10 @@ arketops.controller('ProductCtrl', ['$scope', '$log', '$state', '$stateParams',
           $scope.elements = res.data;
           $scope.elements.forEach(function(element, i, elements) {
             switch (element.name.toUpperCase()) {
-              case "CATEGORIA":
+              case "CATEGORÍA":
                 $scope.categories = element;
                 break;
-              case "LINEA":
+              case "LÍNEA":
                 $scope.lines = element;
                 break;
               case "MARCA":

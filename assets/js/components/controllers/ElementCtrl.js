@@ -5,7 +5,7 @@ arketops.controller('ElementCtrl', ['$scope', '$log', '$state', '$stateParams',
 
     // Baked relations between parent and child elements.
     var linkRelations = [
-      {parent: "CATEGORIA", child: "LINEA", parentRef: null}
+      {parent: "CATEGORÍA", child: "LÍNEA", parentRef: null}
     ];
 
     // Current mode of form.
