@@ -402,6 +402,7 @@ function createTableBodyProducts(productsQuery, objectProduct, elementsDiscountC
     }]
   ];
   // sails.log.debug(productsQuery)
+  // Products to quote gotten of the db
   productsQuery.forEach(function(product, index, productsList) {
     var elementData = product.ElementData;
     var amountElements = elementData.length;
@@ -416,10 +417,11 @@ function createTableBodyProducts(productsQuery, objectProduct, elementsDiscountC
     var isSpecialDiscount = false;
     var discountsList = [];
     var indexElementMain = null;
-    var specialDiscount = null;
+    var specialDiscount = 0;
 
+    // sails.log.debug(elementsDiscountClient)
     for (var i = 0; i < amountElements; i++) {
-      // var isDiscountClient = false;
+      var isSpecialDiscount = false;
       if (elementData[i].Element.name.toUpperCase() == "MARCA") {
         trademark = elementData[i].name;
       } else if (elementData[i].Element.name.toUpperCase() == "IMPUESTO") {
@@ -428,7 +430,7 @@ function createTableBodyProducts(productsQuery, objectProduct, elementsDiscountC
         continue;
       }
       for (var j = 0; j < elementsDiscountLenght; j++) {
-        if (elementData[i].id == elementsDiscountClient[j].id) {
+        if (elementData[i].id === elementsDiscountClient[j].id) {
           specialDiscount = elementsDiscountClient[j].ClientDiscount.discount;
           isSpecialDiscount = true;
           // isDiscountClient = true;
@@ -455,7 +457,9 @@ function createTableBodyProducts(productsQuery, objectProduct, elementsDiscountC
       // }else if (true) {
       //
       // }
+
     }
+    // sails.log.debug(discount);
     amount = objectProduct[product.id].amount;
     price = product.price;
     var tmpTotal = price * amount;

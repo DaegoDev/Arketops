@@ -392,11 +392,31 @@ module.exports = {
         return Quotation.create(quotationCredentials);
       })
       .then(function(quotation) {
+        res.created(quotation);
         // Guarda el documento pdf en la ruta pasada como parametro.
         QuotationPDFService.saveDocument(quotationFilePath);
-        MailService.sendQuotationToClient(supplier, client, quotationFilePath);
-        MailService.sendQuotationToSupplier(supplier, client, quotationFilePath);
-        res.created(quotation);
+        var tmpFilePath = quotationFilePath.replace("pending", "tmp");
+        // var readStream = fs.createReadStream(sails.config.appPath + quotation.fileURI);
+        // readStream.pipe(fs.createWriteStream(tmpFilePath));
+        var options = {
+          'text': 'SIN CONFIRMAR',
+          'color': 'rgb(160, 162, 152)',
+          'dstPath': tmpFilePath,
+          'resize': '100%',
+          'font': '/assets/fonts/ALGERIA.TTF'
+        };
+        setTimeout(function () {
+          watermark.embedWatermarkWithCb(quotationFilePath, options, function() {
+            MailService.sendQuotationToClient(supplier, client, tmpFilePath);
+            MailService.sendQuotationToSupplier(supplier, client, tmpFilePath);
+            setTimeout(function() {
+              fs.unlink(tmpFilePath, (err) => {
+                if (err) throw err;
+                sails.log.debug('Se borró el archivo de pendiente');
+              });
+            }, 10000);
+          });
+        }, 500);
       })
       .catch(function(err) {
         res.serverError(err);

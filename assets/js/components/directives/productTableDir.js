@@ -64,11 +64,11 @@ function productTableCtrl($scope, $log, $ngConfirm, AuthSvc, $state, StorageSvc)
           brand = elementData.name;
           totalDiscount += discount;
           break;
-        case 'CATEGORIA':
+        case 'CATEGORÍA':
           category = elementData.name;
           totalDiscount += discount;
           break;
-        case 'LINEA':
+        case 'LÍNEA':
           line = elementData.name;
           totalDiscount += discount;
           break;

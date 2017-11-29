@@ -34,9 +34,9 @@
                   material-select
                   ng-model="product.category"
                   ng-options="data.name for data in categories.ElementData">
-                  <option value="">Categoria</option>
+                  <option value="">Categoría</option>
                 </select>
-                <label>Categoria</label>
+                <label>Categoría</label>
               </div>
             </div>
 
@@ -52,7 +52,7 @@
                   ng-options="data.name for data in lines.ElementData | linkedElementFilter:product.category:true">
                   <option value="">Linea</option>
                 </select>
-                <label>Linea</label>
+                <label>Línea</label>
               </div>
             </div>
 
