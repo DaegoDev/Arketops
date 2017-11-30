@@ -5,27 +5,56 @@ arketops.controller('ClientDiscountsCtrl', ['$scope', '$log', '$state', '$stateP
     // Declaration of variables
     $scope.client = JSON.parse(StorageSvc.get('clientSelected', 'session'));
 
+    // Get all elements with the elementData corresponding.
     ElementSvc.getElements()
     .then((res) => {
       $scope.resElements = res.data;
-      // console.log($scope.resElements);
+      console.log($scope.resElements);
       $scope.elements = {
         choices: $scope.resElements,
         selected: $scope.resElements[0]
       }
       $scope.getElementData($scope.elements.selected, 0)
     })
-    .catch((err) => {
+     .catch((err) => {
       console.log(err);
     })
 
+    // Function to get the elementData of the elements Object.
     $scope.getElementData = function (value, indexDefault) {
+      console.log(value);
+      if (value.name.toUpperCase() === 'LÍNEA') {
+        $scope.isLineSelected = true;
+        var elementsLength = $scope.resElements.length
+        for (var i = 0; i < elementsLength; i++) {
+          console.log($scope.resElements[i]);
+            if ($scope.resElements[i].name.toUpperCase() === 'CATEGORÍA') {
+              $scope.categories = {
+                choices: $scope.resElements[i].ElementData,
+                selected: $scope.resElements[i].ElementData[0]
+              }
+              break;
+            }
+        }
+        $scope.getLines($scope.categories.selected);
+        return;
+      }
+      $scope.isLineSelected = false;
       $scope.elementData = {
         choices: value.ElementData,
         selected: value.ElementData[indexDefault]
       }
     }
 
+    // Function to get the lines of a category.
+    $scope.getLines = function (category) {
+      $scope.elementData = {
+        choices: category.ElementChildren,
+        selected: category.ElementChildren[0]
+      }
+    }
+
+    // Get the elements with discount assigned to a client.
     $scope.getElementsDiscountByClient = function () {
       ElementSvc.getClientDiscounts({clientSupplierId: $scope.client.ClientSupplier.id})
       .then((res) => {
@@ -38,6 +67,7 @@ arketops.controller('ClientDiscountsCtrl', ['$scope', '$log', '$state', '$stateP
 
     $scope.getElementsDiscountByClient();
 
+    // Add an elementData's discount for a client.
     $scope.addDiscount = function () {
       // Variables
       var elementData = null;
@@ -47,7 +77,12 @@ arketops.controller('ClientDiscountsCtrl', ['$scope', '$log', '$state', '$stateP
       elementData = $scope.elementData.selected;
       discount = $scope.discount;
 
-      if (!discount || !elementData) {
+      if (!elementData) {
+        Materialize.toast('Debe seleccionar el valor del elemento', 4000, 'red darken-1 rounded');
+        return;
+      }
+
+      if (!discount) {
         Materialize.toast('Debe ingresar el descuento', 4000, 'red darken-1 rounded');
         return;
       }
@@ -69,6 +104,7 @@ arketops.controller('ClientDiscountsCtrl', ['$scope', '$log', '$state', '$stateP
       })
     }
 
+    // Function to set the elementData in the form when is selected.
     $scope.selectDiscount = function (elementDataDiscount) {
       $scope.selectedDiscount = true;
       $scope.elementDataDiscount = elementDataDiscount;

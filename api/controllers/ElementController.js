@@ -22,7 +22,11 @@ module.exports = {
          where: {
            userId: user.id
          },
-         required: false
+         required: false,
+         include: [{
+           model: ElementData,
+           as: 'ElementChildren',
+         }]
        }]
      })
      .then(function(resElement) {
