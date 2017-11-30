@@ -2,16 +2,20 @@
   <div class="card">
     <div class="card-content">
       <div class="row">
-        <div class="col s4">
+        <div class="col s3">
           <label for="element">Elemento</label>
           <select id="element" ng-model="elements.selected" ng-options="element.name | capitalize for element in elements.choices"
           ng-change="getElementData(elements.selected,0)" material-select watch></select>
         </div>
-        <div class="col s4">
+        <div class="col s3" ng-show="isLineSelected">
+          <label for="categories">Elija la categoría</label>
+          <select id="categories" ng-model="categories.selected" ng-options="category.name | capitalize for category in categories.choices" ng-change="getLines(categories.selected)" material-select watch></select>
+        </div>
+        <div class="col s3">
           <label for="elementData">Valores</label>
           <select id="elementData" ng-model="elementData.selected" ng-options="value.name | capitalize for value in elementData.choices" material-select watch></select>
         </div>
-        <div class="col s4">
+        <div class="col s3">
           <label for="discount">Descuento</label>
           <input type="number" name="discount" id="discount" ng-model="discount">
         </div>
