@@ -9,6 +9,12 @@
             ng-click="goToState(option.name, $index)">{{option.name}}</a>
           </div>
         </div>
+        <a ng-if="!isSupplier" ng-click="followCompany()" class="waves-effect waves-light btn" style="padding: 2px 15px 4px 15px !important;">Seguir
+          <ng-md-icon icon="person_add" style="fill: black; margin-bottom:4px" size="25"></ng-md-icon>
+        </a>
+        <a ng-if="isSupplier" class="waves-effect waves-light btn disabled" style="padding: 2px 15px 4px 15px !important;">Siguiendo
+          <ng-md-icon icon="person" style="fill: black; margin-bottom:4px" size="25"></ng-md-icon>
+        </a>
       </div>
       <div class="option-content  card col s10" >
         <div class="card-content header-client-details">

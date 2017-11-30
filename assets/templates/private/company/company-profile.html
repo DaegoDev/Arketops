@@ -93,7 +93,7 @@
               <input class="hide" type="file" id="file-input" name="imageFile" ng-model="imageFile" maxsize="10000" do-not-parse-if-oversize
               base-sixty-four-input required onloadend="onLoad" accept="image/jpg, image/jpeg, image/png">
               <label for="file-input">
-                <img ng-style="imgAvatarStyle" id="image-avatar" ng-src="{{user.imageURI}}" height="200" width="200">
+                <img ng-style="imgAvatarStyle" id="image-avatar" ng-src="{{user.imageURI}}" height="200" width="200" style="cursor: pointer;">
               </label>
             </div>
             <div class="row">

@@ -43,5 +43,41 @@ arketops.controller('ClientDetailsCtrl', ['$scope', '$log', '$state', '$statePar
     }
 
     $scope.goToState('Datos personales', 0);
+
+    CompanySvc.isSupplier({companyId: $scope.client.id})
+    .then((res) => {
+        $scope.isSupplier = res.data;
+    })
+    .catch((err) => {
+      console.log(err);
+    })
+
+    $scope.followCompany = function () {
+      $ngConfirm({
+        title: 'Confirmación',
+        useBootstrap: true,
+        content: '¿Desea seguir a este cliente?',
+        boxWidth: '30%',
+        useBootstrap: false,
+        buttons: {
+          confirm: {
+            text: 'Confirmar',
+            btnClass: 'btn-orange',
+            action: function() {
+              CompanySvc.followCompany({supplierId: $scope.client.id})
+              .then((res) => {
+                $scope.isSupplier = true;
+              })
+              .catch((err) => {
+                Materialize.toast('Ocurrió un error al ejecutar la acción.', 4000, 'red darken-1 rounded');
+              })
+            }
+          },
+          cancel: function() {
+
+          }
+        }
+      });
+    }
   }
 ]);
