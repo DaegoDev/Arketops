@@ -99,6 +99,18 @@ function productListCtrl($scope, $log, $ngConfirm, AuthSvc, $state, StorageSvc, 
       });
   }
 
+  //Function to get the tax value.
+  $scope.getTax = function (product) {
+    console.log(product);
+    var taxValue = null;
+    product.ElementData.forEach(function (elementData) {
+      if (elementData.Element.name.toUpperCase() === 'IMPUESTO') {
+        taxValue = elementData.discount;
+      }
+    })
+    return taxValue;
+  }
+
   // Function to update a product.
   $scope.updateProduct = function(product) {
     $scope.product = {

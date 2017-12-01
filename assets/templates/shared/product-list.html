@@ -6,20 +6,29 @@
   </div>
 </div>
 
+<div class="row header-list">
+  <span class="code-col"><strong>Código</strong></span>
+  <span class="name-col"><strong>Nombre</strong></span>
+  <span class="price-col"><strong>Precio</strong></span>
+  <span class="tax-col"><strong>Impuesto</strong></span>
+</div>
+
 <ul class="collapsible popout" data-collapsible="accordion" watch>
   <li ng-repeat="product in products | filter:searchText" on-finish-render>
-
     <div class="collapsible-header">
       <ng-md-icon class="prefix" icon="blur_on" style="fill: blue darken-1" size="20"></ng-md-icon>
-      <span style="margin-right: 30px;">
-        <label for="">Código:
-        </label>{{product.code}}</span>
+      <span style="margin: 0 8% 0 0;">
+        {{product.code}}
+      </span>
       <span class="main-data">
-        <span class="badge">{{product.price | currency : '$' : '0'}}</span>
-        <label for="">Producto:
-        </label>{{product.name | capitalize}}
-        {{product.ElementData[0].name}}
-        {{product.ElementData[1].name}}</span>
+        {{product.name | capitalize}}
+        <span style="margin-left:57%">
+          {{product.price | currency : '$' : '0'}}
+        </span>
+        <span class="badge" style="margin-right: 2%">
+          {{getTax(product)}}%
+        </span>
+      </span>
     </div>
 
     <div class="collapsible-body">
@@ -57,10 +66,10 @@
               </span>
 
               <span>
-                <strong>{{elementData.name | capitalize}}</strong>
+                <strong>{{elementData.name}}</strong>
               </span>
 
-              <span>
+              <span ng-if="isPrivate() && (elementData.Element.name.toUpperCase() !== 'IMPUESTO')">
                 <strong>{{elementData.discount}}
                   <span ng-if="elementData.discount">% Desc.</span>
                 </strong>
