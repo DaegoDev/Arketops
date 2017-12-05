@@ -1,15 +1,51 @@
-
 <table class="highlight bordered responsive-table">
   <thead>
     <tr>
-      <th>Código</th>
-      <th>Nombre</th>
-      <th>Marca</th>
-      <th>Categoría</th>
-      <th>Línea</th>
-      <th>Impuesto</th>
-      <th>Opciones</th>
-      <th style="width:100px"></th>
+      <th style="width: 10%">
+        <span class="header-name">
+          Código
+        </span>
+        <span class="icon-sort" ng-click="sortBy('code')">
+          <ng-md-icon icon="sort_by_alpha" style="fill: blue;" size="20"></ng-md-icon>
+        </span>
+      </th>
+      <th style="width: 17%">
+        <span class="header-name">
+          Nombre
+        </span>
+        <span class="icon-sort" ng-click="sortBy('name')">
+          <ng-md-icon icon="sort_by_alpha" style="fill: blue;" size="20"></ng-md-icon>
+        </span>
+      </th>
+      <th style="width: 13%">
+        <span class="header-name">
+          Marca
+        </span>
+        <span class="icon-sort" ng-click="sortBy('marca')">
+          <ng-md-icon icon="sort_by_alpha" style="fill: blue;" size="20"></ng-md-icon>
+        </span>
+      </th>
+      <th style="width: 13%">
+        <span class="header-name">
+          Categoría
+        </span>
+        <span class="icon-sort" ng-click="sortBy('categoria')">
+          <ng-md-icon icon="sort_by_alpha" style="fill: blue;" size="20"></ng-md-icon>
+        </span>
+      </th>
+      <th style="width: 13%">
+        <span class="header-name">
+          Línea
+        </span>
+        <span class="icon-sort" ng-click="sortBy('linea')">
+          <ng-md-icon icon="sort_by_alpha" style="fill: blue;" size="20"></ng-md-icon>
+        </span>
+      </th>
+      <th style="width: 10%">
+        Impuesto
+      </th>
+      <th style="width: 10%">Opciones</th>
+      <th style="width: 15%"></th>
     </tr>
   </thead>
 
@@ -17,19 +53,16 @@
     <tr ng-repeat="product in products">
       <td>{{product.code}}</td>
       <td>{{product.name}}</td>
-      <!-- <td ng-repeat="elementData in product.ElementData"> -->
-        <td>{{getElementDataName(product.ElementData, 'MARCA')}}</td>
-        <td>{{getElementDataName(product.ElementData, 'CATEGORÍA')}}</td>
-        <td>{{getElementDataName(product.ElementData, 'LÍNEA')}}</td>
-        <td>{{getElementDataName(product.ElementData, 'IMPUESTO')}}</td>
-      <!-- </td> -->
+      <td>{{getElementDataName(product.ElementData, 'MARCA')}}</td>
+      <td>{{getElementDataName(product.ElementData, 'CATEGORÍA')}}</td>
+      <td>{{getElementDataName(product.ElementData, 'LÍNEA')}}</td>
+      <td>{{getElementDataName(product.ElementData, 'IMPUESTO')}}</td>
       <td style="width:100px">
         <a class="waves-effect waves-light btn" ng-click="addProductToList(product, $index)">Añadir</a>
       </td>
       <td style="width:100px" ng-if="product.added">
-        <ng-md-icon  icon="check" style="fill: green" size="40"></ng-md-icon>
-        <ng-md-icon ng-click="removeProductOfList($index, product)" icon="remove_circle" style="fill: red; margin-left: 10px; cursor: pointer"
-        size="40" tooltipped data-position="top" data-delay="50" data-tooltip="Remover"></ng-md-icon>
+        <ng-md-icon icon="check" style="fill: green" size="40"></ng-md-icon>
+        <ng-md-icon ng-click="removeProductOfList($index, product)" icon="remove_circle" style="fill: red; margin-left: 10px; cursor: pointer" size="40" tooltipped data-position="top" data-delay="50" data-tooltip="Remover"></ng-md-icon>
       </td>
     </tr>
   </tbody>

@@ -14,12 +14,33 @@ arketops.directive('productTable', function() {
 })
 
 arketops.controller('productTableCtrl', ['$scope', '$log', '$ngConfirm', 'AuthSvc', '$state',
-  'StorageSvc', productTableCtrl
+  'StorageSvc', 'orderByFilter', productTableCtrl
 ]);
 
-function productTableCtrl($scope, $log, $ngConfirm, AuthSvc, $state, StorageSvc) {
+function productTableCtrl($scope, $log, $ngConfirm, AuthSvc, $state, StorageSvc, orderBy) {
 
   console.log($scope.products);
+  $scope.elementsIndex = {};
+
+  $scope.products[0].ElementData.forEach(function (elementData, index, elementDataList) {
+    switch (elementData.Element.name.toUpperCase()) {
+      case 'MARCA':
+        $scope.elementsIndex.marca = index;
+        break;
+      case 'CATEGORÍA':
+        $scope.elementsIndex.categoria = index;
+        break;
+      case 'LÍNEA':
+        $scope.elementsIndex.linea = index;
+        break;
+      default:
+
+    }
+  })
+
+  $scope.propertyName = 'code';
+  $scope.reverse = true;
+  $scope.products = orderBy($scope.products, $scope.propertyName, $scope.reverse);
 
   $scope.addProductToList = function(productSelected, index) {
     var productToQuote = buildProduct(productSelected);
@@ -87,20 +108,6 @@ function productTableCtrl($scope, $log, $ngConfirm, AuthSvc, $state, StorageSvc)
     productSelected.subtotal = ((amount * productSelected.price) * ((tax.discount / 100) + 1)) * (1 - (totalDiscount / 100));
 
     return productSelected;
-    // var productBuilt = {
-    //   id: productSelected.id,
-    //   code: productSelected.code,
-    //   name: productSelected.name,
-    //   brand: brand,
-    //   category: category,
-    //   line: line,
-    //   tax: tax,
-    //   price: productSelected.price,
-    //   totalDiscount: totalDiscount,
-    //   amount: amount,
-    //   subtotal: ((amount * productSelected.price) * ((tax.discount / 100) + 1)) * (1 - (totalDiscount / 100))
-    // }
-    // return productBuilt;
   }
 
   $scope.removeProductOfList = function (indexProductList, product) {
@@ -119,6 +126,17 @@ function productTableCtrl($scope, $log, $ngConfirm, AuthSvc, $state, StorageSvc)
         break;
       }
     }
+  }
+
+  $scope.sortBy = function (propertyName) {
+    $scope.reverse = (propertyName !== null && $scope.propertyName === propertyName) ? !$scope.reverse : false;
+    $scope.propertyName = propertyName;
+    if (propertyName.toUpperCase() == 'CODE' || propertyName.toUpperCase() == 'NAME') {
+      $scope.products = orderBy($scope.products, $scope.propertyName, $scope.reverse);
+    }else {
+      $scope.products = orderBy($scope.products, 'ElementData[' + $scope.elementsIndex[propertyName] + '].name', $scope.reverse);
+    }
+
   }
 
 }
