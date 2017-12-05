@@ -1,8 +1,8 @@
 var arketops = angular.module('arketops');
 arketops.controller('ClientQuotationCreateCtrl', ['$scope', '$filter', '$log', '$state', '$stateParams',
-  '$ngConfirm', 'StorageSvc', 'QuotationSvc', 'ProductSvc',
+  '$ngConfirm', 'StorageSvc', 'QuotationSvc', 'ProductSvc', '$timeout',
   function($scope, $filter, $log, $state, $stateParams, $ngConfirm, StorageSvc,
-    QuotationSvc, ProductSvc) {
+    QuotationSvc, ProductSvc, $timeout) {
     // Declaration of variables
     $scope.client = JSON.parse(StorageSvc.get('clientSelected', 'session'));
     $scope.quotation = {};
@@ -67,7 +67,7 @@ arketops.controller('ClientQuotationCreateCtrl', ['$scope', '$filter', '$log', '
           removeAll: {
             text: 'Remover todo',
             btnClass: 'btn-red',
-            action: function (scope, button) {
+            action: function(scope, button) {
               $scope.selectList = [];
               $scope.removeMarkAdded();
               $scope.calculateTotal();
@@ -77,7 +77,7 @@ arketops.controller('ClientQuotationCreateCtrl', ['$scope', '$filter', '$log', '
           confirm: {
             text: 'Confirmar',
             btnClass: 'btn-orange',
-            action: function (scope, button) {
+            action: function(scope, button) {
 
             }
           }
@@ -157,14 +157,14 @@ arketops.controller('ClientQuotationCreateCtrl', ['$scope', '$filter', '$log', '
           cancel: {
             text: 'Cancelar',
             btnClass: 'btn-red',
-            action: function (scope, button) {
+            action: function(scope, button) {
 
             }
           },
           confirm: {
             text: 'Confirmar',
             btnClass: 'btn-orange',
-            action: function (scope, button) {
+            action: function(scope, button) {
               createQuotation(params)
             }
           }
@@ -233,15 +233,15 @@ arketops.controller('ClientQuotationCreateCtrl', ['$scope', '$filter', '$log', '
     // }
 
     // Function to calculate the total in the quotation.
-    $scope.calculateTotal = function () {
+    $scope.calculateTotal = function() {
       var total = 0;
-      $scope.selectList.forEach(function (product, index, selectList) {
+      $scope.selectList.forEach(function(product, index, selectList) {
         total += product.subtotal;
       })
       $scope.total = total;
     }
 
-    $scope.calculateSubtotal = function (product) {
+    $scope.calculateSubtotal = function(product) {
       console.log(product.amount);
       if (product.amount < 0 || isNaN(parseFloat(product.amount)) && !isFinite(product.amount)) {
         product.amount = 1;
@@ -265,8 +265,8 @@ arketops.controller('ClientQuotationCreateCtrl', ['$scope', '$filter', '$log', '
       $scope.calculateTotal();
     }
 
-    $scope.removeMarkAdded = function () {
-      $scope.products.forEach(function (product) {
+    $scope.removeMarkAdded = function() {
+      $scope.products.forEach(function(product) {
         product.added = false;
       })
     }
