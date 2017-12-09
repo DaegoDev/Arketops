@@ -81,7 +81,8 @@
                   watch
                   material-select
                   ng-model="product.tax"
-                  ng-options="data.name for data in taxes.ElementData">
+                  ng-options="data.name for data in taxes.ElementData"
+                  ng-change="updatePrice()">
                   <option value="">Impuesto</option>
                 </select>
                 <label>Impuesto</label>
@@ -102,7 +103,7 @@
 
             <div class="col l4 s12">
               <div input-field>
-                <input type="number" name="price" class="validate" ng-model="product.price" min="0" required >
+                <input type="number" name="price" class="validate" ng-model="product.price" min="0" required ng-change="updatePrice()">
                 <label>Precio</label>
               </div>
             </div>
@@ -112,8 +113,9 @@
                 <input
                   type="text"
                   name=""
-                  value="{{(product.price ? product.price:0) | currency}}"
-                  disabled>
+                  value="{{(product.TotalPrice ? product.TotalPrice:0) | currency}}"
+                  disabled
+                  style="color: black">
               </div>
             </div>
 
@@ -127,7 +129,7 @@
                   ng-options="state.name for state in states"
                   class="validate"
                   required>
-                  <option value="">Estado</option>
+                  <option value="" disabled>Estado</option>
                 </select>
                 <label>Estado</label>
               </div>

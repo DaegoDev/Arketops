@@ -81,7 +81,6 @@ module.exports = {
     var appPath = sails.config.appPath;
 
     return sequelize.transaction(function(t) {
-      var imageURI;
       var company;
       var product;
 
@@ -95,27 +94,36 @@ module.exports = {
 
       .spread(function(companyInst, products) {
         var absolutePath = null;
-        if (products.length == 0) {
-          company = companyInst;
-          absolutePath = path.join(appPath, relativePath, company.nit + "-" + code + "-" + Date.now());
-          return ImageDataURIService.decodeAndSave(imageDataURI, absolutePath)
+
+        if (products.length != 0) {
+          throw {errResponse: res.duplicated};
         }
-        throw "Ya existe un producto con ese código";
+        company = companyInst;
+
+        if (!imageDataURI) {
+          return promise.resolve(0);
+        }
+        else {
+          absolutePath = path.join(appPath, relativePath, company.nit + "-" + code + "-" + Date.now());
+          return ImageDataURIService.decodeAndSave(imageDataURI, absolutePath);
+        }
       })
 
       .then(function(resUpload) {
-        if (resUpload) {
+        if (imageDataURI) {
           imageURI = resUpload;
           relativePath = relativePath + path.basename(resUpload);
 
           // Se valida que el archivo tenga el formato y la resolución deseada.
           var dimensions = sizeOf(resUpload);
           if (dimensions.type != "png" && dimensions.type != "jpeg" && dimensions.type != "jpg") {
-            fs.unlink(resUpload, (err) => {
-              sails.log.debug('Se borró la imagen');
-            });
-            throw new Error("La configuración del archivo no es valida");
+            sails.log.debug("Processing image error.")
+            throw {errResponse: res.wrongFormatUpload};
           }
+        }
+
+        else {
+          relativePath = relativePath + 'NOIMAGE.png';
         }
 
         // Creación de las credenciales para crear un producto.
@@ -128,26 +136,34 @@ module.exports = {
           imageURI: relativePath,
           companyId: company.id
         }
-        return Product.create(productCredentials, {
-          transaction: t
-        });
+        return Product.create(productCredentials, { transaction: t });
       })
+
       .then(function(newProduct) {
         product = newProduct;
         return ElementData.findAll({where: {id: {$in: elements}}});
       })
+
       .then(function(result) {
         return product.addElementData(result);
       })
+
       .then(function(finalProduct) {
         return res.ok(finalProduct);
       })
+
       .catch(function(err) {
-        fs.unlink(imageURI, (err) => {
-          if (err) throw err;
-          sails.log.debug('Se borró la imagen');
-        });
+        if (imageURI != null && imageDataURI) {
+          fs.unlink(imageURI, (err2) => {
+            if (err2) { throw err2; }
+            sails.log.debug('Se borró la imagen');
+          });
+        }
         sails.log.debug(err);
+        if (!err.errResponse) {
+          return res.serverError();
+        }
+        return err.errResponse();
       })
     });
   },
@@ -180,6 +196,7 @@ module.exports = {
     if (typeof elements == 'string') {
       return res.badRequest({code: 1, msg: 'There are no enough elements'});
     }
+
     else {
       elements.forEach(function(element, i, elementsList) {
         index = addedElements.indexOf(element);
@@ -228,10 +245,10 @@ module.exports = {
       })
       .then(function(products) {
         if (products.length == 1 && products[0].id != productId) {
-          throw "Ya existe un producto con ese código";
+          throw {errResponse: res.duplicated};
         }
         else if (products.lenth > 1) {
-          throw "La petición es invalida.";
+          throw {errResponse: res.badRequest};
         }
 
         return Product.findOne({
@@ -245,7 +262,7 @@ module.exports = {
       })
       .then(function(product) {
         if (!product) {
-          throw "El producto no ha sido encontrado."
+          throw {errResponse: res.badRequest};
         }
         // Creación de las credenciales para crear un producto.
         productCredentials = {
@@ -259,7 +276,7 @@ module.exports = {
       })
       .then(function (product) {
         if (!product) {
-          throw "El producto no ha sido actualizado";
+          throw {errResponse: res.serverError};
         }
 
         return Promise.all = [
@@ -275,10 +292,14 @@ module.exports = {
       return res.ok(result);
     })
     .catch(function(err) {
+      if (err.errResponse) {
+        return err.errResponse();
+      }
+
       return res.serverError(err);
-      sails.log.debug(err);
     });
   },
+  
   /**
   * Función para eliminar un producto o servicio.
   * @param  {Object} req Request object

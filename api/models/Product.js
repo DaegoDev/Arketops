@@ -19,8 +19,7 @@ module.exports = {
     },
     code: {
       type: Sequelize.STRING(32),
-      allowNull: false,
-      unique: true
+      allowNull: false
     },
     imageURI: {
       type: Sequelize.STRING(512),

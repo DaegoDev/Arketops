@@ -6,45 +6,46 @@
 */
 
 module.exports = {
- /**
+  /**
   * Función para obtener los elementos con descuentos para un cliente.
   * @param  {Object} req Request object
   * @param  {Object} res Response object
   */
- getClientDiscounts: function(req, res) {
-   // Declaración de variables.
-   var clientSupplierId = null;
+  getClientDiscounts: function(req, res) {
+    // Declaración de variables.
+    var clientSupplierId = null;
 
-   clientSupplierId = parseInt(req.param('clientSupplierId'))
+    clientSupplierId = parseInt(req.param('clientSupplierId'))
 
-   if (!clientSupplierId) {
-     return res.badRequest('Id de clientSupplier requerido')
-   }
+    if (!clientSupplierId) {
+      return res.badRequest('Id de clientSupplier requerido')
+    }
 
-   ClientSupplier.findOne({
-       where: {
-         id: clientSupplierId,
-       }
-     })
-     .then((clientSupplier) => {
-       return clientSupplier.getElementData({
-         include: [{
-           model: Element
-         }]
-       })
-     })
-     .then(function(resElement) {
-       return res.ok(resElement);
-     })
-     .catch(function(err) {
-       return res.serverError(err);
-     })
-   },
+    ClientSupplier.findOne({
+      where: {
+        id: clientSupplierId,
+      }
+    })
+    .then((clientSupplier) => {
+      return clientSupplier.getElementData({
+        include: [{
+          model: Element
+        }]
+      })
+    })
+    .then(function(resElement) {
+      return res.ok(resElement);
+    })
+    .catch(function(err) {
+      return res.serverError(err);
+    })
+  },
   /**
   * Función para crear un elemento de un producto.
   * @param  {Object} req Request object
   * @param  {Object} res Response object
   */
+
   getElementsByUser: function(req, res) {
     var user = req.user;
     Element.findAll({
@@ -190,7 +191,7 @@ module.exports = {
     }
 
     discount = req.param('discount');
-    if (!discount) {
+    if (discount == null) {
       return res.badRequest('Descuento del elemento vacío');
     }
 
@@ -207,12 +208,12 @@ module.exports = {
       if (element) {
         return ElementData.findAll({where: {userId: user.id}});
       }
-      throw "El elemento no existe";
+      throw {errResponse: res.serverError};
     })
     .then(function(elementsData) {
       elementsData.forEach(function(elementData, index, elementsDataList) {
         if (elementData.name == name) {
-          throw "Ya existe un elemento con ese nombre";
+          throw {errResponse: res.duplicated};
         }
       })
       // Se contruye las credenciales para crear el elemento.
@@ -228,6 +229,9 @@ module.exports = {
       return res.created(elementData);
     })
     .catch(function(err) {
+      if (err.errResponse) {
+        return err.errResponse();
+      }
       return res.serverError(err);
     })
   },
@@ -278,7 +282,7 @@ module.exports = {
       return ElementData.find({where: {id: dataParentId}})
       .then(function(elementData) {
         if (!elementData) {
-          throw "El padre del elemento no existe."
+          throw {errResponse: res.badRequest};
         }
 
         parentInstance = elementData;
@@ -287,7 +291,7 @@ module.exports = {
       })
       .then(function(element) {
         if (!element) {
-          throw "El elemento del nuevo item no exite."
+          throw {errResponse: res.serverError};
         }
 
         return ElementData.findAll({
@@ -309,7 +313,7 @@ module.exports = {
       })
       .then(function (resElements) {
         if (resElements.length != 0) {
-          throw "El dato que desea crear ya existe."
+          throw {errResponse: res.duplicated};
         }
 
         // Now we can create the new dataElement
@@ -324,7 +328,7 @@ module.exports = {
       })
       .then(function(elementData) {
         if (!elementData) {
-          throw "El nuevo item no ha sido creado."
+          throw {errResponse: res.serverError};
         }
         elementDataInstance = elementData;
         // Finally when the new dataElement is created link it to the parent.
@@ -336,6 +340,9 @@ module.exports = {
       return res.ok(elementDataInstance);
     })
     .catch(function(err) {
+      if (err.errResponse) {
+        return err.errResponse();
+      }
       return res.serverError(err);
     })
   },
@@ -385,12 +392,12 @@ module.exports = {
           where: {userId: user.id, elementId: elementId}
         })];
       }
-      throw "El elemento no existe";
+      throw {errResponse: res.serverError};
     })
     .spread(function(elementData, elementsData) {
       elementsData.forEach(function(data, index, elementsDataList) {
         if (data.name.toUpperCase() == name.toUpperCase() && data.id != elementDataId) {
-          throw "Ya existe un elemento con ese nombre";
+          throw {errResponse: res.duplicated};
         }
       })
       // Se contruye las credenciales para crear el elemento.
@@ -404,6 +411,9 @@ module.exports = {
       res.ok(elementData);
     })
     .catch(function(err) {
+      if (err.errResponse) {
+        return err.errResponse();
+      }
       res.serverError(err);
     })
   },
@@ -457,39 +467,42 @@ module.exports = {
       if (elementData) {
         return Promise.all = [elementData,
           ElementData.findAll({
-          where: {
-            userId: user.id,
-            elementId: elementId
-          },
-          include: [
-            {
-              model: ElementData,
-              as: 'ElementParent',
-              where: {id: dataParentId}
-            }
-          ]
-        })];
-      }
-      throw "El elemento no existe";
-    })
-    .spread(function(elementData, elementsData) {
-      elementsData.forEach(function(data, index, elementsDataList) {
-        if (data.name.toUpperCase() == name.toUpperCase() && data.id != elementDataId) {
-          throw "Ya existe un elemento con ese nombre";
+            where: {
+              userId: user.id,
+              elementId: elementId
+            },
+            include: [
+              {
+                model: ElementData,
+                as: 'ElementParent',
+                where: {id: dataParentId}
+              }
+            ]
+          })];
         }
+        throw {errResponse: res.serverError};
       })
-      // Se contruye las credenciales para crear el elemento.
-      elementDataCredentials = {
-        name: name,
-        discount: discount,
-      }
-      return elementData.update(elementDataCredentials);
-    })
-    .then(function(elementData) {
-      res.ok(elementData);
-    })
-    .catch(function(err) {
-      res.serverError(err);
-    })
-  }
-};
+      .spread(function(elementData, elementsData) {
+        elementsData.forEach(function(data, index, elementsDataList) {
+          if (data.name.toUpperCase() == name.toUpperCase() && data.id != elementDataId) {
+            throw {errResponse: res.duplicated};
+          }
+        })
+        // Se contruye las credenciales para crear el elemento.
+        elementDataCredentials = {
+          name: name,
+          discount: discount,
+        }
+        return elementData.update(elementDataCredentials);
+      })
+      .then(function(elementData) {
+        res.ok(elementData);
+      })
+      .catch(function(err) {
+        if (err.errResponse) {
+          return err.errResponse();
+        }
+        return res.serverError(err);
+      })
+    }
+  };

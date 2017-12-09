@@ -100,13 +100,29 @@ arketops.controller('ElementCtrl', ['$scope', '$log', '$state', '$stateParams',
       // when created.
       ElementSvc.createElementData(elementData)
         .then(function(res) {
+          Materialize.toast('El elemento ha sido creado.',
+            3000, 'green darken-1 rounded');
+
           $scope.currentElement.ElementData.push(res.data);
           $scope.elementData = {};
           $scope.isRequesting = false;
         })
         .catch(function(err) {
-          $log.debug(err);
-          $scope.isRequesting = false;
+          var errData = err.data;
+          if (err.status != 409) {
+            Materialize.toast('El elemento no ha sido creado, por favor intentelo nuevamente.',
+            3000, 'red darken-1 rounded');
+            $scope.isRequesting = false;
+            return;
+          }
+
+          if (errData.code == 3) {
+            Materialize.toast('El nombre del elemento ya está en uso.',
+            3000, 'red darken-1 rounded');
+            $scope.isRequesting = false;
+            return;
+          }
+
         });
     }
 
@@ -127,6 +143,10 @@ arketops.controller('ElementCtrl', ['$scope', '$log', '$state', '$stateParams',
       ElementSvc.createLinkedElementData(elementData)
         .then(function(res) {
           var elementData = res.data;
+
+          Materialize.toast('El elemento ha sido creado.',
+            3000, 'green darken-1 rounded');
+
           elementData.ElementParent = [];
           elementData.ElementParent.push($scope.elementData.parent);
           $scope.currentElement.ElementData.push(res.data);
@@ -136,8 +156,21 @@ arketops.controller('ElementCtrl', ['$scope', '$log', '$state', '$stateParams',
 
         })
         .catch(function(err) {
-          $log.debug(err)
-          $scope.isRequesting = false;
+          var errData = err.data;
+          if (err.status != 409) {
+            Materialize.toast('El elemento no ha sido creado, por favor intentelo nuevamente.',
+            3000, 'red darken-1 rounded');
+            $scope.isRequesting = false;
+            return;
+          }
+
+          if (errData.code == 3) {
+            Materialize.toast('El nombre del elemento ya está en uso.',
+            3000, 'red darken-1 rounded');
+            $scope.isRequesting = false;
+            return;
+          }
+
         });
     }
 
@@ -191,6 +224,9 @@ arketops.controller('ElementCtrl', ['$scope', '$log', '$state', '$stateParams',
 
       ElementSvc.updateElementData(credentials)
       .then(function (res) {
+        Materialize.toast('El elemento ha sido actualizado correctamente.',
+          3000, 'green darken-1 rounded');
+
         $scope.elementData.self.name = res.data.name;
         $scope.elementData.self.discount = res.data.discount;
         $scope.elementData = {
@@ -200,8 +236,21 @@ arketops.controller('ElementCtrl', ['$scope', '$log', '$state', '$stateParams',
         $scope.mode = $scope.CREATE;
       })
       .catch(function (err) {
-        console.log(err);
-        $scope.isRequesting = false;
+        var errData = err.data;
+        if (err.status != 409) {
+          Materialize.toast('El elemento no ha sido actualizado, por favor intentelo nuevamente.',
+          3000, 'red darken-1 rounded');
+          $scope.isRequesting = false;
+          return;
+        }
+
+        if (errData.code == 3) {
+          Materialize.toast('El nombre del elemento ya está en uso.',
+          3000, 'red darken-1 rounded');
+          $scope.isRequesting = false;
+          return;
+        }
+
       });
     }
 
@@ -217,6 +266,9 @@ arketops.controller('ElementCtrl', ['$scope', '$log', '$state', '$stateParams',
 
       ElementSvc.updateLinkedElementData(credentials)
       .then(function (res) {
+        Materialize.toast('El elemento ha sido actualizado correctamente.',
+          3000, 'green darken-1 rounded');
+
         $scope.elementData.self.name = res.data.name;
         $scope.elementData.self.discount = res.data.discount;
         $scope.elementData = {
@@ -226,8 +278,21 @@ arketops.controller('ElementCtrl', ['$scope', '$log', '$state', '$stateParams',
         $scope.mode = $scope.CREATE;
       })
       .catch(function (err) {
-        console.log(err);
-        $scope.isRequesting = false;
+        var errData = err.data;
+        if (err.status != 409) {
+          Materialize.toast('El elemento no ha sido actualizado, por favor intentelo nuevamente.',
+          3000, 'red darken-1 rounded');
+          $scope.isRequesting = false;
+          return;
+        }
+
+        if (errData.code == 3) {
+          Materialize.toast('El nombre del elemento ya está en uso.',
+          3000, 'red darken-1 rounded');
+          $scope.isRequesting = false;
+          return;
+        }
+
       });
     }
 

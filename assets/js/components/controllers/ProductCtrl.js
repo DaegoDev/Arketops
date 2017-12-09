@@ -14,17 +14,17 @@ arketops.controller('ProductCtrl', ['$scope', '$log', '$state', '$stateParams',
         .then(function(res) {
           $scope.elements = res.data;
           $scope.elements.forEach(function(element, i, elements) {
-            switch (element.name.toUpperCase()) {
-              case "CATEGORIA":
+            switch (element.id) {
+              case 2:
                 $scope.categories = element;
                 break;
-              case "LINEA":
+              case 3:
                 $scope.lines = element;
                 break;
-              case "MARCA":
+              case 1:
                 $scope.brands = element;
                 break;
-              case "IMPUESTO":
+              case 4:
                 $scope.taxes = element;
                 break;
               default:
@@ -48,7 +48,14 @@ arketops.controller('ProductCtrl', ['$scope', '$log', '$state', '$stateParams',
         if ($scope.elements[i].name.toUpperCase() == name) {
           return $scope.elements[i];
         }
-        console.log($scope.elements[i].name.toUpperCase());
+      }
+    }
+
+    $scope.updatePrice = function () {
+      if ($scope.product.tax) {
+        $scope.product.TotalPrice = $scope.product.price * (1 + ($scope.product.tax.discount / 100));
+      } else {
+        $scope.product.TotalPrice = $scope.product.price;
       }
     }
 
@@ -59,7 +66,6 @@ arketops.controller('ProductCtrl', ['$scope', '$log', '$state', '$stateParams',
 
       if ($scope.productForm.$invalid) {
         $scope.product.hasErrors = true;
-        console.log($scope.productForm);
         return;
       }
 
@@ -91,21 +97,38 @@ arketops.controller('ProductCtrl', ['$scope', '$log', '$state', '$stateParams',
       $scope.product.isRequesting = true;
       ProductSvc.create(credentials)
         .then(function(res) {
-          console.log(res);
           Materialize.toast('El producto ha sido creado.',
             3000, 'green darken-1 rounded');
           $scope.product = {};
           $scope.fileObject = null;
+          $scope.product.isRequesting = false;
         })
         .catch(function(err) {
-          console.log(err);
-          Materialize.toast('El producto no ha sido creado, por favor intentelo nuevamente.',
+          var errData = err.data;
+          if (err.status != 409) {
+            Materialize.toast('El producto no ha sido creado, por favor intentelo nuevamente.',
             3000, 'red darken-1 rounded');
+            $scope.product.isRequesting = false;
+            return;
+          }
+
+          if (errData.code == 3) {
+            Materialize.toast('El código del producto ya está en uso.',
+            3000, 'red darken-1 rounded');
+          }
+
+          if (errData.code == 4) {
+            Materialize.toast('El formato de la imagen es incorrecto.',
+            3000, 'red darken-1 rounded');
+          }
+
+          $scope.product.isRequesting = false;
         });
     }
 
     // This function shows a modal to create a normal element data.
     $scope.createElementModal = function(element) {
+      $scope.element = element;
       $ngConfirm({
         theme: 'material',
         title: 'Crear ' + element.name,

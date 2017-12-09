@@ -53,7 +53,7 @@
                 <div class="col l3 s4" input-field>
                   <input id="discount" type="number" class="validate" ng-model="elementData.discount" name="discount"
                     min="0" max="100" required>
-                  <label for="discount">Descuento</label>
+                  <label for="discount">{{currentElement.id == 4 ? 'Tarifa':'Descuento'}}</label>
                 </div>
 
               </div>
@@ -72,10 +72,10 @@
                 </div>
 
                 <div class="col l9 s12 push-l3 invalid" ng-messages="elementForm.discount.$error" ng-if="elementData.hasErrors" ng-messages-multiple>
-                  <p ng-message="number"><b>El descuento debe ser un valor númerico.</b></p>
-                  <p ng-message="required"><b>Debe ingresar el valor del descuento.</b></p>
-                  <p ng-message="min"><b>El descuento no puede ser menor a 0%.</b></p>
-                  <p ng-message="max"><b>El descuento no puede ser mayor a 100%.</b></p>
+                  <p ng-message="number"><b>El descuento o tarifa debe ser un valor númerico.</b></p>
+                  <p ng-message="required"><b>Debe ingresar el valor del descuento o tarifa.</b></p>
+                  <p ng-message="min"><b>El descuento o tarifa no puede ser menor a 0%.</b></p>
+                  <p ng-message="max"><b>El descuento o tarifa no puede ser mayor a 100%.</b></p>
                 </div>
               </div>
             </form>
@@ -89,7 +89,7 @@
               <div class="card z-depth-1 z-depth-2">
                 <div class="card-content">
                   <p><b>{{data.name}}</b></p>
-                  <p>Desc. {{data.discount}}%</p>
+                  <p>{{currentElement.id == 4 ? 'Tarifa':'Desc'}}. {{data.discount}}%</p>
                 </div>
               </div>
             </div>

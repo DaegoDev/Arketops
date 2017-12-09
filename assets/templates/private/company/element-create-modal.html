@@ -23,7 +23,7 @@
           min="0"
           max="100"
           required>
-        <label for="discount">Descuento</label>
+        <label for="discount">{{element.id == 4 ? 'Tarifa':'Descuento'}}</label>
       </div>
 
       <div class="col l9 s12 push-l3 invalid" ng-messages="elementForm.name.$error" ng-if="elementData.hasErrors" ng-messages-multiple>
