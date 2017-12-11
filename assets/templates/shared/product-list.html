@@ -7,19 +7,47 @@
 </div>
 
 <ul class="collapsible popout" data-collapsible="accordion" watch>
-  <li ng-repeat="product in products | filter:searchText" on-finish-render>
+  <li>
+    <div class="collapsible-header ">
+      <div class="row">
+        <span class="col l1 m2 s3">
+          <label for="">Código</label>
+        </span>
 
+        <span class="col l8 m6 s3">
+          <label for="">Producto</label>
+        </span>
+
+        <span class="col l2 m2 s3">
+          <label for="">Precio</label>
+        </span>
+
+        <span class="col l1 m2 s3">
+          <label for="">Impuesto</label>
+        </span>
+      </div>
+    </div>
+  </li>
+
+  <li ng-repeat="product in products | filter:searchText" on-finish-render>
     <div class="collapsible-header">
-      <ng-md-icon class="prefix" icon="blur_on" style="fill: blue darken-1" size="20"></ng-md-icon>
-      <span style="margin-right: 30px;">
-        <label for="">Código:
-        </label>{{product.code}}</span>
-      <span class="main-data">
-        <span class="badge">{{product.price | currency : '$' : '0'}}</span>
-        <label for="">Producto:
-        </label>{{product.name | capitalize}}
-        {{product.ElementData[0].name}}
-        {{product.ElementData[1].name}}</span>
+      <div class="row">
+        <span class="col l1 m2 s3">
+          {{product.code}}
+        </span>
+        <span class="col l8 m6 s3">
+          {{product.name | capitalize}}
+          {{product.ElementData[0].name}}
+        </span>
+
+        <span class="col l2 m2 s3">
+          <span>{{product.price | currency : '$' : '0'}}</span>
+        </span>
+
+        <span class="col l1 m2 s3">
+          {{product.ElementData[3].name}}
+        </span>
+      </div>
     </div>
 
     <div class="collapsible-body">
@@ -49,7 +77,7 @@
         </div>
 
         <div class="col s12 m10">
-          <div class="row section">
+          <!-- <div class="row section">
             <div class="col s12 m6" ng-repeat="elementData in product.ElementData">
               <span>
                 <label for="elementData">{{elementData.Element.name | capitalize}}:
@@ -67,7 +95,7 @@
               </span>
 
             </div>
-          </div>
+          </div> -->
           <div class="row section">
             <div class="col s12 m12 ">
               <label for="description">Descripción:

@@ -212,7 +212,7 @@ module.exports = {
     })
     .then(function(elementsData) {
       elementsData.forEach(function(elementData, index, elementsDataList) {
-        if (elementData.name == name) {
+        if (elementData.name.toUpperCase() == name.toUpperCase()) {
           throw {errResponse: res.duplicated};
         }
       })
@@ -295,10 +295,7 @@ module.exports = {
         }
 
         return ElementData.findAll({
-          where: {
-            userId: user.id,
-            name: name
-          },
+          where: {userId: user.id},
           include: [
             {
               model: ElementData,
@@ -312,9 +309,11 @@ module.exports = {
 
       })
       .then(function (resElements) {
-        if (resElements.length != 0) {
-          throw {errResponse: res.duplicated};
-        }
+        resElements.forEach(function(elementData, index, elementsDataList) {
+          if (elementData.name.toUpperCase() == name.toUpperCase()) {
+            throw {errResponse: res.duplicated};
+          }
+        })
 
         // Now we can create the new dataElement
         elementDataCredentials = {
