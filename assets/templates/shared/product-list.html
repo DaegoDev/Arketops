@@ -6,29 +6,49 @@
   </div>
 </div>
 
-<div class="row header-list">
-  <span class="code-col"><strong>Código</strong></span>
-  <span class="name-col"><strong>Nombre</strong></span>
-  <span class="price-col"><strong>Precio</strong></span>
-  <span class="tax-col"><strong>Impuesto</strong></span>
-</div>
-
 <ul class="collapsible popout" data-collapsible="accordion" watch>
+  <li>
+    <div class="collapsible-header ">
+      <div class="row">
+        <span class="col l1 m2 s3">
+          <label for="">Código</label>
+        </span>
+
+        <span class="col l8 m6 s3">
+          <label for="">Producto</label>
+        </span>
+
+        <span class="col l2 m2 s3">
+          <label for="">Precio</label>
+        </span>
+
+        <span class="col l1 m2 s3">
+          <label for="">Impuesto</label>
+        </span>
+      </div>
+    </div>
+  </li>
+
   <li ng-repeat="product in products | filter:searchText" on-finish-render>
     <div class="collapsible-header">
-      <ng-md-icon class="prefix" icon="blur_on" style="fill: blue darken-1" size="20"></ng-md-icon>
-      <span style="margin: 0 8% 0 0;">
-        {{product.code}}
-      </span>
-      <span class="main-data">
-        {{product.name | capitalize}}
-        <span style="margin-left:57%">
-          {{product.price | currency : '$' : '0'}}
+      <div class="row">
+        <span class="col l1 m2 s3">
+          {{product.code}}
         </span>
-        <span class="badge" style="margin-right: 2%">
-          {{getTax(product)}}%
+        <span class="col l8 m6 s3">
+          {{product.name | capitalize}}
+          {{product.ElementData[0].name}}
         </span>
-      </span>
+
+        <span class="col l2 m2 s3">
+          <span>{{product.price | currency : '$' : '0'}}</span>
+        </span>
+
+        <span class="col l1 m2 s3">
+          {{product.ElementData[3].discount}}%
+        </span>
+      </div>
+
     </div>
 
     <div class="collapsible-body">
@@ -58,7 +78,7 @@
         </div>
 
         <div class="col s12 m10">
-          <div class="row section">
+          <!-- <div class="row section">
             <div class="col s12 m6" ng-repeat="elementData in product.ElementData">
               <span>
                 <label for="elementData">{{elementData.Element.name | capitalize}}:
@@ -76,7 +96,7 @@
               </span>
 
             </div>
-          </div>
+          </div> -->
           <div class="row section">
             <div class="col s12 m12 ">
               <label for="description">Descripción:

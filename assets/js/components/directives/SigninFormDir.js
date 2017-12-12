@@ -61,6 +61,7 @@ arketops.controller('signinCtrl', ['$scope', '$state', '$cookieStore', '$log', '
         $scope.closeModal();
         $scope.user = {};
         $scope.user.loading = false;
+        $('#signinModal').modal('close');
       })
       .catch(function(err) {
         Materialize.toast('No se ha podido iniciar sesión, verifique su nombre de usuario o contraseña.', 4000,'rounded')

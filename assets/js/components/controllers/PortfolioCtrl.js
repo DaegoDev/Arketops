@@ -8,12 +8,19 @@ function($scope, $log, $state, $stateParams, $ngConfirm, ProductSvc) {
     .then(function (res) {
       $scope.portfolio = res.data;
     })
-    .catch(function (err) {console.log(err);});
+    .catch(function (err) {
+      console.log(err);
+    }
+  );
 
     $scope.options = {
-      mode: 'OWNER'
+      mode: 'OWNER',
+      reload: function () {
+        $scope.init();
+      }
     };
   }
+  
   $scope.init();
 
 }]);

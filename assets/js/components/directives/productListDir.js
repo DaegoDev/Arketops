@@ -22,17 +22,17 @@ function productListCtrl($scope, $log, $ngConfirm, AuthSvc, $state, StorageSvc, 
       .then(function(res) {
         $scope.elements = res.data;
         $scope.elements.forEach(function(element, i, elements) {
-          switch (element.name.toUpperCase()) {
-            case "CATEGORÍA":
+          switch (element.id) {
+            case 2:
             $scope.categories = element;
             break;
-            case "LÍNEA":
+            case 3:
             $scope.lines = element;
             break;
-            case "MARCA":
+            case 1:
             $scope.brands = element;
             break;
-            case "IMPUESTO":
+            case 4:
             $scope.taxes = element;
             break;
             default:
@@ -93,9 +93,16 @@ function productListCtrl($scope, $log, $ngConfirm, AuthSvc, $state, StorageSvc, 
     ProductSvc.delete(product.id)
       .then(function(res) {
         $scope.products.splice($scope.products.indexOf(product), 1);
+        Materialize.toast('El producto ha sido eliminado correctamente.',
+          3000, 'green darken-1 rounded');
+        return true;
       })
       .catch(function(err) {
-        $log.log(err);
+        if (err.status != 409) {
+          Materialize.toast('El producto no ha sido eliminado, por favor intentelo nuevamente.',
+          3000, 'red darken-1 rounded');
+          return true;
+        }
       });
   }
 
@@ -172,7 +179,6 @@ function productListCtrl($scope, $log, $ngConfirm, AuthSvc, $state, StorageSvc, 
           btnClass: 'btn',
           text: 'Guardar',
           action: function (scope, button) {
-            console.log(scope.product);
             credentials = {
               productId: scope.product.id,
               code: scope.product.code,
@@ -197,13 +203,30 @@ function productListCtrl($scope, $log, $ngConfirm, AuthSvc, $state, StorageSvc, 
             }
 
             ProductSvc.update(credentials)
-            .then(function (product) {
-              $log.log(product);
+            .then(function (resProduct) {
+              if ($scope.options.reload) {
+                $scope.options.reload();
+              }
+
+              Materialize.toast('El producto ha sido actualizado correctamente.',
+                3000, 'green darken-1 rounded');
             })
             .catch(function (err) {
               $log.log(err)
+              var errData = err.data;
+              if (err.status != 409) {
+                Materialize.toast('El producto no ha sido actualizado, por favor intentelo nuevamente.',
+                3000, 'red darken-1 rounded');
+                return true;
+              }
+
+              if (errData.code == 3) {
+                Materialize.toast('El código del producto ya está en uso.',
+                3000, 'red darken-1 rounded');
+              }
+
+              return true;
             });
-            return false;
           }
         },
         exit: {
