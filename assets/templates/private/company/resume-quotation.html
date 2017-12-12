@@ -1,0 +1,42 @@
+<div class="">
+  <div class="card-panel">
+    <div class="card-content">
+      <strong>A continuación se muestra la información que quedará registrada con la cotización.
+      Verifique que los productos y las cantidades si sean las que desea enviar para generar la cotización,
+    si considera que la información esta correcta seleccione la opción confirmar, de lo contrario
+  seleccione cancelar.</strong>
+    </div>
+  </div>
+  <div ng-if="quotation.validityPeriod" class="">
+    <label style="font-size: 16px;" for="validityPeriod">Validez de la oferta: </label>
+    <strong id="validityPeriod">{{quotation.validityPeriod.selected}} Días</strong><br>
+    <label style="font-size: 16px;" for="paymentForm">Forma de pago: </label>
+    <strong id="paymentForm">{{quotation.paymentForms.selected.name}}</strong>
+    <hr>
+  </div>
+  <table class="highlight bordered responsive-table centered">
+    <thead>
+      <tr>
+        <th>Código</th>
+        <th>Nombre</th>
+        <th>Impuesto</th>
+        <th>Cantidad</th>
+        <th>Vr. Unitario</th>
+        <th>Vr. Descuento</th>
+        <th>Subtotal</th>
+      </tr>
+    </thead>
+
+    <tbody>
+      <tr ng-repeat="product in selectList" ng-init="sumToTotal(product.subtotal)">
+        <td>{{product.code}}</td>
+        <td>{{product.name}}</td>
+        <td>{{product.tax.name }} ({{product.tax.discount}}%) </td>
+        <td>{{product.amount}}</td>
+        <td>{{product.price | currency: '$' : '0'}}</td>
+        <td>{{product.totalDiscount}}%</td>
+        <td>{{product.subtotal | currency: '$' : '0'}}</td>
+      </tr>
+    </tbody>
+  </table>
+</div>

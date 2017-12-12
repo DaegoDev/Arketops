@@ -51,7 +51,7 @@ module.exports = {
   buildContentSupplier: function(supplier, codePdf) {
     var firstSection = [{
         columns: [{
-            image: supplier.imageURI,
+            image: sails.config.appPath + supplier.imageURI,
             width: 110,
             height: 90,
           },
@@ -222,13 +222,13 @@ module.exports = {
    * @param  {Object} productsQuery Contiene la información de los productos obtenida de la base de datos.
    * @param  {Object} objectProduct Contiene la información de los productos ingresada por el usuario, como cantidad a cotizar.
    */
-  buildTableProducts: function(productsQuery, objectProduct) {
+  buildTableProducts: function(productsQuery, objectProduct, elementsDiscountClient) {
     var thirdSection = [{
       style: 'tableProducts',
       table: {
         widths: ['5,5%', '8,5%', '23%', '12%', '15%', '12,5%', '12%', '14%'],
         headerRows: 1,
-        body: createTableBodyProducts(productsQuery, objectProduct),
+        body: createTableBodyProducts(productsQuery, objectProduct, elementsDiscountClient),
       },
       layout: {
         fillColor: function(i, node) {
@@ -341,13 +341,13 @@ module.exports = {
     var context = pageModifier.startContext().getContext();
     sails.log.debug(context);
     context.cm(1, 0, 0, -1, 0, 792);
-    context.writeText(paymentForm, 455, 550, {
+    context.writeText(paymentForm, 455, 560, {
       font: pdfWriter.getFontForFile(sails.config.appPath + '/assets/fonts/arial.ttf'),
       size: 10,
       colorspace: 'gray',
       color: 0x00
     });
-    context.writeText(quotationValidityPeriod + " días", 535, 550, {
+    context.writeText(quotationValidityPeriod + " días", 535, 560, {
       font: pdfWriter.getFontForFile(sails.config.appPath + '/assets/fonts/arial.ttf'),
       size: 10,
       colorspace: 'gray',
@@ -401,9 +401,11 @@ function createTableBodyProducts(productsQuery, objectProduct, elementsDiscountC
       style: 'tableHeader'
     }]
   ];
+  // sails.log.debug(productsQuery)
+  // Products to quote gotten of the db
   productsQuery.forEach(function(product, index, productsList) {
-    var elements = product.ElementData;
-    var amountElements = elements.length;
+    var elementData = product.ElementData;
+    var amountElements = elementData.length;
     var discount = 0;
     var trademark = null;
     var amount = null;
@@ -412,41 +414,52 @@ function createTableBodyProducts(productsQuery, objectProduct, elementsDiscountC
     var taxValue = null;
     var total = null;
     var mainFound = false;
-    var especialDiscount = false;
+    var isSpecialDiscount = false;
     var discountsList = [];
     var indexElementMain = null;
-    for (i = 0; i < amountElements; i++) {
-      var isDiscountClient = false;
-      if (elements[i].Element.name == "marca") {
-        trademark = elements[i].name;
-      } else if (elements[i].Element.name == "impuesto") {
-        taxName = elements[i].name;
-        taxValue = elements[i].discount;
+    var specialDiscount = 0;
+
+    // sails.log.debug(elementsDiscountClient)
+    for (var i = 0; i < amountElements; i++) {
+      var isSpecialDiscount = false;
+      if (elementData[i].Element.name.toUpperCase() == "MARCA") {
+        trademark = elementData[i].name;
+      } else if (elementData[i].Element.name.toUpperCase() == "IMPUESTO") {
+        taxName = elementData[i].name;
+        taxValue = elementData[i].discount;
         continue;
       }
       for (var j = 0; j < elementsDiscountLenght; j++) {
-        if (element[i].id == elementsDiscountClient[j].id) {
-          discountsList[i] = elementsDiscountClient[j].ClientDiscount.discount;
-          especialDiscount = true;
-          isDiscountClient = true;
+        if (elementData[i].id === elementsDiscountClient[j].id) {
+          specialDiscount = elementsDiscountClient[j].ClientDiscount.discount;
+          isSpecialDiscount = true;
+          // isDiscountClient = true;
           break;
         }
-
       }
-      // if (!mainFound && !especialDiscount) {
-        if (elements[i].ElementProduct.main) {
-          indexElementMain = i;
-          // discount = elements[i].discount;
-          // mainFound = true;
-        }
-        if (!isDiscountClient) {
-          discountsList[i] = elements[i].discount;
-          // discount += elements[i].discount;
-        }
-      // }else if (true) {
 
+      if (isSpecialDiscount) {
+        discount += specialDiscount;
+      } else {
+        discount += elementData[i].discount;
+      }
+
+      // if (!mainFound && !especialDiscount) {
+      //   if (elementData[i].ElementProduct.main) {
+      //     indexElementMain = i;
+      //     discount = elementData[i].discount;
+      //     mainFound = true;
+      //   }
+      //   if (!isDiscountClient) {
+      //     discountsList[i] = elementData[i].discount;
+      //     discount += elementData[i].discount;
+      //   }
+      // }else if (true) {
+      //
       // }
+
     }
+    // sails.log.debug(discount);
     amount = objectProduct[product.id].amount;
     price = product.price;
     var tmpTotal = price * amount;
@@ -466,7 +479,7 @@ function createTableBodyProducts(productsQuery, objectProduct, elementsDiscountC
       text: amount,
       style: 'tableBody'
     }, {
-      text: price,
+      text: '$ ' + price.toLocaleString(),
       style: 'tableBody'
     }, {
       text: discount + "%",
@@ -475,7 +488,7 @@ function createTableBodyProducts(productsQuery, objectProduct, elementsDiscountC
       text: taxName + " " + taxValue + "%",
       style: 'tableBody'
     }, {
-      text: "$ " + total.toFixed(2),
+      text: "$ " + total.toLocaleString(),
       style: 'tableBody'
     }];
     contentTableProducts.push(productToPdf);
@@ -487,7 +500,7 @@ function createTableBodyProducts(productsQuery, objectProduct, elementsDiscountC
     text: "Total",
     style: 'tableBody'
   }, {
-    text: "$ " + totalQuotation.toFixed(2),
+    text: "$ " + totalQuotation.toLocaleString(),
     style: 'tableBody'
   }]
   contentTableProducts.push(lastColumn);

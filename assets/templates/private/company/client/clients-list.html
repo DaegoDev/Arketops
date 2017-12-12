@@ -7,8 +7,7 @@
         <label for="searchInput">Filtrar los resultados</label>
       </div>
   </div>
-  <div class="responsive-table">
-    <table class="highlight">
+    <table class="highlight bordered responsive-table">
       <thead>
         <tr>
           <th>Logo</th>
@@ -23,7 +22,7 @@
         <tr class="row-link" ng-click="showDetails(client)" ng-repeat="client in clients | filter:searchText | orderBy: sortByProperty:sortReversed">
           <td style="vertical-align:middle"><img ng-style="imgAvatarStyle" class="img-profile materialboxed"
           ng-src="{{client.imageURI}}" height="40" width="40"></td>
-          <td style="vertical-align:middle">{{client.name | capitalize}}</td>
+          <td style="vertical-align:middle">{{client.name}}</td>
           <td style="vertical-align:middle">{{client.nit}}</td>
           <td style="vertical-align:middle">{{client.Headquarters[0].phonenumber}}</td>
           <td style="vertical-align:middle">{{client.Headquarters[0].nomenclature}} &nbsp; {{client.Headquarters[0].city}}, {{client.Headquarters[0].department}}</td>
@@ -31,5 +30,4 @@
         </tr>
       </tbody>
     </table>
-  </div>
 </div>

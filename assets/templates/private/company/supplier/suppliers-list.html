@@ -9,8 +9,7 @@
       </div>
     <!-- </div> -->
   </div>
-  <div class="responsive-table">
-    <table class="highlight">
+    <table class="highlight bordered responsive-table">
       <thead>
         <tr>
           <th>Logo</th>
@@ -26,7 +25,7 @@
         <tr class="row-link" ng-click="showDetails(supplier)" ng-repeat="supplier in suppliers | filter:searchText | orderBy: sortByProperty:sortReversed">
           <td style="vertical-align:middle"><img ng-style="imgAvatarStyle" class="materialboxed"
           ng-src="{{supplier.imageURI}}" height="40" width="40"></td>
-          <td style="vertical-align:middle">{{supplier.name | capitalize}}</td>
+          <td style="vertical-align:middle">{{supplier.name}}</td>
           <td style="vertical-align:middle">{{supplier.nit}}</td>
           <td style="vertical-align:middle">{{supplier.Headquarters[0].phonenumber}}</td>
           <td style="vertical-align:middle">{{supplier.Headquarters[0].nomenclature + ', ' + supplier.Headquarters[0].city + ', ' + supplier.Headquarters[0].department}}</td>
@@ -34,5 +33,4 @@
         </tr>
       </tbody>
     </table>
-  </div>
 </div>

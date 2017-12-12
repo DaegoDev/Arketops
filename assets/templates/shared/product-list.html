@@ -45,9 +45,10 @@
         </span>
 
         <span class="col l1 m2 s3">
-          {{product.ElementData[3].name}}
+          {{product.ElementData[3].discount}}%
         </span>
       </div>
+
     </div>
 
     <div class="collapsible-body">
@@ -85,10 +86,10 @@
               </span>
 
               <span>
-                <strong>{{elementData.name | capitalize}}</strong>
+                <strong>{{elementData.name}}</strong>
               </span>
 
-              <span>
+              <span ng-if="isPrivate() && (elementData.Element.name.toUpperCase() !== 'IMPUESTO')">
                 <strong>{{elementData.discount}}
                   <span ng-if="elementData.discount">% Desc.</span>
                 </strong>

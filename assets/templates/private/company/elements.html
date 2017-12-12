@@ -30,7 +30,7 @@
 
                 <!-- PARENT ELEMENT SELECT INPUT -->
                 <div class="col l6 s8" input-field>
-                  <select ng-model="elementData.parent" material-select ng-options="data.name for data in parentElement.ElementData">
+                  <select ng-model="elementData.parent" material-select ng-options="data.name for data in parentElement.ElementData" watch>
                     <option value="">Seleccionar</option>
                   </select>
                 </div>

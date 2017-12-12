@@ -1,4 +1,4 @@
-<nav class="white">
+<nav class="white" id="menubar">
   <div class="navbar">
     <ul id="nav-mobile" class="center hide-on-med-and-down">
       <li>
@@ -10,30 +10,19 @@
       </li>
 
       <li>
-        <a
-          dropdown
-          data-activates='productOptions'
-          data-hover="true"
-          data-beloworigin="true"
-          href="">Productos</a>
+        <a dropdown data-activates='productOptions' data-hover="true" data-beloworigin="true" href="">
+          Productos
+          <span>
+            <ng-md-icon icon="keyboard_arrow_down" style="fill: black" size="30"></ng-md-icon>
+          </span>
+        </a>
       </li>
 
       <li>
-        <a
-          dropdown
-          data-activates='quotationOptions'
-          data-hover="true"
-          data-beloworigin="true"
-          href="">Cotizaciones</a>
-      </li>
-
-      <li>
-        <a
-          dropdown
-          data-activates='clientSupplierOptions'
-          data-hover="true"
-          data-beloworigin="true"
-          href="">Clientes y proveedores
+        <a dropdown data-activates='clientSupplierOptions' data-hover="true" data-beloworigin="true" href="">Clientes y proveedores
+          <span>
+            <ng-md-icon icon="keyboard_arrow_down" style="fill: black" size="30"></ng-md-icon>
+          </span>
         </a>
       </li>
     </ul>
@@ -45,12 +34,13 @@
   <li><a ui-sref="productCreation">Crear</a></li>
 </ul>
 
-<ul id='quotationOptions' class='dropdown-content'>
-  <li><a href="javascript:void(0);">Crear</a></li>
-  <li><a href="javascript:void(0);">Listar</a></li>
-</ul>
-
 <ul id='clientSupplierOptions' class='dropdown-content'>
   <li><a ui-sref="clientsList">Ver clientes</a></li>
   <li><a ui-sref="suppliersList">Ver proveedores</a></li>
 </ul>
+
+<div class="fixed-action-btn ">
+  <a ng-click="scrollUp()" class="btn-floating btn-large yellow">
+    <ng-md-icon style="margin-left: -35px; margin-top: -40px; fill: black;" icon="keyboard_arrow_up" size="60"></ng-md-icon>
+  </a>
+</div>

@@ -14,5 +14,9 @@ arketops.controller('SupplierProductsCtrl', ['$scope', '$log', '$state', '$state
     .catch((err) => {
       console.log(err);
     })
+
+    $scope.options = {
+      mode: 'other'
+    }
   }
 ]);

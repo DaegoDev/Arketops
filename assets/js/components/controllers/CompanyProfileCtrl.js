@@ -54,105 +54,105 @@ arketops.controller('CompanyProfileCtrl', ['$scope', '$timeout', '$log', '$state
                   selected: res.data[51]
                 };
               }
-              $scope.getDepartments($scope.countries.selected.alpha2Code);
+              // $scope.getDepartments($scope.countries.selected.alpha2Code);
             })
         }
 
         $scope.getCountries();
 
-        // Get the first administratives divisions of a country.
-        $scope.getDepartments = function(countryCode) {
-          $scope.countryCode = countryCode;
-          GeographicSvc.getDepartmentsByCountry({
-              country: countryCode,
-              featureCode: 'ADM1',
-              land: 'es',
-              username: 'jonnatan328'
-            })
-            .then((res) => {
-              var departments = orderBy(res.data.geonames, 'adminName1');
-              var indexDepartment = null;
-              departments.unshift({
-                adminName1: 'Seleccione...',
-                adminCode1: -1
-              });
-              if ($scope.formHeadquarters) {
-                if ($scope.headquartersToUpdate) {
-                  console.log('why');
-                  var n = departments.length
-                  for (var i = 0; i < n; i++) {
-                    if (departments[i].adminName1 == $scope.headquartersToUpdate.department) {
-                      $scope.departmentsHeadquarters = {
-                        choices: departments,
-                        selected: departments[i]
-                      }
-                      break;
-                    }
-                  }
-                  $scope.getCities($scope.departmentsHeadquarters.selected.adminCode1);
-                } else {
-                  $scope.departmentsHeadquarters = {
-                    choices: departments,
-                    selected: departments[0]
-                  }
-                }
-              } else {
-                departments.forEach(function(department, index, departmentList) {
-                  if (department.adminName1 == $scope.mainHeadquarters.department) {
-                    indexDepartment = index;
-                  }
-                })
-                $scope.departments = {
-                  choices: departments,
-                  selected: departments[indexDepartment]
-                }
-                $scope.getCities($scope.departments.selected.adminCode1);
-              }
-            })
-        }
+        // // Get the first administratives divisions of a country.
+        // $scope.getDepartments = function(countryCode) {
+        //   $scope.countryCode = countryCode;
+        //   GeographicSvc.getDepartmentsByCountry({
+        //       country: countryCode,
+        //       featureCode: 'ADM1',
+        //       land: 'es',
+        //       username: 'jonnatan328'
+        //     })
+        //     .then((res) => {
+        //       var departments = orderBy(res.data.geonames, 'adminName1');
+        //       var indexDepartment = null;
+        //       departments.unshift({
+        //         adminName1: 'Seleccione...',
+        //         adminCode1: -1
+        //       });
+        //       if ($scope.formHeadquarters) {
+        //         if ($scope.headquartersToUpdate) {
+        //           console.log('why');
+        //           var n = departments.length
+        //           for (var i = 0; i < n; i++) {
+        //             if (departments[i].adminName1 == $scope.headquartersToUpdate.department) {
+        //               $scope.departmentsHeadquarters = {
+        //                 choices: departments,
+        //                 selected: departments[i]
+        //               }
+        //               break;
+        //             }
+        //           }
+        //           $scope.getCities($scope.departmentsHeadquarters.selected.adminCode1);
+        //         } else {
+        //           $scope.departmentsHeadquarters = {
+        //             choices: departments,
+        //             selected: departments[0]
+        //           }
+        //         }
+        //       } else {
+        //         departments.forEach(function(department, index, departmentList) {
+        //           if (department.adminName1 == $scope.mainHeadquarters.department) {
+        //             indexDepartment = index;
+        //           }
+        //         })
+        //         $scope.departments = {
+        //           choices: departments,
+        //           selected: departments[indexDepartment]
+        //         }
+        //         $scope.getCities($scope.departments.selected.adminCode1);
+        //       }
+        //     })
+        // }
 
-        // Se obtienen las segundas divisiones administrativas de un país.
-        $scope.getCities = function(adminCode1) {
-          GeographicSvc.getCitiesByDepartment({
-              country: $scope.countryCode,
-              featureCode: 'ADM2',
-              adminCode1: adminCode1,
-              username: 'jonnatan328'
-            })
-            .then((res) => {
-              var cities = orderBy(res.data.geonames, 'name');
-              var indexCity = null;
-              if ($scope.formHeadquarters) {
-                if ($scope.headquartersToUpdate) {
-                  var n = cities.length
-                  for (var i = 0; i < n; i++) {
-                    if (cities[i].name == $scope.headquartersToUpdate.city) {
-                      $scope.citiesHeadquarters = {
-                        choices: cities,
-                        selected: cities[i]
-                      }
-                      break;
-                    }
-                  }
-                } else {
-                  $scope.citiesHeadquarters = {
-                    choices: cities,
-                    selected: cities[0]
-                  }
-                }
-              } else {
-                cities.forEach(function(city, index, citiesList) {
-                  if (city.name == $scope.mainHeadquarters.city) {
-                    indexCity = index;
-                  }
-                })
-                $scope.cities = {
-                  choices: cities,
-                  selected: cities[indexCity ? indexCity : 0]
-                }
-              }
-            })
-        }
+        // // Se obtienen las segundas divisiones administrativas de un país.
+        // $scope.getCities = function(adminCode1) {
+        //   GeographicSvc.getCitiesByDepartment({
+        //       country: $scope.countryCode,
+        //       featureCode: 'ADM2',
+        //       adminCode1: adminCode1,
+        //       username: 'jonnatan328'
+        //     })
+        //     .then((res) => {
+        //       var cities = orderBy(res.data.geonames, 'name');
+        //       var indexCity = null;
+        //       if ($scope.formHeadquarters) {
+        //         if ($scope.headquartersToUpdate) {
+        //           var n = cities.length
+        //           for (var i = 0; i < n; i++) {
+        //             if (cities[i].name == $scope.headquartersToUpdate.city) {
+        //               $scope.citiesHeadquarters = {
+        //                 choices: cities,
+        //                 selected: cities[i]
+        //               }
+        //               break;
+        //             }
+        //           }
+        //         } else {
+        //           $scope.citiesHeadquarters = {
+        //             choices: cities,
+        //             selected: cities[0]
+        //           }
+        //         }
+        //       } else {
+        //         cities.forEach(function(city, index, citiesList) {
+        //           if (city.name == $scope.mainHeadquarters.city) {
+        //             indexCity = index;
+        //           }
+        //         })
+        //         $scope.cities = {
+        //           choices: cities,
+        //           selected: cities[indexCity ? indexCity : 0]
+        //         }
+        //       }
+        //     })
+        // }
       })
 
     // Función que se llama cuando la imagen se carga.
@@ -299,8 +299,10 @@ arketops.controller('CompanyProfileCtrl', ['$scope', '$timeout', '$log', '$state
     function createHeadquarters() {
       // Fields of headquarters.
       var countryHeadquarters = $scope.countriesHeadquarters.selected.name;
-      var departmentHeadquarters = $scope.departmentsHeadquarters.selected;
-      var cityHeadquarters = $scope.citiesHeadquarters;
+      var departmentHeadquarters = $scope.headquarters.department;
+      var cityHeadquarters = $scope.headquarters.city;
+      // var departmentHeadquarters = $scope.departmentsHeadquarters.selected;
+      // var cityHeadquarters = $scope.citiesHeadquarters;
       var nomenclatureHeadquarters = $scope.headquarters.nomenclature;
       var phonenumberHeadquarters = $scope.headquarters.phonenumber;
       var contactHeadquarters = $scope.headquarters.contact;
@@ -309,15 +311,16 @@ arketops.controller('CompanyProfileCtrl', ['$scope', '$timeout', '$log', '$state
       var headquartersParams = {};
 
       // Validations to fields of headquarters.
-      if (!countryHeadquarters || departmentHeadquarters.adminCode1 == -1 || !cityHeadquarters ||
+      // departmentHeadquarters.adminCode1 == -1
+      if (!countryHeadquarters || !departmentHeadquarters || !cityHeadquarters ||
         !nomenclatureHeadquarters || !phonenumberHeadquarters || !contactHeadquarters || !contactPhonenumberHeadquarters) {
         $ngConfirm('Debe ingresar los datos de la sede');
         return false;
       }
       $scope.formHeadquarters = false;
 
-      cityHeadquarters = cityHeadquarters.selected.name;
-      departmentHeadquarters = departmentHeadquarters.adminName1;
+      // cityHeadquarters = cityHeadquarters.selected.name;
+      // departmentHeadquarters = departmentHeadquarters.adminName1;
 
       headquartersParams = {
         country: countryHeadquarters,
@@ -342,8 +345,10 @@ arketops.controller('CompanyProfileCtrl', ['$scope', '$timeout', '$log', '$state
     function updateHeadquarters(headquartersId, indexInList) {
       // Fields of headquarters.
       var countryHeadquarters = $scope.countriesHeadquarters.selected.name;
-      var departmentHeadquarters = $scope.departmentsHeadquarters.selected;
-      var cityHeadquarters = $scope.citiesHeadquarters;
+      var departmentHeadquarters = $scope.headquarters.department;
+      var cityHeadquarters = $scope.headquarters.city;
+      // var departmentHeadquarters = $scope.departmentsHeadquarters.selected;
+      // var cityHeadquarters = $scope.citiesHeadquarters;
       var nomenclatureHeadquarters = $scope.headquarters.nomenclature;
       var phonenumberHeadquarters = $scope.headquarters.phonenumber;
       var contactHeadquarters = $scope.headquarters.contact;
@@ -352,15 +357,16 @@ arketops.controller('CompanyProfileCtrl', ['$scope', '$timeout', '$log', '$state
       var headquartersParams = {};
 
       // Validations to fields of headquarters.
-      if (!countryHeadquarters || departmentHeadquarters.adminCode1 == -1 || !cityHeadquarters ||
+      // departmentHeadquarters.adminCode1 == -1
+      if (!countryHeadquarters || !departmentHeadquarters || !cityHeadquarters ||
         !nomenclatureHeadquarters || !phonenumberHeadquarters || !contactHeadquarters || !contactPhonenumberHeadquarters) {
         Materialize.toast('Debe ingresar los datos de la sede', 4000, 'red darken-1 rounded')
         return false;
       }
       $scope.formHeadquarters = false;
 
-      cityHeadquarters = cityHeadquarters.selected.name;
-      departmentHeadquarters = departmentHeadquarters.adminName1;
+      // cityHeadquarters = cityHeadquarters.selected.name;
+      // departmentHeadquarters = departmentHeadquarters.adminName1;
 
       headquartersParams = {
         country: countryHeadquarters,
@@ -483,15 +489,17 @@ arketops.controller('CompanyProfileCtrl', ['$scope', '$timeout', '$log', '$state
       website = $scope.user.website;
       email = $scope.user.User.email;
       country = $scope.countries.selected.name;
-      department = $scope.departments.selected.adminName1;
-      city = $scope.cities.selected.name;
+      department = $scope.mainHeadquarters.department;
+      city = $scope.mainHeadquarters.city;
+      // department = $scope.departments.selected.adminName1;
+      // city = $scope.cities.selected.name;
       nomenclature = $scope.mainHeadquarters.nomenclature;
       phonenumber = $scope.mainHeadquarters.phonenumber;
       contact = $scope.mainHeadquarters.contact;
       contactPhonenumber = $scope.mainHeadquarters.contactPhonenumber;
 
       // Validación de los datos ingresados.
-      if (!name || !nit || !businessOverview || !email || !country ||
+      if (!name || !nit || !businessOverview || !email || !country || !department || !city ||
         !nomenclature || !phonenumber || !contact || !contactPhonenumber) {
         Materialize.toast('Verifique que todos los datos se hayan ingresado correctamente.', 4000, 'red darken-1 rounded')
         return;

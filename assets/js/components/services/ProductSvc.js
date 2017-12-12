@@ -85,6 +85,16 @@ angular.module('arketops')
           return portfolio;
         },
 
+        // Servicio para obtener todos los productos con los descuentos para un cliente.
+        getMyPortfolioToQuote: function (params) {
+          var portfolio = $http({
+            url: '/product/getMyProductsToQuote',
+            method: 'GET',
+            params: params
+          });
+          return portfolio;
+        },
+
         getStates: function () {
           var states = $http({
             url: '/product/getStates',

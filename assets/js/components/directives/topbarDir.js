@@ -74,11 +74,9 @@ arketops.controller('topbarCtrl', ['$scope', '$cookieStore', '$ngConfirm', 'Auth
         $state.go('home');
         $timeout(function() {
           AnchorSmoothScroll.scrollTo('signup');
-          // $anchorScroll('signup');
         }, 100);
       } else {
         AnchorSmoothScroll.scrollTo('signup');
-        // $anchorScroll('signup');
       };
     }
 

@@ -10,17 +10,23 @@
       </div>
       <div class="col s4">
         <div input-field>
-          <i class="fa fa-map-signs prefix"></i>
+            <i class="fa fa-map-signs prefix"></i>
+            <input type="text" name="department" placeholder="Ej. Antioquia" ng-model="headquarters.department" required>
+            <label>Departamento</label>
+          <!-- <i class="fa fa-map-signs prefix"></i>
           <select class="" ng-model="departmentsHeadquarters.selected" ng-options="department.adminName1 for department in departmentsHeadquarters.choices" ng-change="getCities(departmentsHeadquarters.selected.adminCode1)" material-select watch></select>
-          <label>Departamento</label>
+          <label>Departamento</label> -->
         </div>
       </div>
       <div class="col s4">
         <div input-field>
           <ng-md-icon icon="location_city" class="prefix" style="fill: black" size="30"></ng-md-icon>
+          <input type="text" name="city" placeholder="Ej. Medellín" ng-model="headquarters.city" required>
+          <label>Ciudad</label>
+          <!-- <ng-md-icon icon="location_city" class="prefix" style="fill: black" size="30"></ng-md-icon>
           <select class="" ng-model="citiesHeadquarters.selected" ng-options="city.name for city in citiesHeadquarters.choices" material-select watch>
           </select>
-          <label>Ciudad</label>
+          <label>Ciudad</label> -->
         </div>
       </div>
     </div>

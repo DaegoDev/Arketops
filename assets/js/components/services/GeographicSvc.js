@@ -13,7 +13,7 @@ angular.module('arketops')
         // Service to get department, states by country.
         getDepartmentsByCountry: function (params) {
           var departments = $http({
-            url: 'http://api.geonames.org/searchJSON',
+            url: '//api.geonames.org/searchJSON',
             method: 'GET',
             params: params
           });
@@ -22,7 +22,7 @@ angular.module('arketops')
         // Service to get cities by department.
         getCitiesByDepartment: function (params) {
           var cities = $http({
-            url: 'http://api.geonames.org/searchJSON',
+            url: '//api.geonames.org/searchJSON',
             method: 'GET',
             params: params
           });

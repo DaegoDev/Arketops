@@ -31,17 +31,53 @@ arketops.controller('ClientDetailsCtrl', ['$scope', '$log', '$state', '$statePar
       $scope.options[index].selected = true;
       if (option == 'Datos personales') {
         $state.go('clientDetails.personalData')
-      } else if (option == 'Productos') {
+      } else if (option.toUpperCase() == 'PRODUCTOS') {
         $state.go('clientDetails.products');
-      } else if (option == 'Descuentos') {
+      } else if (option.toUpperCase() == 'DESCUENTOS') {
         $state.go('clientDetails.discounts');
-      } else if (option == 'Cotizaciones') {
-        console.log('Coti');
-      } else if (option == 'Cotizar') {
-        console.log('Cotizar');
+      } else if (option.toUpperCase() == 'COTIZACIONES') {
+        $state.go('clientDetails.quotationsList');
+      } else if (option.toUpperCase() == 'COTIZAR') {
+        $state.go('clientDetails.quotationCreate')
       }
     }
 
     $scope.goToState('Datos personales', 0);
+
+    CompanySvc.isSupplier({companyId: $scope.client.id})
+    .then((res) => {
+        $scope.isSupplier = res.data;
+    })
+    .catch((err) => {
+      console.log(err);
+    })
+
+    $scope.followCompany = function () {
+      $ngConfirm({
+        title: 'Confirmación',
+        useBootstrap: true,
+        content: '¿Desea seguir a este cliente?',
+        boxWidth: '30%',
+        useBootstrap: false,
+        buttons: {
+          confirm: {
+            text: 'Confirmar',
+            btnClass: 'btn-orange',
+            action: function() {
+              CompanySvc.followCompany({supplierId: $scope.client.id})
+              .then((res) => {
+                $scope.isSupplier = true;
+              })
+              .catch((err) => {
+                Materialize.toast('Ocurrió un error al ejecutar la acción.', 4000, 'red darken-1 rounded');
+              })
+            }
+          },
+          cancel: function() {
+
+          }
+        }
+      });
+    }
   }
 ]);
