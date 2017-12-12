@@ -46,7 +46,7 @@ module.exports = {
         to: user.email,
         subject: "Recuperación contraseña ARKETOPS"
       },
-      function(err) {});
+      function(err) {sails.log.debug(err)});
   },
   /**
    * Función para enviar un correo con la nueva contraseña a la empresa que solicitó

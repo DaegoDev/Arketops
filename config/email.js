@@ -1,19 +1,47 @@
 
-var wellknown = require('nodemailer-wellknown');
+// var wellknown = require('nodemailer-wellknown');
+//
+// var config = wellknown('Gmail');
+// config.auth = {
+//   user: 'arketops1@gmail.com',
+//   pass: 'arketops123'
+// }
+var nodemailer = require('nodemailer');
 
-var config = wellknown('Gmail');
-config.auth = {
-  user: 'arketops1@gmail.com',
-  pass: 'arketops123'
-}
+var transporter = nodemailer.createTransport({
+    host: 'smtp.arketops.com',
+    port: '587',
+    secure: false, // use TLS
+    auth: {
+        user: 'app@arketops.com',
+        pass: 'app$2016'
+    },
+    requireTLS: true,
+    logger: true,
+    debug: true,
+    tls: {
+        rejectUnauthorized: false
+    }
+});
+
+// var transporter = nodemailer.createTransport('smtps://app@arketops.com:app$2016@smtp.arketops.com')
+
+// verify connection configuration
+transporter.verify(function(error, success) {
+   if (error) {
+     console.log(error);
+        // sails.log.error(error);
+   } else {
+        sails.log.debug(success);
+        sails.log.debug('Server is ready to take our messages');
+   }
+});
 
 module.exports.email = {
-  service: "Gmail",
-  transporter: config,
+  transporter: transporter,
   templateDir: "api/emailTemplates",
-  from: "arketops1@gmail.com",
+  from: "app@arketops.com",
   testMode: false,
-  ssl: false
 };
 
 

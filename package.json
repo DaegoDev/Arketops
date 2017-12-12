@@ -29,6 +29,7 @@
     "include-all": "^1.0.0",
     "jsonwebtoken": "^7.4.1",
     "nodemailer": "^4.4.0",
+    "nodemailer-smtp-transport": "^2.7.4",
     "nodemailer-wellknown": "^0.2.3",
     "passport": "^0.3.2",
     "passport-jwt": "^2.2.1",
