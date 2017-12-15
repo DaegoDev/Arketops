@@ -6,6 +6,7 @@ arketops.controller('ResultListCtrl', ['$scope', '$log', '$state', '$stateParams
 
   $scope.result = [];
   $scope.total = 0;
+  $scope.flagProductHeader = true;
 
   // Declaración de variables para la paginación.
   $scope.filteredResults = [];
@@ -14,7 +15,11 @@ arketops.controller('ResultListCtrl', ['$scope', '$log', '$state', '$stateParams
   $scope.figureOutResultsToDisplay = function(currentPage) {
     var begin = ((currentPage - 1) * $scope.itemsPerPage);
     var end = begin + $scope.itemsPerPage;
-    $scope.filteredResults = $scope.result.slice(begin, end);
+    // if (isSearchAll) {
+    //   $scope.filteredResults = $scope.result.companies.slice(begin, end);
+    // } else {
+      $scope.filteredResults = $scope.result.slice(begin, end);
+    // }
   };
 
   $scope.changePage = function(currentPage) {
@@ -59,11 +64,23 @@ arketops.controller('ResultListCtrl', ['$scope', '$log', '$state', '$stateParams
         keyword: $scope.searchValue
       })
       .then((result) => {
-        // console.log(result.data);
         $scope.result = result.data.companies.concat(result.data.products);
+        // $scope.result = result.data;
         $scope.total = $scope.result.length
         $scope.figureOutResultsToDisplay(1);
       })
+  }
+
+  $scope.greenFlagToSubtittle = function (compProd) {
+    var greenFlag = false;
+    console.log(compProd.type);
+    console.log($scope.flagProductHeader);
+    if (compProd.type === 2 && $scope.flagProductHeader) {
+      greenFlag = true;
+      $scope.flagProductHeader = false;
+    }
+    // console.log(greenFlag);
+    return greenFlag;
   }
 
 }]);

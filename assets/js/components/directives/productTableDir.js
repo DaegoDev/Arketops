@@ -14,14 +14,27 @@ arketops.directive('productTable', function() {
 })
 
 arketops.controller('productTableCtrl', ['$scope', '$log', '$ngConfirm', 'AuthSvc', '$state',
-  'StorageSvc', 'orderByFilter', productTableCtrl
+  'StorageSvc', 'orderByFilter', '$filter', productTableCtrl
 ]);
 
-function productTableCtrl($scope, $log, $ngConfirm, AuthSvc, $state, StorageSvc, orderBy) {
+function productTableCtrl($scope, $log, $ngConfirm, AuthSvc, $state, StorageSvc, orderBy, $filter) {
 
   console.log($scope.products);
-  $scope.elementsIndex = {};
 
+  $scope.productsFiltered = $scope.products;
+
+  $(".dropdown-button + .dropdown-content").on("click",function(event){
+        event.stopPropagation();
+  });
+
+  $scope.elementsIndex = {};
+  $scope.elementDataValues = {};
+  $scope.elementDataValues.brand = [];
+  $scope.elementDataValues.category = [];
+  $scope.elementDataValues.line = [];
+  $scope.elementDataValuesPushed = [];
+
+  // Recover the index for each elementData in array elementData.
   $scope.products[0].ElementData.forEach(function (elementData, index, elementDataList) {
     switch (elementData.Element.name.toUpperCase()) {
       case 'MARCA':
@@ -40,12 +53,47 @@ function productTableCtrl($scope, $log, $ngConfirm, AuthSvc, $state, StorageSvc,
 
   $scope.propertyName = 'code';
   $scope.reverse = true;
-  $scope.products = orderBy($scope.products, $scope.propertyName, $scope.reverse);
+  $scope.productsFiltered = orderBy($scope.products, $scope.propertyName, $scope.reverse);
+
+  $scope.products.forEach(function (product, index, products) {
+    var brandValue = product.ElementData[$scope.elementsIndex.marca].name;
+    var categoryValue = product.ElementData[$scope.elementsIndex.categoria].name;
+    var lineValue = product.ElementData[$scope.elementsIndex.linea].name;
+
+
+    var indexBrand = $scope.elementDataValuesPushed.indexOf(brandValue.toUpperCase())
+    if (indexBrand === -1) {
+      $scope.elementDataValues.brand.push({
+        name: brandValue,
+        selected: true
+      });
+      $scope.elementDataValuesPushed.push(brandValue.toUpperCase())
+    }
+
+    var indexCategory = $scope.elementDataValuesPushed.indexOf(categoryValue.toUpperCase())
+    if (indexCategory === -1) {
+      $scope.elementDataValues.category.push({
+        name: categoryValue,
+        selected: true
+      });
+      $scope.elementDataValuesPushed.push(categoryValue.toUpperCase())
+    }
+
+    var indexLine = $scope.elementDataValuesPushed.indexOf(lineValue.toUpperCase())
+    if (indexLine === -1) {
+      $scope.elementDataValues.line.push({
+        name: lineValue,
+        selected: true
+      });
+      $scope.elementDataValuesPushed.push(lineValue.toUpperCase())
+    }
+
+  })
 
   $scope.addProductToList = function(productSelected, index) {
     var productToQuote = buildProduct(productSelected);
     if (productToQuote) {
-      if ($scope.products[index].added) {
+      if ($scope.productsFiltered[index].added) {
         $ngConfirm({
           title: 'Error',
           content: 'Ya se añadió el producto.',
@@ -63,7 +111,7 @@ function productTableCtrl($scope, $log, $ngConfirm, AuthSvc, $state, StorageSvc,
       }
       productToQuote.indexProductList = index;
       $scope.selectList.push(productToQuote);
-      $scope.products[index].added = true;
+      $scope.productsFiltered[index].added = true;
     }
   }
 
@@ -113,7 +161,7 @@ function productTableCtrl($scope, $log, $ngConfirm, AuthSvc, $state, StorageSvc,
   $scope.removeProductOfList = function (indexProductList, product) {
     var indexSelectList = $scope.selectList.indexOf(product);
     $scope.selectList.splice(indexSelectList, 1);
-    $scope.products[indexProductList].added = false;
+    $scope.productsFiltered[indexProductList].added = false;
     $scope.ctrlFn();
   }
 
@@ -132,11 +180,32 @@ function productTableCtrl($scope, $log, $ngConfirm, AuthSvc, $state, StorageSvc,
     $scope.reverse = (propertyName !== null && $scope.propertyName === propertyName) ? !$scope.reverse : false;
     $scope.propertyName = propertyName;
     if (propertyName.toUpperCase() == 'CODE' || propertyName.toUpperCase() == 'NAME') {
-      $scope.products = orderBy($scope.products, $scope.propertyName, $scope.reverse);
+      $scope.productsFiltered = orderBy($scope.products, $scope.propertyName, $scope.reverse);
     }else {
-      $scope.products = orderBy($scope.products, 'ElementData[' + $scope.elementsIndex[propertyName] + '].name', $scope.reverse);
+      $scope.productsFiltered = orderBy($scope.products, 'ElementData[' + $scope.elementsIndex[propertyName] + '].name', $scope.reverse);
     }
 
+  }
+
+  $scope.filter = function (elementDataValue, type) {
+    elementDataValue.selected = !elementDataValue.selected;
+    var indexElementData = null;
+    var checkList = null;
+    if (type.toUpperCase() == 'BRAND') {
+      indexElementData = $scope.elementsIndex.marca;
+      checkList = $scope.elementDataValues.brand;
+    } else if (type.toUpperCase() == 'CATEGORY'){
+      indexElementData = $scope.elementsIndex.categoria;
+      checkList = $scope.elementDataValues.category;
+    } else if (type.toUpperCase() == 'LINE') {
+      indexElementData = $scope.elementsIndex.linea;
+      checkList = $scope.elementDataValues.line;
+    }
+    $scope.productsFiltered = $filter('filterElementData')($scope.products, checkList, indexElementData);
+  }
+
+  $scope.filterByProductName = function () {
+    $scope.productsFiltered = $filter('filter')($scope.products, $scope.searchText);
   }
 
 }

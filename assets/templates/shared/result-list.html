@@ -1,15 +1,15 @@
 <div class="container">
   <div class="row">
-    <h3 class="center">Resultados de la busqueda</h3>
+    <h5 class="center">Resultados de la busqueda</h5>
   </div>
   <div class="card-panel compProd-list">
     <div class="row">
-      <div class="col s2 filters">
+      <!-- <div class="col s2 filters">
         <div class="card-panel">
           <p>Filtros</p>
         </div>
-      </div>
-      <div class="col s10">
+      </div> -->
+      <div class="col s12">
         <div style="padding-left: 10px;" class="row ">
           <div ng-if="isCompanySearch()" class="card-title">
             <p>{{total}} empresas con la palabra: {{searchValue}}</p>
@@ -21,10 +21,20 @@
             <p>{{total}} resultados se obtuvieron para empresas y productos con la palabra o frase: {{searchValue}}</p>
           </div>
         </div>
-        <div class="row">
-          <result-card ng-repeat="compProd in filteredResults" comp-prod="compProd" type="{{compProd.type}}">
+        <div ng-if="isAllSearch()">
+          <h3>Empresas:</h3><br>
+        </div>
+        <div ng-repeat="compProd in filteredResults" style="display: inline-block">
+          <div ng-if="greenFlagToSubtittle(compProd)">
+            <h3>Productos:</h3><br>
+          </div>
+          <result-card  comp-prod="compProd" type="{{compProd.type}}">
           </result-card>
         </div>
+        <!-- <div >
+          <result-card ng-repeat="compProd in result.products" comp-prod="compProd" type="{{compProd.type}}">
+          </result-card>
+        </div> -->
       </div>
       <pagination class="center" page="1" page-size="20" total="total" show-prev-next="true" use-simple-prev-next="true" dots="...." hide-if-empty="false" adjacent="2" scroll-top="false" pagination-action="changePage(page)" />
     </div>
