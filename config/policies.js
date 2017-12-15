@@ -41,6 +41,7 @@ module.exports.policies = {
     getByName: 'isValidToDiscounts',
     searchAll: 'isValidToDiscounts',
     recoverPassword: 'isValidRecovery',
+    getMyNit: 'isAuthenticated',
   },
 
   ElementController: {

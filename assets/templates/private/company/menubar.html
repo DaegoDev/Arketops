@@ -2,7 +2,13 @@
   <div class="navbar">
     <ul id="nav-mobile" class="center hide-on-med-and-down">
       <li>
-        <a ui-sref="companyProfile">Perfil</a>
+        <a dropdown data-activates='accountOptions' data-hover="true" data-beloworigin="true" href="">
+          Cuenta
+          <span>
+            <ng-md-icon icon="keyboard_arrow_down" style="fill: black" size="30"></ng-md-icon>
+          </span>
+          &nbsp; &nbsp; &nbsp;
+        </a>
       </li>
 
       <li>
@@ -28,6 +34,11 @@
     </ul>
   </div>
 </nav>
+
+<ul id='accountOptions' class='dropdown-content'>
+  <li><a ng-click="loadMyProfile()">Mi perfil</a></li>
+  <li><a ui-sref="companyProfile">Configuración</a></li>
+</ul>
 
 <ul id='productOptions' class='dropdown-content'>
   <li><a ui-sref="portfolio">Portafolio</a></li>

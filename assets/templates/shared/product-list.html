@@ -8,28 +8,28 @@
 
 <ul class="collapsible popout" data-collapsible="accordion" watch>
   <li>
-    <div class="collapsible-header ">
+    <div class="custom-header">
       <div class="row">
-        <span class="col l1 m2 s3">
+        <span class="col l1 m2 s3 header" ng-click="orderField='code'; reverseFlag = !reverseFlag">
           <label for="">Código</label>
         </span>
 
-        <span class="col l8 m6 s3">
+        <span class="col l8 m6 s3 header" ng-click="orderField='name'; reverseFlag = !reverseFlag">
           <label for="">Producto</label>
         </span>
 
-        <span class="col l2 m2 s3">
+        <span class="col l2 m2 s3 header" ng-click="orderField='price'; reverseFlag = !reverseFlag">
           <label for="">Precio</label>
         </span>
 
-        <span class="col l1 m2 s3">
+        <span class="col l1 m2 s3 header" ng-click="orderField='tax'; reverseFlag = !reverseFlag">
           <label for="">Impuesto</label>
         </span>
       </div>
     </div>
   </li>
 
-  <li ng-repeat="product in products | filter:searchText" on-finish-render>
+  <li ng-repeat="product in products | filter:searchText | orderBy: orderField:reverseFlag" on-finish-render>
     <div class="collapsible-header">
       <div class="row">
         <span class="col l1 m2 s3">
@@ -37,7 +37,6 @@
         </span>
         <span class="col l8 m6 s3">
           {{product.name | capitalize}}
-          {{product.ElementData[0].name}}
         </span>
 
         <span class="col l2 m2 s3">
@@ -45,7 +44,7 @@
         </span>
 
         <span class="col l1 m2 s3">
-          {{product.ElementData[3].discount}}%
+          {{product.tax.discount ?  product.tax.discount + '%': product.tax.name}}
         </span>
       </div>
 
@@ -78,7 +77,7 @@
         </div>
 
         <div class="col s12 m10">
-          <!-- <div class="row section">
+          <div class="row section">
             <div class="col s12 m6" ng-repeat="elementData in product.ElementData">
               <span>
                 <label for="elementData">{{elementData.Element.name | capitalize}}:
@@ -88,15 +87,8 @@
               <span>
                 <strong>{{elementData.name}}</strong>
               </span>
-
-              <span ng-if="isPrivate() && (elementData.Element.name.toUpperCase() !== 'IMPUESTO')">
-                <strong>{{elementData.discount}}
-                  <span ng-if="elementData.discount">% Desc.</span>
-                </strong>
-              </span>
-
             </div>
-          </div> -->
+          </div>
           <div class="row section">
             <div class="col s12 m12 ">
               <label for="description">Descripción:

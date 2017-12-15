@@ -142,7 +142,16 @@ function ($http, $rootScope) {
         data: params
       });
       return clientDiscount;
-    }
+    },
 
+    // Service to get the profile info of a company using its email account.
+    getProfileInfo: function (params) {
+      var companyProfileInfo = $http({
+        url: '/company/getByEmail',
+        method: 'GET',
+        params: params
+      });
+      return companyProfileInfo;
+    }
   };
 }]);

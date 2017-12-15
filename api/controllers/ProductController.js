@@ -299,7 +299,7 @@ module.exports = {
       return res.serverError(err);
     });
   },
-  
+
   /**
   * Función para eliminar un producto o servicio.
   * @param  {Object} req Request object
@@ -342,6 +342,7 @@ module.exports = {
   getMyProducts: function(req, res) {
     // Declaración de variables.
     var user = null;
+    var productList = null;
 
     // Definición de variables.
     user = req.user;
@@ -364,16 +365,26 @@ module.exports = {
       order: [[ElementData, Element, 'id', 'ASC']]
     })
     .then(function (products) {
-      products.forEach(function (product, index, productList) {
-        ImageDataURIService.encode(path.resolve(sails.config.appPath + product.imageURI))
+      productList = products;
+      var promises = [];
+      var promiseFunction = function (product) {
+        return ImageDataURIService.encode(path.resolve(sails.config.appPath + product.imageURI))
         .then((imageDataURI) => {
           product.imageURI = imageDataURI;
         })
         .catch((err) => {
           sails.log.debug(err)
         })
+      }
+
+      productList.forEach(function (product, index) {
+        promises.push(promiseFunction(product));
       });
-      setTimeout(function() {return res.ok(products);}, 10);
+
+      return promise.all(promises);
+    })
+    .then(function (data) {
+      return res.ok(productList);
     })
     .catch(function(err) {
       return res.serverError(err);

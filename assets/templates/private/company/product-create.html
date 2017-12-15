@@ -104,7 +104,7 @@
             <div class="col l4 s12">
               <div input-field>
                 <input type="number" name="price" class="validate" ng-model="product.price" min="0" required ng-change="updatePrice()">
-                <label>Precio</label>
+                <label>Subtotal</label>
               </div>
             </div>
 
@@ -113,9 +113,10 @@
                 <input
                   type="text"
                   name=""
-                  value="{{(product.TotalPrice ? product.TotalPrice:0) | currency}}"
+                  value="{{(product.TotalPrice ? product.TotalPrice:0) | currency : '$' : '0'}}"
                   disabled
                   style="color: black">
+                  <label>Total</label>
               </div>
             </div>
 
