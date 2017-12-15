@@ -1,0 +1,57 @@
+<div class="container">
+  <div class="card company-summary">
+    <div class="card-content">
+      <div class="row card-company">
+        <div class="col s2 image-profile">
+          <img id="image-avatar" ng-src="{{company.imageURI}}" height="85" width="85">
+        </div>
+        <div class="col s10 company-data">
+          <div class="col s7 business-overview-section">
+            <h5>{{company.name | capitalize}}</h5>
+            <p>{{company.businessOverview}}</p>
+          </div>
+          <div class="main-data-section col s5">
+            <div class="row">
+              <div class="col s3">
+                <label for="email">Correo: </label>
+              </div>
+              <div class="col s9">
+                <strong id="email">{{company.User.email}}</strong><br>
+              </div>
+            </div>
+            <div class="row field-data">
+              <div class="col s3">
+                <label for="address">Dirección: </label>
+              </div>
+              <div class="col s9">
+                <strong id="address">{{mainHeadquarters.nomenclature  + ', ' + mainHeadquarters.city + ', ' + mainHeadquarters.department}}</strong><br>
+              </div>
+            </div>
+            <div class="row field-data">
+              <div class="col s3">
+                <label for="phonenumber">Teléfono: </label>
+              </div>
+              <div class="col s9">
+                <strong id="phonenumber">{{mainHeadquarters.phonenumber}}</strong><br>
+              </div>
+            </div>
+            <div class="row field-data">
+              <div class="col s3">
+                <label for="website">Sitio web: </label>
+              </div>
+              <div class="col s9">
+                <strong id="website">{{company.website}}</strong><br>
+              </div>
+            </div>
+          </div>
+          <div ng-if="otherHeadquarters.length != 0" class="headquarters">
+            <label for="">Otras sedes: </label>
+            <span ng-repeat="headquarters in otherHeadquarters">{{headquarters.nomenclature}} &nbsp; {{headquarters.city}}, &nbsp; {{headquarters.department}}; &nbsp; &nbsp;</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <h5 class="center"><strong>Productos</strong></h5>
+  <product-list products="products" options="options"></product-list>
+</div>

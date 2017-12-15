@@ -62,6 +62,18 @@ angular.module('arketops')
             url: '/product/getByName',
             method: 'GET',
             params: params
+          })
+          .then(function (res) {
+            data = res.data
+            angular.forEach(data, function (product, key) {
+              for (var i in product.ElementData) {
+                if (product.ElementData[i].Element.id == 4) {
+                  product.tax = product.ElementData[i];
+                  break
+                }
+              }
+            });
+            return res;
           });
           return products;
         },
@@ -72,6 +84,18 @@ angular.module('arketops')
             url: '/product/getByCompany',
             method: 'GET',
             params: params
+          })
+          .then(function (res) {
+            data = res.data
+            angular.forEach(data, function (product, key) {
+              for (var i in product.ElementData) {
+                if (product.ElementData[i].Element.id == 4) {
+                  product.tax = product.ElementData[i];
+                  break
+                }
+              }
+            });
+            return res;
           });
           return products;
         },
@@ -81,6 +105,18 @@ angular.module('arketops')
           var portfolio = $http({
             url: '/product/getMyProducts',
             method: 'GET'
+          })
+          .then(function (res) {
+            data = res.data
+            angular.forEach(data, function (product, key) {
+              for (var i in product.ElementData) {
+                if (product.ElementData[i].Element.id == 4) {
+                  product.tax = product.ElementData[i];
+                  break
+                }
+              }
+            });
+            return res;
           });
           return portfolio;
         },

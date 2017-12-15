@@ -12,8 +12,8 @@ arketops.directive('signinForm', function() {
   }
 })
 
-arketops.controller('signinCtrl', ['$scope', '$state', '$cookieStore', '$log', 'AuthSvc',
-  function($scope, $state, $cookieStore, $log, AuthSvc) {
+arketops.controller('signinCtrl', ['$scope', '$state', '$cookieStore', '$log', 'AuthSvc', '$location',
+  function($scope, $state, $cookieStore, $log, AuthSvc, $location) {
 
   $scope.user = {};
 
@@ -62,6 +62,7 @@ arketops.controller('signinCtrl', ['$scope', '$state', '$cookieStore', '$log', '
         $scope.user = {};
         $scope.user.loading = false;
         $('#signinModal').modal('close');
+        $scope.loadMyProfile()
       })
       .catch(function(err) {
         Materialize.toast('No se ha podido iniciar sesión, verifique su nombre de usuario o contraseña.', 4000,'rounded')
@@ -74,4 +75,15 @@ arketops.controller('signinCtrl', ['$scope', '$state', '$cookieStore', '$log', '
   $scope.switchError = function(value) {
     $scope[value] = !$scope[value];
   };
+
+  $scope.loadMyProfile = function () {
+    AuthSvc.getMyNit()
+    .then(function (res) {
+      var nit = res.data.nit;
+      $location.path('profile-info/' + nit)
+    })
+    .catch(function (err) {
+      console.log(err);
+    });
+  }
 }]);

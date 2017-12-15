@@ -47,8 +47,20 @@ function productListCtrl($scope, $log, $ngConfirm, AuthSvc, $state, StorageSvc, 
         .then(function(res) {$scope.states = res.data;})
         .catch(function(err) {$log.error(err);});
     }
+
+    // angular.forEach($scope.products, function (product, key) {
+    //   for (var i in product.ElementData) {
+    //     if (product.ElementData[i].id == 4) {
+    //       product.tax = product.ElementData[i];
+    //       break;
+    //     }
+    //   }
+    //   console.log(product);
+    // });
   }
   $scope.init();
+  console.log($scope);
+  console.log($scope.products);
 
   // Flag function to know if the current elements belongs to the user.
   $scope.isPrivate = function() {

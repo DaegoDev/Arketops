@@ -8,12 +8,22 @@ arketops.directive('menubar', function() {
   }
 })
 
-arketops.controller('menubarCtrl', ['$scope', '$cookieStore', '$ngConfirm', 'AuthSvc', '$interval', 'AnchorSmoothScroll',
-  function($scope, $cookieStore, $ngConfirm, AuthSvc, $interval, AnchorSmoothScroll) {
+arketops.controller('menubarCtrl', ['$scope', '$cookieStore', '$ngConfirm', 'AuthSvc', '$interval', 'AnchorSmoothScroll', '$location',
+  function($scope, $cookieStore, $ngConfirm, AuthSvc, $interval, AnchorSmoothScroll, $location) {
 
     $scope.scrollUp = function () {
       AnchorSmoothScroll.scrollTo('navbar');
     }
 
+    $scope.loadMyProfile = function () {
+      AuthSvc.getMyNit()
+      .then(function (res) {
+        var nit = res.data.nit;
+        $location.path('profile-info/' + nit)
+      })
+      .catch(function (err) {
+        console.log(err);
+      });
+    }
   }
 ]);

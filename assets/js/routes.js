@@ -38,6 +38,12 @@ arketops.config(['$stateProvider', '$urlRouterProvider',
         controller: 'ProductsByCompanyCtrl'
       })
 
+      .state('profileInfo', {
+        url: '/profile-info/:nit',
+        templateUrl: 'templates/public/profile-info.html',
+        controller: 'ProfileInfoCtrl'
+      })
+
       .state('elements', {
         url: '/elementos',
         templateUrl: 'templates/private/company/elements.html',

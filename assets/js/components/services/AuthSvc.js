@@ -53,6 +53,14 @@ var storageType = 'session';
 		getRole: function() {
 			return StorageSvc.get("role", storageType);
 		},
+
+		getMyNit: function () {
+			var myNit = $http({
+				url: '/company/getMyNit',
+				method: 'GET'
+			});
+			return myNit;
+		}
 	};
 }]);
 
