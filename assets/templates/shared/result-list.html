@@ -3,40 +3,49 @@
     <h5 class="center">Resultados de la busqueda</h5>
   </div>
   <div class="card-panel compProd-list">
-    <div class="row">
-      <!-- <div class="col s2 filters">
-        <div class="card-panel">
-          <p>Filtros</p>
+    <div class="row tool-bar">
+      <div ng-if="isCompanySearch()" class="card-title">
+        <div class="col s6">
+          <h5><strong>{{total}} empresas con la palabra: "{{searchValue}}"</strong></h5>
         </div>
-      </div> -->
-      <div class="col s12">
-        <div style="padding-left: 10px;" class="row ">
-          <div ng-if="isCompanySearch()" class="card-title">
-            <p>{{total}} empresas con la palabra: {{searchValue}}</p>
-          </div>
-          <div ng-if="isProductSearch()" class="card-title">
-            <p>{{total}} productos con la palabra: {{searchValue}}</p>
-          </div>
-          <div ng-if="isAllSearch()" class="card-title" >
-            <p>{{total}} resultados se obtuvieron para empresas y productos con la palabra o frase: {{searchValue}}</p>
+        <div class="col s6 right" style="margin-bottom:-15px;">
+          <div input-field>
+            <select id="orderOptionsCompanies" ng-change="orderCompanies()" ng-model="orderOptionsCompanies.selected"
+            ng-options="option.name for option in orderOptionsCompanies.choices" material-select watch></select>
+            <label for="orderOptionsCompanies">Ordenar por</label>
           </div>
         </div>
-        <div ng-if="isAllSearch()">
-          <h3>Empresas:</h3><br>
-        </div>
-        <div ng-repeat="compProd in filteredResults" style="display: inline-block">
-          <div ng-if="greenFlagToSubtittle(compProd)">
-            <h3>Productos:</h3><br>
-          </div>
-          <result-card  comp-prod="compProd" type="{{compProd.type}}">
-          </result-card>
-        </div>
-        <!-- <div >
-          <result-card ng-repeat="compProd in result.products" comp-prod="compProd" type="{{compProd.type}}">
-          </result-card>
-        </div> -->
       </div>
-      <pagination class="center" page="1" page-size="20" total="total" show-prev-next="true" use-simple-prev-next="true" dots="...." hide-if-empty="false" adjacent="2" scroll-top="false" pagination-action="changePage(page)" />
+      <div ng-if="isProductSearch()" class="card-title">
+        <div class="col s6">
+          <h5><strong>{{total}} productos con la palabra: "{{searchValue}}"</strong></h5>
+        </div>
+        <div class="col s6 right" style="margin-bottom:-15px;">
+          <div input-field>
+            <select id="orderOptionsProducts" ng-change="orderProducts()" ng-model="orderOptionsProducts.selected"
+            ng-options="option.name for option in orderOptionsProducts.choices" material-select watch>
+            </select>
+            <label for="orderOptionsProducts">Ordenar por</label>
+          </div>
+        </div>
+      </div>
+      <div ng-if="isAllSearch()" class="card-title">
+        <h5><strong>{{total}} resultados se obtuvieron para empresas y productos con la palabra o frase: "{{searchValue}}"</strong></h5>
+      </div>
     </div>
+    <hr>
+    <div ng-if="isAllSearch()">
+      <h5>Empresas:</h5>
+    </div>
+    <div ng-repeat="compProd in filteredResults" ng-style="compProd == 'divider' ? {} : {'display': 'inline-block'}">
+      <div ng-if="compProd == 'divider'">
+        <hr>
+        <h5>Productos:</h5>
+      </div>
+      <div ng-if="compProd != 'divider'">
+        <result-card comp-prod="compProd" type="{{compProd.type}}"></result-card>
+      </div>
+    </div>
+    <pagination class="center" page="1" page-size="20" total="total" show-prev-next="true" use-simple-prev-next="true" dots="...." hide-if-empty="false" adjacent="2" scroll-top="false" pagination-action="changePage(page)" />
   </div>
 </div>

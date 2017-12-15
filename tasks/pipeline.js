@@ -1,3 +1,4 @@
+require('events').EventEmitter.defaultMaxListeners = 0;
 /**
  * grunt/pipeline.js
  *
