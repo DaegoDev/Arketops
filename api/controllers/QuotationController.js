@@ -8,7 +8,6 @@
 // Modulos requeridos.
 var PdfPrinter = require('pdfmake/src/printer');
 var watermark = require('image-watermark');
-var hummus = require('hummus');
 var fs = require('fs');
 const Datauri = require('datauri');
 

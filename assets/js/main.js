@@ -89,4 +89,22 @@
     }
   });
 
+  arketops.filter('filterElementData', function() {
+    return function(products, checkList, indexElementData) {
+      // console.log(products);
+      // console.log(checkList);
+      console.log(indexElementData);
+      var output = [];
+      angular.forEach(products, function(product, productKey) {
+        angular.forEach(checkList, function(checkValue, checkKey) {
+          if (checkValue.selected && product.ElementData[indexElementData].name.toUpperCase().trim().includes(checkValue.name.toUpperCase().trim())) {
+            output.push(product);
+          }
+        });
+      });
+      console.log(output);
+      return output;
+    }
+  });
+
 })();
