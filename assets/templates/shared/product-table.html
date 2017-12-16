@@ -1,36 +1,108 @@
+<div class="container-product-table">
+  <div class="row search-section">
+      <div class="input-field input-group">
+        <ng-md-icon icon="search" class="prefix" style="fill: black" size="30"></ng-md-icon>
+        <input type="text" id="searchInput" ng-model="searchText" ng-change="filterByProductName()">
+        <label for="searchInput">Filtrar los resultados</label>
+      </div>
+  </div>
+  <table class="highlight bordered responsive-table">
+    <thead>
+      <tr>
+        <th style="width: 10%">
+          <span class="header-name">
+          Código
+        </span>
+          <span class="icon-sort" ng-click="sortBy('code')">
+          <ng-md-icon icon="sort_by_alpha" style="fill: blue;" size="20"></ng-md-icon>
+        </span>
+        </th>
+        <th style="width: 17%">
+          <span class="header-name">
+          Nombre
+        </span>
+          <span class="icon-sort" ng-click="sortBy('name')">
+          <ng-md-icon icon="sort_by_alpha" style="fill: blue;" size="20"></ng-md-icon>
+        </span>
+        </th>
+        <th style="width: 13%">
+          <span class="header-name">
+          <a class='dropdown-button' data-activates='brandsDropdown' dropdown data-beloworigin='true' data-constrainwidth='false' >
+              Marca
+          </a>
+          <ul id='brandsDropdown' class='dropdown-content'>
+              <li class="element-data-filter" ng-repeat="brand in elementDataValues.brand">
+                <input type="checkbox" class="filled-in" id="{{brand.name}}" checked="{{brand.selected}}" ng-click="filter(brand, 'brand')"/>
+                <label for="{{brand.name}}">{{brand.name}}</label>
+              </li>
+          </ul>
+        </span>
+          <span class="icon-sort" ng-click="sortBy('marca')">
+          <ng-md-icon icon="sort_by_alpha" style="fill: blue;" size="20"></ng-md-icon>
+        </span>
+        </th>
+        <th style="width: 13%">
+          <span class="header-name">
+          <a class='dropdown-button' data-activates='categoriesDropdown' dropdown data-beloworigin='true' data-constrainwidth='false' >
+              Categoría
+          </a>
+          <ul id='categoriesDropdown' class='dropdown-content'>
+              <li class="element-data-filter" ng-repeat="category in elementDataValues.category" >
+                <input type="checkbox" class="filled-in" id="{{category.name}}" checked="{{category.selected}}" ng-click="filter(category, 'category')"/>
+                <label for="{{category.name}}">{{category.name}}</label>
+              </li>
+          </ul>
+        </span>
+          <span class="icon-sort" ng-click="sortBy('categoria')">
+          <ng-md-icon icon="sort_by_alpha" style="fill: blue;" size="20"></ng-md-icon>
+        </span>
+        </th>
+        <th style="width: 13%">
+          <span class="header-name">
+          <a class='dropdown-button' data-activates='linesDropdown' dropdown data-beloworigin='true' data-constrainwidth='false' >
+              Línea
+          </a>
+          <ul id='linesDropdown' class='dropdown-content'>
+              <li class="element-data-filter" ng-repeat="line in elementDataValues.line">
+                <input type="checkbox" class="filled-in" id="{{line.name}}" checked="{{line.selected}}" ng-click="filter(line, 'line')"/>
+                <label for="{{line.name}}">{{line.name}}</label>
+              </li>
+          </ul>
+        </span>
+          <span class="icon-sort" ng-click="sortBy('linea')">
+          <ng-md-icon icon="sort_by_alpha" style="fill: blue;" size="20"></ng-md-icon>
+        </span>
+        </th>
+        <th style="width: 10%">
+          <span class="header-name">
+          Impuesto
+        </span>
+        </th>
+        <th style="width: 10%">
+          <span class="header-name">
+          Opciones
+        </span>
+        </th>
+        <th style="width: 15%"></th>
+      </tr>
+    </thead>
 
-<table class="highlight bordered responsive-table">
-  <thead>
-    <tr>
-      <th>Código</th>
-      <th>Nombre</th>
-      <th>Marca</th>
-      <th>Categoría</th>
-      <th>Línea</th>
-      <th>Impuesto</th>
-      <th>Opciones</th>
-      <th style="width:100px"></th>
-    </tr>
-  </thead>
-
-  <tbody>
-    <tr ng-repeat="product in products">
-      <td>{{product.code}}</td>
-      <td>{{product.name}}</td>
-      <!-- <td ng-repeat="elementData in product.ElementData"> -->
+    <tbody>
+      <tr ng-repeat="product in productsFiltered">
+        <td>{{product.code}}</td>
+        <td>{{product.name}}</td>
         <td>{{getElementDataName(product.ElementData, 'MARCA')}}</td>
         <td>{{getElementDataName(product.ElementData, 'CATEGORÍA')}}</td>
         <td>{{getElementDataName(product.ElementData, 'LÍNEA')}}</td>
         <td>{{getElementDataName(product.ElementData, 'IMPUESTO')}}</td>
-      <!-- </td> -->
-      <td style="width:100px">
-        <a class="waves-effect waves-light btn" ng-click="addProductToList(product, $index)">Añadir</a>
-      </td>
-      <td style="width:100px" ng-if="product.added">
-        <ng-md-icon  icon="check" style="fill: green" size="40"></ng-md-icon>
-        <ng-md-icon ng-click="removeProductOfList($index, product)" icon="remove_circle" style="fill: red; margin-left: 10px; cursor: pointer"
-        size="40" tooltipped data-position="top" data-delay="50" data-tooltip="Remover"></ng-md-icon>
-      </td>
-    </tr>
-  </tbody>
-</table>
+        <td style="width:100px">
+          <a class="waves-effect waves-light btn" ng-click="addProductToList(product, $index)">Añadir</a>
+        </td>
+        <td style="width:100px" ng-if="product.added">
+          <ng-md-icon icon="check" style="fill: green" size="40"></ng-md-icon>
+          <ng-md-icon ng-click="removeProductOfList($index, product)" icon="remove_circle" style="fill: red; margin-left: 10px; cursor: pointer" size="40" tooltipped data-position="top" data-delay="50" data-tooltip="Remover"></ng-md-icon>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+</div>

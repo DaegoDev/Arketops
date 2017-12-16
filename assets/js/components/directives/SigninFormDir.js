@@ -19,7 +19,8 @@ arketops.controller('signinCtrl', ['$scope', '$state', '$cookieStore', '$log', '
 
   $scope.toFormRecoverPws = function () {
     $scope.closeModal();
-    $state.go('recoverPassword')
+    $state.go('recoverPassword');
+    $('#signinModal').modal('close');
   }
 
   // Función para el inicio de sesión de un usuario.
