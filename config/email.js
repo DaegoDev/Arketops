@@ -1,21 +1,40 @@
 
-var wellknown = require('nodemailer-wellknown');
+// var wellknown = require('nodemailer-wellknown');
+//
+// var config = wellknown('Gmail');
+// config.auth = {
+//   user: 'arketops1@gmail.com',
+//   pass: 'arketops123'
+// }
+//
+// module.exports.email = {
+//   service: "Gmail",
+//   transporter: config,
+//   templateDir: "api/emailTemplates",
+//   from: "arketops1@gmail.com",
+//   testMode: false,
+//   ssl: false
+// };
 
-var config = wellknown('Gmail');
-config.auth = {
-  user: 'arketops1@gmail.com',
-  pass: 'arketops123'
-}
+var nodemailer = require("nodemailer");
+var smtpTransport = require("nodemailer-smtp-transport");
+
+var transporterDetails = smtpTransport({
+  host: 'mail.arketops.com',
+  port: 25,
+  secure: false,
+  auth: {
+    user: "app@arketops.com",
+    pass: "app$2016"
+  }
+});
 
 module.exports.email = {
-  service: "Gmail",
-  transporter: config,
+  transporter: transporterDetails,
+  from: "app@arketops.com",
   templateDir: "api/emailTemplates",
-  from: "arketops1@gmail.com",
-  testMode: false,
-  ssl: false
+  testMode: false
 };
-
 
 
 // var generator = require('xoauth2').createXOAuth2Generator({
