@@ -26,7 +26,11 @@ var transporterDetails = smtpTransport({
   auth: {
     user: "app@arketops.com",
     pass: "app$2016"
-  }
+  },
+  tls: {
+    rejectUnauthorized: false
+  },
+  ssl: false
 });
 
 module.exports.email = {
