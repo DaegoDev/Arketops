@@ -41,6 +41,8 @@ arketops.controller('ClientQuotationsListCtrl', ['$scope', '$filter', '$log', '$
         })
       })
       .catch((err) => {
+        $scope.quotations.loading = false;
+        Materialize.toast('No se pudo obtener el archivo.', 4000, 'red darken-1 rounded')
         console.log(err);
       })
     }
@@ -121,14 +123,15 @@ arketops.controller('ClientQuotationsListCtrl', ['$scope', '$filter', '$log', '$
         paymentFormId: paymentFormId,
       }
 
+      $scope.quotations.loading = true;
       QuotationSvc.confirmToClient(params)
       .then((res) => {
-        console.log(indexQuotation);
-        console.log(res.data);
+        $scope.quotations.loading = false;
         $scope.quotations.requested[indexQuotation] = res.data;
         Materialize.toast('Se confirmó la cotización exitosamente.', 4000, 'green darken-1 rounded');
       })
       .catch((err) => {
+        $scope.quotations.loading = false;
         Materialize.toast('No fue posible confirmar la cotización.', 4000, 'red darken-1 rounded');
       })
     }

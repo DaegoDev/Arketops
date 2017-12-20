@@ -17,10 +17,11 @@ function($scope, $log, $state, $stateParams, $ngConfirm, ProductSvc) {
       mode: 'OWNER',
       reload: function () {
         $scope.init();
-      }
+      },
+      isRequesting: false
     };
   }
-  
+
   $scope.init();
 
 }]);

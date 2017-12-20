@@ -93,14 +93,16 @@ arketops.controller('ClientDiscountsCtrl', ['$scope', '$log', '$state', '$stateP
         discount: discount
       }
 
+      $scope.isRequesting = true;
       CompanySvc.setDiscountToClient(params)
       .then((res) => {
+        $scope.isRequesting = false;
         $scope.getElementsDiscountByClient();
         $scope.discount = '';
         Materialize.toast('Se añadió correctamente', 4000, 'green darken-1 rounded');
       })
       .catch((err) => {
-
+        $scope.isRequesting = false;
       })
     }
 
@@ -140,12 +142,15 @@ arketops.controller('ClientDiscountsCtrl', ['$scope', '$log', '$state', '$stateP
             text: 'Eliminar',
             btnClass: 'btn-red',
             action: function() {
+              $scope.isRequesting = true;
               CompanySvc.deleteDiscountToClient({clientDiscountId: clientDiscountId})
               .then((res) => {
+                $scope.isRequesting = false;
                 Materialize.toast('Se eliminó correctamente', 4000, 'green darken-1 rounded');
                 $scope.getElementsDiscountByClient();
               })
               .catch((err) => {
+                $scope.isRequesting = false;
                 console.log(err);
               })
             }
@@ -182,14 +187,17 @@ arketops.controller('ClientDiscountsCtrl', ['$scope', '$log', '$state', '$stateP
         newDiscount: newDiscount
       }
 
+      $scope.isRequesting = true;
       CompanySvc.updateDiscountToClient(params)
       .then((res) => {
+        $scope.isRequesting = false;
         $scope.getElementsDiscountByClient();
         $scope.selectedDiscount = false;
         $scope.discount = '';
         Materialize.toast('Se actualizó correctamente', 4000, 'green darken-1 rounded');
       })
       .catch((err) => {
+        $scope.isRequesting = false;
         console.log(err);
       })
     }

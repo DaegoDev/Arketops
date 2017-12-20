@@ -187,13 +187,16 @@ arketops.controller('CompanyProfileCtrl', ['$scope', '$timeout', '$log', '$state
 
     $scope.$watch('user.imageURI', function(newValue, oldValue) {
       if ($scope.useWatch) {
+        $scope.user.isRequesting = true;
         CompanySvc.updateImageProfile({
             imageDataURI: newValue
           })
           .then((res) => {
+            $scope.user.isRequesting = false;
             Materialize.toast('Se actualizó la imagen correctamente.', 4000, 'green darken-1 rounded')
           })
           .catch((err) => {
+            $scope.user.isRequesting = false;
             Materialize.toast('No se pudo cambiar la imagen.', 4000, 'red darken-1 rounded');
           })
       }
@@ -218,8 +221,10 @@ arketops.controller('CompanyProfileCtrl', ['$scope', '$timeout', '$log', '$state
             text: 'Confirmar',
             btnClass: 'btn-yellow',
             action: function (scope, button) {
+              $scope.user.isRequesting = true;
               CompanySvc.deactivateAccount()
               .then((res) => {
+                $scope.user.isRequesting = false;
                 $ngConfirm({
                   title: 'Proceso exitoso',
                   content: 'Su cuenta se eliminó correctamente.',
@@ -231,6 +236,7 @@ arketops.controller('CompanyProfileCtrl', ['$scope', '$timeout', '$log', '$state
                 $state.go('home');
               })
               .catch((err) => {
+                $scope.user.isRequesting = false;
                 $ngConfirm({
                   title: 'Error',
                   content: 'No se pudo eliminar la cuenta.',
@@ -332,13 +338,16 @@ arketops.controller('CompanyProfileCtrl', ['$scope', '$timeout', '$log', '$state
         contactPhonenumber: contactPhonenumberHeadquarters,
       }
 
+      $scope.user.isRequesting = true;
       HeadquartersSvc.create(headquartersParams)
         .then((res) => {
-          console.log(res.data);
+          $scope.user.isRequesting = false;
+          // console.log(res.data);
           $scope.otherHeadquarters.push(res.data)
         })
         .catch((err) => {
-
+          $scope.user.isRequesting = false;
+          Materialize.toast('No se pudo ejecutar la acción, intente más tarde.', 4000, 'red darken-1 rounded')
         })
     }
 
@@ -378,16 +387,19 @@ arketops.controller('CompanyProfileCtrl', ['$scope', '$timeout', '$log', '$state
         contactPhonenumber: contactPhonenumberHeadquarters,
         headquartersId: headquartersId
       }
+
+      $scope.user.isRequesting = true;
       $scope.citiesHeadquarters = {};
       HeadquartersSvc.update(headquartersParams)
         .then((res) => {
+          $scope.user.isRequesting = false;
           $scope.otherHeadquarters[indexInList] = res.data
-          console.log(res.data);
-          console.log(indexInList);
+          // console.log(res.data);
           $scope.headquartersToUpdate = false;
         })
         .catch((err) => {
-
+          $scope.user.isRequesting = false;
+          Materialize.toast('No se pudo ejecutar la acción, intente más tarde.', 4000, 'red darken-1 rounded')
         })
     }
 
@@ -395,6 +407,8 @@ arketops.controller('CompanyProfileCtrl', ['$scope', '$timeout', '$log', '$state
       $ngConfirm({
         title: '¿Desea borrar esta sede?',
         content: 'Si desea borrar la sede presione confirmar, de lo contrario presione cancelar.',
+        boxWidth: '30%',
+        useBootstrap: false,
         type: 'red',
         buttons: {
           cancel: {
@@ -416,11 +430,14 @@ arketops.controller('CompanyProfileCtrl', ['$scope', '$timeout', '$log', '$state
     }
 
     function deleteHeadquarters(headquartersId, indexInList) {
+      $scope.user.isRequesting = true;
       HeadquartersSvc.delete({headquartersId: headquartersId})
       .then((res) => {
+        $scope.user.isRequesting = false;
         $scope.otherHeadquarters.splice(indexInList, 1);
       })
       .catch((err) => {
+        $scope.user.isRequesting = false;
         Materialize.toast('No se pudo borrar la sede.', 4000, 'red darken-1 rounded')
       })
     }
@@ -449,8 +466,10 @@ arketops.controller('CompanyProfileCtrl', ['$scope', '$timeout', '$log', '$state
         newPassword: newPassword
       }
 
+      $scope.user.isRequesting = true;
       CompanySvc.updatePassword(paramsChangePws)
         .then((res) => {
+          $scope.user.isRequesting = false;
           Materialize.toast('Se cambió la contraseña.', 4000, 'green darken-1 rounded');
           $scope.forms.formChangePws.$setPristine();
           $scope.forms.formChangePws.$setUntouched();
@@ -459,7 +478,8 @@ arketops.controller('CompanyProfileCtrl', ['$scope', '$timeout', '$log', '$state
           $scope.user.reNewPassword = "";
         })
         .catch((err) => {
-          Materialize.toast('No se pudo cambiar la contraseña.', 4000, 'red darken-1 rounded');
+          $scope.user.isRequesting = false;
+          Materialize.toast('No se pudo cambiar la contraseña, verifique la contraseña actual.', 4000, 'red darken-1 rounded');
           console.log(err);
         })
 
@@ -521,13 +541,16 @@ arketops.controller('CompanyProfileCtrl', ['$scope', '$timeout', '$log', '$state
         contactPhonenumber: contactPhonenumber,
       }
 
+      $scope.user.isRequesting = true;
       // Llama al servicio que actualiza los datos del cliente.
       CompanySvc.updateData(paramsToUpdate)
         .then((res) => {
-          console.log(res.data);
-          Materialize.toast('Se actualizó correctamente.', 4000, 'green darken-1 rounded')
+          $scope.user.isRequesting = false;
+          Materialize.toast('La información se actualizó correctamente.', 4000, 'green darken-1 rounded')
         })
         .catch((err) => {
+          $scope.user.isRequesting = false;
+          Materialize.toast('No se pudo ejecutar la acción, intente más tarde.', 4000, 'red darken-1 rounded')
           console.log(err);
         })
 

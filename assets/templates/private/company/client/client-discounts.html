@@ -25,7 +25,7 @@
         class="right" style="fill: white" size="27"></ng-md-icon>Añadir</a>
         <a ng-if="selectedDiscount" class="waves-effect waves-light btn" ng-click="updateDiscount()"><ng-md-icon icon="autorenew"
         class="right" style="fill: white" size="27"></ng-md-icon>Actualizar</a>
-        <a ng-if="selectedDiscount" class="waves-effect waves-light btn" ng-click="enableAdd()">Nuevo</a>
+        <a ng-if="selectedDiscount" class="waves-effect waves-light btn" ng-click="enableAdd()">Cancelar</a>
         <!-- </div> -->
     </div>
   </div>
@@ -62,3 +62,4 @@
     </table>
   </div>
 </div>
+<preloader ng-show="isRequesting"></preloader>

@@ -64,11 +64,14 @@ arketops.controller('ClientDetailsCtrl', ['$scope', '$log', '$state', '$statePar
             text: 'Confirmar',
             btnClass: 'btn-orange',
             action: function() {
+              $scope.isRequesting = true;
               CompanySvc.followCompany({supplierId: $scope.client.id})
               .then((res) => {
+                $scope.isRequesting = false;
                 $scope.isSupplier = true;
               })
               .catch((err) => {
+                $scope.isRequesting = false;
                 Materialize.toast('Ocurrió un error al ejecutar la acción.', 4000, 'red darken-1 rounded');
               })
             }

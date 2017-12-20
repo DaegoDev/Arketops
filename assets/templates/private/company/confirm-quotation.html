@@ -9,7 +9,7 @@
   </div>
   <div class="col s6">
     <div input-field>
-      <select id="paymentForms" ng-model="quotation.paymentForms.selected" ng-options="paymentForm.name for paymentForm in quotation.paymentForms.choices" material-select watch>
+      <select id="paymentForms" ng-model="quotation.paymentForms.selected" ng-options="paymentForm.name | capitalize for paymentForm in quotation.paymentForms.choices" material-select watch>
         <option value="">Seleccionar</option>
       </select>
       <label>Forma de pago</label>

@@ -200,8 +200,10 @@
 
         $scope.signinup = true;
 
+        $scope.user.isRequesting = true;
         CompanySvc.signup(userCredentials)
           .then(function(res) {
+            $scope.user.isRequesting = false;
             $scope.signingUp = false;
             $scope.user = {};
             $scope.flagImageDataURI = false;
@@ -232,7 +234,7 @@
             });
           })
           .catch(function(err) {
-            console.log(err);
+            $scope.user.isRequesting = false;
             if (err.status === 409) {
               $scope.alertMessage = "Error, el nombre de usuario ya está registrado."
             } else {

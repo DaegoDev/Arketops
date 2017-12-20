@@ -102,14 +102,17 @@ function productListCtrl($scope, $log, $ngConfirm, AuthSvc, $state, StorageSvc, 
 
   // Function to delete a product.
   $scope.deleteProduct = function(product) {
+    $scope.options.isRequesting = true;
     ProductSvc.delete(product.id)
       .then(function(res) {
+        $scope.options.isRequesting = false;
         $scope.products.splice($scope.products.indexOf(product), 1);
         Materialize.toast('El producto ha sido eliminado correctamente.',
           3000, 'green darken-1 rounded');
         return true;
       })
       .catch(function(err) {
+        $scope.options.isRequesting = false;
         if (err.status != 409) {
           Materialize.toast('El producto no ha sido eliminado, por favor intentelo nuevamente.',
           3000, 'red darken-1 rounded');
@@ -214,8 +217,10 @@ function productListCtrl($scope, $log, $ngConfirm, AuthSvc, $state, StorageSvc, 
               credentials.elements.push(scope.product.tax.id);
             }
 
+            $scope.options.isRequesting = true;
             ProductSvc.update(credentials)
             .then(function (resProduct) {
+              $scope.options.isRequesting = false;
               if ($scope.options.reload) {
                 $scope.options.reload();
               }
@@ -224,6 +229,7 @@ function productListCtrl($scope, $log, $ngConfirm, AuthSvc, $state, StorageSvc, 
                 3000, 'green darken-1 rounded');
             })
             .catch(function (err) {
+              $scope.options.isRequesting = false;
               $log.log(err)
               var errData = err.data;
               if (err.status != 409) {

@@ -128,7 +128,7 @@
                   material-select
                   data-beloworigin="true"
                   ng-model="product.state"
-                  ng-options="state.name for state in states"
+                  ng-options="state.name | capitalize for state in states"
                   class="validate"
                   required>
                   <option value="" disabled>Estado</option>
@@ -239,23 +239,9 @@
           <button type="submit" class="btn waves-effect waves-light" name="button">Crear</button>
         </div>
 
-        <div class="center" ng-show="product.isRequesting">
-          <div class="preloader-wrapper big active">
-            <div class="spinner-layer spinner-yellow-only">
-              <div class="circle-clipper left">
-                <div class="circle"></div>
-              </div>
-              <div class="gap-patch">
-                <div class="circle"></div>
-              </div>
-              <div class="circle-clipper right">
-                <div class="circle"></div>
-              </div>
-            </div>
-          </div>
-        </div>
       </form>
     </div>
   </div>
 </div>
 <br>
+<preloader ng-show="product.isRequesting"></preloader>

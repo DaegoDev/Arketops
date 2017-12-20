@@ -15,18 +15,18 @@ arketops.controller('RecoverPasswordCtrl', ['$scope', '$log', '$ngConfirm', '$st
       credentials = {
         email: email
       };
-      $scope.sending = true;
+      $scope.user.isRequesting = true;
       RecoverPasswordSvc.startRecover(credentials)
         .then(function(res) {
           $scope.token = res.data;
-          $scope.sending = false;
+          $scope.user.isRequesting = false;
           $scope.waitingCode = true;
           $scope.user = {};
           Materialize.toast('Se envió a su correo el código para cambiar la contraseña.', 6000, 'green darken-1 rounded')
         })
         .catch(function(err) {
+          $scope.user.isRequesting = false;
           Materialize.toast('Error, el correo electrónico ingresado no existe.', 6000, 'red darken-1 rounded');
-          $scope.sending = false;
         });
     }
 
@@ -50,10 +50,11 @@ arketops.controller('RecoverPasswordCtrl', ['$scope', '$log', '$ngConfirm', '$st
       }
 
       console.log($scope.token);
-      $scope.sending = true;
+      $scope.user.isRequesting = true;
       //Llamado al servicio de recuperar contraseña de una empresa.
       RecoverPasswordSvc.recoverPassword(request, $scope.token)
         .then(function(res) {
+          $scope.user.isRequesting = false;
           $state.go('home');
           $ngConfirm({
             title: 'Se recuperó la contraseña.',
@@ -68,9 +69,8 @@ arketops.controller('RecoverPasswordCtrl', ['$scope', '$log', '$ngConfirm', '$st
           $scope.sending = false;
         })
         .catch(function(err) {
-          console.log(err);
+          $scope.user.isRequesting = false;
           Materialize.toast('El codigo ingresado es incorrecto.', 6000, 'red darken-1 rounded');
-          $scope.sending = false;
         });
     };
 

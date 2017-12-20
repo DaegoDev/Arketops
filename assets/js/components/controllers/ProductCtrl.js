@@ -159,8 +159,10 @@ arketops.controller('ProductCtrl', ['$scope', '$log', '$state', '$stateParams',
               }
 
               scope.elementData.isRequesting = true;
+              $scope.product.isRequesting = true;
               ElementSvc.createElementData(elementData)
                 .then(function(res) {
+                  $scope.product.isRequesting = false;
                   element.ElementData.push(res.data);
                   scope.elementData = {};
                   Materialize.toast('Elemento creado correctamente.',
@@ -168,6 +170,7 @@ arketops.controller('ProductCtrl', ['$scope', '$log', '$state', '$stateParams',
                   return true;
                 })
                 .catch(function(err) {
+                  $scope.product.isRequesting = false;
                   $log.debug(err);
                   scope.elementData = {};
                   Materialize.toast('El elemento no ha sido creado, por favor intentelo nuevamente.',
@@ -223,8 +226,10 @@ arketops.controller('ProductCtrl', ['$scope', '$log', '$state', '$stateParams',
               }
 
               scope.elementData.isRequesting = true;
+              $scope.product.isRequesting = true;
               ElementSvc.createLinkedElementData(elementData)
                 .then(function(res) {
+                  $scope.product.isRequesting = false;
                   res.data.ElementParent = [scope.elementData.parent];
                   element.ElementData.push(res.data);
                   scope.elementData = {};
@@ -233,6 +238,7 @@ arketops.controller('ProductCtrl', ['$scope', '$log', '$state', '$stateParams',
                   return true;
                 })
                 .catch(function(err) {
+                  $scope.product.isRequesting = false;
                   $log.debug(err);
                   scope.elementData = {};
                   Materialize.toast('El elemento no ha sido creado, por favor intentelo nuevamente.',

@@ -98,8 +98,10 @@ arketops.controller('ElementCtrl', ['$scope', '$log', '$state', '$stateParams',
       $scope.isRequesting = true; // Block the requests until this one finish
       // Call the data element create service and save it into the element data list
       // when created.
+      $scope.elementData.isRequesting = true;
       ElementSvc.createElementData(elementData)
         .then(function(res) {
+          $scope.elementData.isRequesting = false;
           Materialize.toast('El elemento ha sido creado.',
             3000, 'green darken-1 rounded');
 
@@ -108,6 +110,7 @@ arketops.controller('ElementCtrl', ['$scope', '$log', '$state', '$stateParams',
           $scope.isRequesting = false;
         })
         .catch(function(err) {
+          $scope.elementData.isRequesting = false;
           var errData = err.data;
           if (err.status != 409) {
             Materialize.toast('El elemento no ha sido creado, por favor intentelo nuevamente.',
@@ -138,12 +141,13 @@ arketops.controller('ElementCtrl', ['$scope', '$log', '$state', '$stateParams',
 
       $scope.isRequesting = true; // Blocks the requests until this one finish
 
+      $scope.elementData.isRequesting = true;
       // Call the linked data element create service and save it into both the element
       // data list and the parent children when created.
       ElementSvc.createLinkedElementData(elementData)
         .then(function(res) {
+          $scope.elementData.isRequesting = false;
           var elementData = res.data;
-
           Materialize.toast('El elemento ha sido creado.',
             3000, 'green darken-1 rounded');
 
@@ -156,6 +160,7 @@ arketops.controller('ElementCtrl', ['$scope', '$log', '$state', '$stateParams',
 
         })
         .catch(function(err) {
+          $scope.elementData.isRequesting = false;
           var errData = err.data;
           if (err.status != 409) {
             Materialize.toast('El elemento no ha sido creado, por favor intentelo nuevamente.',
@@ -222,8 +227,10 @@ arketops.controller('ElementCtrl', ['$scope', '$log', '$state', '$stateParams',
         discount: $scope.elementData.discount
       }
 
+      $scope.elementData.isRequesting = true;
       ElementSvc.updateElementData(credentials)
       .then(function (res) {
+        $scope.elementData.isRequesting = false;
         Materialize.toast('El elemento ha sido actualizado correctamente.',
           3000, 'green darken-1 rounded');
 
@@ -236,6 +243,7 @@ arketops.controller('ElementCtrl', ['$scope', '$log', '$state', '$stateParams',
         $scope.mode = $scope.CREATE;
       })
       .catch(function (err) {
+        $scope.elementData.isRequesting = false;
         var errData = err.data;
         if (err.status != 409) {
           Materialize.toast('El elemento no ha sido actualizado, por favor intentelo nuevamente.',
@@ -264,8 +272,10 @@ arketops.controller('ElementCtrl', ['$scope', '$log', '$state', '$stateParams',
         discount: $scope.elementData.discount
       }
 
+      $scope.elementData.isRequesting = true;
       ElementSvc.updateLinkedElementData(credentials)
       .then(function (res) {
+        $scope.elementData.isRequesting = false;
         Materialize.toast('El elemento ha sido actualizado correctamente.',
           3000, 'green darken-1 rounded');
 
@@ -278,6 +288,7 @@ arketops.controller('ElementCtrl', ['$scope', '$log', '$state', '$stateParams',
         $scope.mode = $scope.CREATE;
       })
       .catch(function (err) {
+        $scope.elementData.isRequesting = false;
         var errData = err.data;
         if (err.status != 409) {
           Materialize.toast('El elemento no ha sido actualizado, por favor intentelo nuevamente.',
