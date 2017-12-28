@@ -465,20 +465,21 @@ module.exports = {
         fileToModify = sails.config.appPath + quotation.fileURI;
         return Promise.all = [quotation, PaymentForm.findById(paymentFormId)];
       })
-      .spread((quotation, paymentFormRaw) => {
-        if (!paymentFormRaw) {
-          throw "No existe el registro de forma de pago";
-        }
-        paymentForm = paymentFormRaw;
-        fieldsToUpdate.fileURI = relativeOutPath;
-        return quotation.update(fieldsToUpdate);
-      })
+      // .spread((quotation, paymentFormRaw) => {
+      //   if (!paymentFormRaw) {
+      //     throw "No existe el registro de forma de pago";
+      //   }
+      //   paymentForm = paymentFormRaw;
+      //   fieldsToUpdate.fileURI = relativeOutPath;
+      //   return quotation.update(fieldsToUpdate);
+      // })
       .then((quotationsUpdated) => {
         if (quotationsUpdated == 0) {
           throw "No se actualizó ningún registro";
         }
-        QuotationPDFService.modify(fileToModify, quotationValidityPeriod, paymentForm.name);
-        return Quotation.findById(quotationId);
+        QuotationPDFService.modify(fileToModify);
+        // QuotationPDFService.modify(fileToModify, quotationValidityPeriod, paymentForm.name);
+        // return Quotation.findById(quotationId);
       })
       .then((quotation) => {
         res.ok(quotation);

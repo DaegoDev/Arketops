@@ -10,7 +10,7 @@ arketops.controller('ClientQuotationsListCtrl', ['$scope', '$filter', '$log', '$
 
     QuotationSvc.getByClientSupplierId({clientSupplierId: $scope.client.ClientSupplier.id})
     .then((res) => {
-      console.log(res.data);
+      // console.log(res.data);
       $scope.quotations = res.data;
     })
     .catch((err) => {
@@ -29,6 +29,7 @@ arketops.controller('ClientQuotationsListCtrl', ['$scope', '$filter', '$log', '$
       $scope.quotations.loading = true;
       QuotationSvc.getQuotationFile({quotationId: quotation.id})
       .then((res) => {
+        console.log(res.data);
         var file = new Blob([res.data], {type: 'application/pdf'});
         var fileURL = URL.createObjectURL(file);
         $scope.pdfUrl = $sce.trustAsResourceUrl(fileURL);

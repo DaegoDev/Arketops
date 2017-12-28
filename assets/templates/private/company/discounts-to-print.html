@@ -1,0 +1,57 @@
+<div class="card discounts-section">
+  <div class="card-content">
+    <p>
+    Puede seleccionar los elementos que tendrán descuentos al generar el catálogo.
+    Todos los productos que tengan estos elementos se les asignará el descuento.
+    </p>
+    <hr>
+    <div class="row">
+      <div class="col s3">
+        <label for="element">Elemento</label>
+        <select id="element" ng-model="elements.selected" ng-options="element.name | capitalize for element in elements.choices"
+        ng-change="getElementData(elements.selected,0)" material-select watch class="browser-default"></select>
+      </div>
+      <div class="col s3" ng-show="isLineSelected">
+        <label for="categories">Elija la categoría</label>
+        <select id="categories" ng-model="categories.selected" ng-options="category.name | capitalize for category in categories.choices"
+        ng-change="getLines(categories.selected)" material-select watch class="browser-default"></select>
+      </div>
+      <div class="col s3">
+        <label for="elementData">Valores</label>
+        <select id="elementData" ng-model="elementData.selected" ng-options="value.name | capitalize for value in elementData.choices"
+        material-select watch class="browser-default"></select>
+      </div>
+      <div class="col s3">
+        <label for="discount">Descuento</label>
+        <input type="number" name="discount" id="discount" ng-model="discount">
+      </div>
+    </div>
+    <div class="left">
+      <button type="button" ng-click="addDiscountToPrint()" class="btn waves-effect waves-light" name="button">Añadir</button>
+    </div>
+    <div class="responsive-table">
+      <table class="highlight">
+        <thead>
+          <tr>
+            <th>ID</th>
+            <th>Elemento</th>
+            <th>Valor</th>
+            <th>Descuento</th>
+            <th>Opciones</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr class="row-link" ng-repeat="elementDataDiscount in elementDataDiscounts | orderBy: sortByProperty:sortReversed">
+            <td style="vertical-align:middle">{{elementDataDiscount.id}}</td>
+            <td style="vertical-align:middle">{{elementDataDiscount.elementName | capitalize}}</td>
+            <td style="vertical-align:middle">{{elementDataDiscount.name | capitalize}}</td>
+            <td style="vertical-align:middle">{{elementDataDiscount.discount}}%</td>
+            <td style="vertical-align:middle" ng-click="removeDiscount(elementDataDiscount)">
+              <ng-md-icon tooltipped icon="delete" class="prefix" style="fill: black"
+              size="20" data-position="top" data-delay="50" data-tooltip="Eliminar"></ng-md-icon></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+  </div>
+</div>

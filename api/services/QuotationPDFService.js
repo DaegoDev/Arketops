@@ -4,7 +4,8 @@
 var PdfPrinter = require('pdfmake/src/printer');
 var watermark = require('image-watermark');
 var fs = require('fs');
-var hummus = require('hummus');
+// var hummus = require('hummus');
+var pdf = require('pdf-write-page');
 
 // Variable que guarda el contenido del pdf.
 var docDefinition = {};
@@ -331,37 +332,92 @@ module.exports = {
    * @param  {String} paymentForm Tipo de pago para la cotización.
    */
   modify: function(quotationFilePath, quotationValidityPeriod, paymentForm) {
-    var inStream = new hummus.PDFRStreamForFile(quotationFilePath);
     var outputPath = quotationFilePath.replace("pending", "confirmed");
-    var outStream = new hummus.PDFWStreamForFile(outputPath);
 
-    var pdfWriter = hummus.createWriterToModify(inStream, outStream);
-    var pageModifier = new hummus.PDFPageModifier(pdfWriter, 0);
+    pdf({ in: quotationFilePath,
+        out: outputPath,
+        pageNumber: 0
+      })
+      .cfg({
+        fontPath: '',
+        size: 14,
+        colorspace: 'gray',
+        color: 0x00
+      })
+      .write(455, 650, 'A')
+      .cfg({
+        size: 60
+      })
+      .write(10, 28, 'C')
+      .restoreCfg()
+      .write(100, 100, 'D')
+      .end()
 
-    var context = pageModifier.startContext().getContext();
-    sails.log.debug(context);
-    context.cm(1, 0, 0, -1, 0, 792);
-    context.writeText(paymentForm, 455, 560, {
-      font: pdfWriter.getFontForFile(sails.config.appPath + '/assets/fonts/arial.ttf'),
-      size: 10,
-      colorspace: 'gray',
-      color: 0x00
-    });
-    context.writeText(quotationValidityPeriod + " días", 535, 560, {
-      font: pdfWriter.getFontForFile(sails.config.appPath + '/assets/fonts/arial.ttf'),
-      size: 10,
-      colorspace: 'gray',
-      color: 0x00
-    });
-    pageModifier.endContext().writePage();
+    // var docDefinitionToModify = {
+    //   content: [{
+    //     text: [{
+    //         text: 'ATENTAMENTE: ',
+    //         style: 'subTitle'
+    //       },
+    //       {
+    //         text: 'supplier.name',
+    //         style: 'supplierData'
+    //       }
+    //     ]
+    //   }]
+    // };
+    // var writeStream = fs.createWriteStream(quotationFilePath);
+    //
+    // // Fuentas usadas para construir el pdf.
+    // var fonts = {
+    //   Roboto: {
+    //     normal: sails.config.appPath + '/assets/fonts/Roboto-Regular.ttf',
+    //     bold: sails.config.appPath + '/assets/fonts/Roboto-Medium.ttf',
+    //     italics: sails.config.appPath + '/assets/fonts/Roboto-Italic.ttf',
+    //     bolditalics: sails.config.appPath + '/assets/fonts/Roboto-MediumItalic.ttf'
+    //   }
+    // };
+    // // Instancia para crear el pdf de la cotización.
+    // var printer = new PdfPrinter(fonts);
+    //
+    // var pdfDoc = printer.createPdfKitDocument(docDefinitionToModify);
+    // pdfDoc.pipe(writeStream);
+    // pdfDoc.end();
 
-    pdfWriter.end();
-    outStream.close();
-    inStream.close();
-    fs.unlink(quotationFilePath, (err) => {
-      if (err) throw err;
-      sails.log.debug('Se borró el archivo de pendiente');
-    });
+
+
+
+    // var inStream = new hummus.PDFRStreamForFile(quotationFilePath);
+    // var outputPath = quotationFilePath.replace("pending", "confirmed");
+    // var outStream = new hummus.PDFWStreamForFile(outputPath);
+    //
+    // var pdfWriter = hummus.createWriterToModify(inStream, outStream);
+    // var pageModifier = new hummus.PDFPageModifier(pdfWriter, 0);
+    //
+    // var context = pageModifier.startContext().getContext();
+    // sails.log.debug(context);
+    // context.cm(1, 0, 0, -1, 0, 792);
+    // context.writeText(paymentForm, 455, 560, {
+    //   font: pdfWriter.getFontForFile(sails.config.appPath + '/assets/fonts/arial.ttf'),
+    //   size: 10,
+    //   colorspace: 'gray',
+    //   color: 0x00
+    // });
+    // context.writeText(quotationValidityPeriod + " días", 535, 560, {
+    //   font: pdfWriter.getFontForFile(sails.config.appPath + '/assets/fonts/arial.ttf'),
+    //   size: 10,
+    //   colorspace: 'gray',
+    //   color: 0x00
+    // });
+    // pageModifier.endContext().writePage();
+    //
+    // pdfWriter.end();
+    // outStream.close();
+    // inStream.close();
+    // fs.unlink(quotationFilePath, (err) => {
+    //   if (err) throw err;
+    //   sails.log.debug('Se borró el archivo de pendiente');
+    // });
   },
 
 }

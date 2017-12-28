@@ -137,6 +137,16 @@ angular.module('arketops')
             method: 'GET'
           });
           return states;
+        },
+
+        portfolioToPDF: function (params) {
+          var portfolioPDFFile = $http({
+            url: '/product/portfolioToPDF',
+            method: 'PUT',
+            params: params,
+            responseType: 'arraybuffer'
+          });
+          return portfolioPDFFile;
         }
       };
     }

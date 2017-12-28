@@ -1,18 +1,20 @@
-<div class="row" style="height: 150px; overflow-y: auto; overflow-x: hidden">
+<div class="row" >
   <div class="col s6">
-    <div input-field>
-      <select id="validityPeriod" ng-model="quotation.validityPeriod.selected" ng-options="validityPeriod for validityPeriod in quotation.validityPeriod.choices" material-select watch>
+    <div >
+      <label for="validityPeriod">Validez (Días)</label>
+      <select id="validityPeriod" ng-model="quotation.validityPeriod.selected" class="browser-default"
+      ng-options="validityPeriod for validityPeriod in quotation.validityPeriod.choices" material-select watch>
         <option value="">Seleccionar</option>
       </select>
-      <label>Validez (Días)</label>
     </div>
   </div>
   <div class="col s6">
-    <div input-field>
-      <select id="paymentForms" ng-model="quotation.paymentForms.selected" ng-options="paymentForm.name | capitalize for paymentForm in quotation.paymentForms.choices" material-select watch>
+    <div>
+      <label for="paymentForms">Forma de pago</label>
+      <select id="paymentForms" ng-model="quotation.paymentForms.selected" class="browser-default"
+      ng-options="paymentForm.name | capitalize for paymentForm in quotation.paymentForms.choices" material-select watch>
         <option value="">Seleccionar</option>
       </select>
-      <label>Forma de pago</label>
     </div>
   </div>
 </div>

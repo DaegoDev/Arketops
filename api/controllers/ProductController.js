@@ -1,9 +1,9 @@
 /**
-* ProductController
-*
-* @description :: Server-side logic for managing products
-* @help        :: See http://sailsjs.org/#!/documentation/concepts/Controllers
-*/
+ * ProductController
+ *
+ * @description :: Server-side logic for managing products
+ * @help        :: See http://sailsjs.org/#!/documentation/concepts/Controllers
+ */
 
 // Modulos requeridos.
 var promise = require('bluebird');
@@ -13,10 +13,10 @@ var path = require('path');
 
 module.exports = {
   /**
-  * Función para crear un producto o servicio.
-  * @param  {Object} req Request object
-  * @param  {Object} res Response object
-  */
+   * Función para crear un producto o servicio.
+   * @param  {Object} req Request object
+   * @param  {Object} res Response object
+   */
   create: function(req, res) {
     // Declaración de variables.
     var code = null;
@@ -37,13 +37,19 @@ module.exports = {
     // Definición de las variables y validaciones.
     elements = req.param("elements");
     if (!elements) {
-      return res.badRequest({code: 1, msg: 'There are no enough elements'});
+      return res.badRequest({
+        code: 1,
+        msg: 'There are no enough elements'
+      });
     }
 
     elements.forEach(function(element, i, elementsList) {
       index = addedElements.indexOf(element);
       if (index != -1) {
-        return res.badRequest({code: 2, msg: 'There are repeated elements.'});
+        return res.badRequest({
+          code: 2,
+          msg: 'There are repeated elements.'
+        });
       } else {
         addedElements.push(element);
       }
@@ -84,94 +90,115 @@ module.exports = {
       var company;
       var product;
 
-      return Company.findOne({where: {userId: user.id}, transaction: t})
-      .then(function(company) {
-        return Promise.all = [
-          company,
-          company.getProducts({where: {code: code}, transaction: t})
-        ];
-      })
+      return Company.findOne({
+          where: {
+            userId: user.id
+          },
+          transaction: t
+        })
+        .then(function(company) {
+          return Promise.all = [
+            company,
+            company.getProducts({
+              where: {
+                code: code
+              },
+              transaction: t
+            })
+          ];
+        })
 
-      .spread(function(companyInst, products) {
-        var absolutePath = null;
+        .spread(function(companyInst, products) {
+          var absolutePath = null;
 
-        if (products.length != 0) {
-          throw {errResponse: res.duplicated};
-        }
-        company = companyInst;
-
-        if (!imageDataURI) {
-          return promise.resolve(0);
-        }
-        else {
-          absolutePath = path.join(appPath, relativePath, company.nit + "-" + code + "-" + Date.now());
-          return ImageDataURIService.decodeAndSave(imageDataURI, absolutePath);
-        }
-      })
-
-      .then(function(resUpload) {
-        if (imageDataURI) {
-          imageURI = resUpload;
-          relativePath = relativePath + path.basename(resUpload);
-
-          // Se valida que el archivo tenga el formato y la resolución deseada.
-          var dimensions = sizeOf(resUpload);
-          if (dimensions.type != "png" && dimensions.type != "jpeg" && dimensions.type != "jpg") {
-            sails.log.debug("Processing image error.")
-            throw {errResponse: res.wrongFormatUpload};
+          if (products.length != 0) {
+            throw {
+              errResponse: res.duplicated
+            };
           }
-        }
+          company = companyInst;
 
-        else {
-          relativePath = relativePath + 'NOIMAGE.png';
-        }
+          if (!imageDataURI) {
+            return promise.resolve(0);
+          } else {
+            absolutePath = path.join(appPath, relativePath, company.nit + "-" + code + "-" + Date.now());
+            return ImageDataURIService.decodeAndSave(imageDataURI, absolutePath);
+          }
+        })
 
-        // Creación de las credenciales para crear un producto.
-        productCredentials = {
-          code: code,
-          name: name,
-          description: description,
-          price: price,
-          stateId: stateId,
-          imageURI: relativePath,
-          companyId: company.id
-        }
-        return Product.create(productCredentials, { transaction: t });
-      })
+        .then(function(resUpload) {
+          if (imageDataURI) {
+            imageURI = resUpload;
+            relativePath = relativePath + path.basename(resUpload);
 
-      .then(function(newProduct) {
-        product = newProduct;
-        return ElementData.findAll({where: {id: {$in: elements}}});
-      })
+            // Se valida que el archivo tenga el formato y la resolución deseada.
+            var dimensions = sizeOf(resUpload);
+            if (dimensions.type != "png" && dimensions.type != "jpeg" && dimensions.type != "jpg") {
+              sails.log.debug("Processing image error.")
+              throw {
+                errResponse: res.wrongFormatUpload
+              };
+            }
+          } else {
+            relativePath = relativePath + 'NOIMAGE.png';
+          }
 
-      .then(function(result) {
-        return product.addElementData(result);
-      })
-
-      .then(function(finalProduct) {
-        return res.ok(finalProduct);
-      })
-
-      .catch(function(err) {
-        if (imageURI != null && imageDataURI) {
-          fs.unlink(imageURI, (err2) => {
-            if (err2) { throw err2; }
-            sails.log.debug('Se borró la imagen');
+          // Creación de las credenciales para crear un producto.
+          productCredentials = {
+            code: code,
+            name: name,
+            description: description,
+            price: price,
+            stateId: stateId,
+            imageURI: relativePath,
+            companyId: company.id
+          }
+          return Product.create(productCredentials, {
+            transaction: t
           });
-        }
-        sails.log.debug(err);
-        if (!err.errResponse) {
-          return res.serverError();
-        }
-        return err.errResponse();
-      })
+        })
+
+        .then(function(newProduct) {
+          product = newProduct;
+          return ElementData.findAll({
+            where: {
+              id: {
+                $in: elements
+              }
+            }
+          });
+        })
+
+        .then(function(result) {
+          return product.addElementData(result);
+        })
+
+        .then(function(finalProduct) {
+          return res.ok(finalProduct);
+        })
+
+        .catch(function(err) {
+          if (imageURI != null && imageDataURI) {
+            fs.unlink(imageURI, (err2) => {
+              if (err2) {
+                throw err2;
+              }
+              sails.log.debug('Se borró la imagen');
+            });
+          }
+          sails.log.debug(err);
+          if (!err.errResponse) {
+            return res.serverError();
+          }
+          return err.errResponse();
+        })
     });
   },
   /**
-  * Función para editar un producto o servicio.
-  * @param  {Object} req Request object
-  * @param  {Object} res Response object
-  */
+   * Función para editar un producto o servicio.
+   * @param  {Object} req Request object
+   * @param  {Object} res Response object
+   */
   update: function(req, res) {
     // Declaración de variables.
     var productId = null;
@@ -194,14 +221,18 @@ module.exports = {
     // Definición de las variables y validaciones.
     elements = req.param("elements");
     if (typeof elements == 'string') {
-      return res.badRequest({code: 1, msg: 'There are no enough elements'});
-    }
-
-    else {
+      return res.badRequest({
+        code: 1,
+        msg: 'There are no enough elements'
+      });
+    } else {
       elements.forEach(function(element, i, elementsList) {
         index = addedElements.indexOf(element);
         if (index != -1) {
-          return res.badRequest({code: 2, msg: 'There are repeated elements.'})
+          return res.badRequest({
+            code: 2,
+            msg: 'There are repeated elements.'
+          })
         } else {
           addedElements.push(element);
         }
@@ -239,72 +270,105 @@ module.exports = {
     }
 
     return sequelize.transaction(function(t) {
-      return Company.findOne({where: {userId: user.id}, transaction: t})
-      .then(function(company) {
-        return company.getProducts({where: {code: code}, transaction: t});
+        return Company.findOne({
+            where: {
+              userId: user.id
+            },
+            transaction: t
+          })
+          .then(function(company) {
+            return company.getProducts({
+              where: {
+                code: code
+              },
+              transaction: t
+            });
+          })
+          .then(function(products) {
+            if (products.length == 1 && products[0].id != productId) {
+              throw {
+                errResponse: res.duplicated
+              };
+            } else if (products.lenth > 1) {
+              throw {
+                errResponse: res.badRequest
+              };
+            }
+
+            return Product.findOne({
+              where: {
+                id: productId
+              },
+              include: [{
+                model: Company,
+                where: {
+                  userId: user.id
+                }
+              }]
+            });
+          })
+          .then(function(product) {
+            if (!product) {
+              throw {
+                errResponse: res.badRequest
+              };
+            }
+            // Creación de las credenciales para crear un producto.
+            productCredentials = {
+              code: code,
+              name: name,
+              description: description,
+              price: price,
+              stateId: stateId,
+            };
+            return product.update(productCredentials, {
+              where: {
+                id: productId
+              },
+              transaction: t
+            });
+          })
+          .then(function(product) {
+            if (!product) {
+              throw {
+                errResponse: res.serverError
+              };
+            }
+
+            return Promise.all = [
+              product,
+              ElementData.findAll({
+                where: {
+                  id: {
+                    $in: elements
+                  }
+                }
+              })
+            ];
+          })
+          .spread(function(product, elementData) {
+            return product.setElementData(elementData, {
+              transaction: t
+            });
+          });
       })
-      .then(function(products) {
-        if (products.length == 1 && products[0].id != productId) {
-          throw {errResponse: res.duplicated};
-        }
-        else if (products.lenth > 1) {
-          throw {errResponse: res.badRequest};
+      .then(function(result) {
+        return res.ok(result);
+      })
+      .catch(function(err) {
+        if (err.errResponse) {
+          return err.errResponse();
         }
 
-        return Product.findOne({
-          where: {
-            id: productId
-          },
-          include: [
-            {model: Company, where: {userId: user.id}}
-          ]
-        });
-      })
-      .then(function(product) {
-        if (!product) {
-          throw {errResponse: res.badRequest};
-        }
-        // Creación de las credenciales para crear un producto.
-        productCredentials = {
-          code: code,
-          name: name,
-          description: description,
-          price: price,
-          stateId: stateId,
-        };
-        return product.update(productCredentials, {where: {id: productId}, transaction: t});
-      })
-      .then(function (product) {
-        if (!product) {
-          throw {errResponse: res.serverError};
-        }
-
-        return Promise.all = [
-          product,
-          ElementData.findAll({where: {id: {$in: elements}}})
-        ];
-      })
-      .spread(function (product, elementData) {
-        return product.setElementData(elementData, {transaction: t});
+        return res.serverError(err);
       });
-    })
-    .then(function(result) {
-      return res.ok(result);
-    })
-    .catch(function(err) {
-      if (err.errResponse) {
-        return err.errResponse();
-      }
-
-      return res.serverError(err);
-    });
   },
 
   /**
-  * Función para eliminar un producto o servicio.
-  * @param  {Object} req Request object
-  * @param  {Object} res Response object
-  */
+   * Función para eliminar un producto o servicio.
+   * @param  {Object} req Request object
+   * @param  {Object} res Response object
+   */
   delete: function(req, res) {
     // Declaración de variables.
     var productId = null;
@@ -323,22 +387,35 @@ module.exports = {
     }
 
     // Se verifica que el producto exista, en caso de que exista se actualiza el campo enabled a false.
-    Product.findById(productId, {include: [{model: Company, where: {userId: user.id}}]})
-    .then(function(product) {
-      if (product) {
-        return product.update({enabled: false})
-      }
-      throw "El producto no existe";
-    })
-    .then(function() {return res.ok()})
-    .catch(function(err) {return res.serverError(err);})
+    Product.findById(productId, {
+        include: [{
+          model: Company,
+          where: {
+            userId: user.id
+          }
+        }]
+      })
+      .then(function(product) {
+        if (product) {
+          return product.update({
+            enabled: false
+          })
+        }
+        throw "El producto no existe";
+      })
+      .then(function() {
+        return res.ok()
+      })
+      .catch(function(err) {
+        return res.serverError(err);
+      })
   },
 
   /**
-  * Función para obtener los productos o servicios de un usuario atenticado.
-  * @param  {Object} req Request object
-  * @param  {Object} res Response object
-  */
+   * Función para obtener los productos o servicios de un usuario atenticado.
+   * @param  {Object} req Request object
+   * @param  {Object} res Response object
+   */
   getMyProducts: function(req, res) {
     // Declaración de variables.
     var user = null;
@@ -351,44 +428,51 @@ module.exports = {
     }
 
     Product.findAll({
-      where: {enabled: true},
-      include: [
-        {
-          model: ElementData,
-          include: [{model: Element}]
+        where: {
+          enabled: true
         },
-        {
-          model: Company,
-          where: {userId: user.id}
+        include: [{
+            model: ElementData,
+            include: [{
+              model: Element
+            }]
+          },
+          {
+            model: Company,
+            where: {
+              userId: user.id
+            }
+          }
+        ],
+        order: [
+          [ElementData, Element, 'id', 'ASC']
+        ]
+      })
+      .then(function(products) {
+        productList = products;
+        var promises = [];
+        var promiseFunction = function(product) {
+          return ImageDataURIService.encode(path.resolve(sails.config.appPath + product.imageURI))
+            .then((imageDataURI) => {
+              product.imageURI = imageDataURI;
+            })
+            .catch((err) => {
+              sails.log.debug(err)
+            })
         }
-      ],
-      order: [[ElementData, Element, 'id', 'ASC']]
-    })
-    .then(function (products) {
-      productList = products;
-      var promises = [];
-      var promiseFunction = function (product) {
-        return ImageDataURIService.encode(path.resolve(sails.config.appPath + product.imageURI))
-        .then((imageDataURI) => {
-          product.imageURI = imageDataURI;
-        })
-        .catch((err) => {
-          sails.log.debug(err)
-        })
-      }
 
-      productList.forEach(function (product, index) {
-        promises.push(promiseFunction(product));
+        productList.forEach(function(product, index) {
+          promises.push(promiseFunction(product));
+        });
+
+        return promise.all(promises);
+      })
+      .then(function(data) {
+        return res.ok(productList);
+      })
+      .catch(function(err) {
+        return res.serverError(err);
       });
-
-      return promise.all(promises);
-    })
-    .then(function (data) {
-      return res.ok(productList);
-    })
-    .catch(function(err) {
-      return res.serverError(err);
-    });
   },
 
   /**
@@ -410,35 +494,48 @@ module.exports = {
     user = req.user;
 
     Product.findAll({
-      where: {enabled: true},
-      include: [
-        {
-          model: ElementData,
-          include: [{model: Element},{model: ClientSupplier, where: {id: clientId}, required: false}]
+        where: {
+          enabled: true
         },
-        {
-          model: Company,
-          where: {userId: user.id}
-        }
-      ],
-      order: [[ElementData, Element, 'id', 'ASC']]
-    })
-    .then(function (products) {
-      // products.forEach(function (product, index, productList) {
-      //   ImageDataURIService.encode(path.resolve(sails.config.appPath + product.imageURI))
-      //   .then((imageDataURI) => {
-      //     product.imageURI = imageDataURI;
-      //   })
-      //   .catch((err) => {
-      //     sails.log.debug(err)
-      //   })
-      // });
-      // setTimeout(function() {return res.ok(products);}, 10);
-      return res.ok(products)
-    })
-    .catch(function(err) {
-      return res.serverError(err);
-    });
+        include: [{
+            model: ElementData,
+            include: [{
+              model: Element
+            }, {
+              model: ClientSupplier,
+              where: {
+                id: clientId
+              },
+              required: false
+            }]
+          },
+          {
+            model: Company,
+            where: {
+              userId: user.id
+            }
+          }
+        ],
+        order: [
+          [ElementData, Element, 'id', 'ASC']
+        ]
+      })
+      .then(function(products) {
+        // products.forEach(function (product, index, productList) {
+        //   ImageDataURIService.encode(path.resolve(sails.config.appPath + product.imageURI))
+        //   .then((imageDataURI) => {
+        //     product.imageURI = imageDataURI;
+        //   })
+        //   .catch((err) => {
+        //     sails.log.debug(err)
+        //   })
+        // });
+        // setTimeout(function() {return res.ok(products);}, 10);
+        return res.ok(products)
+      })
+      .catch(function(err) {
+        return res.serverError(err);
+      });
   },
   /**
    * Función para obtener los productos o servicios por nombre.
@@ -459,58 +556,58 @@ module.exports = {
     }
 
     Product.findAll({
-      where: {
-        name: {
-          $iLike: '%' + name + '%'
-        }
-      },
-      include: [{
-        model: ElementData,
-        include: [{
-          model: Element,
-        }]
-      }, {
-        model: Company,
-        attributes: ['name', 'id'],
-        include: [{
-          model: User,
-          attributes: {
-            exclude: ['password']
-          },
-          where: {
-            state: true
+        where: {
+          name: {
+            $iLike: '%' + name + '%'
           }
+        },
+        include: [{
+          model: ElementData,
+          include: [{
+            model: Element,
+          }]
+        }, {
+          model: Company,
+          attributes: ['name', 'id'],
+          include: [{
+            model: User,
+            attributes: {
+              exclude: ['password']
+            },
+            where: {
+              state: true
+            }
+          }]
         }]
-      }]
-    })
-    .then(function(products) {
-      var numberProducts = products.length;
-      products.forEach(function(product, index, productsList) {
-        product.dataValues.type = 2;
-        sails.log.debug(path.resolve(sails.config.appPath + product.imageURI))
-        ImageDataURIService.encode(path.resolve(sails.config.appPath + product.imageURI))
-        .then((imageDataURI) => {
-          product.imageURI = imageDataURI;
-        })
-        .catch((err) => {
-          sails.log.debug(err)
-        })
       })
-      setTimeout(function() {
-        // sails.log.debug(products);
-        res.ok(products);
-      }, 10);
-    })
-    .catch(function(err) {
-      sails.log.debug(err);
-      res.serverError(err);
-    })
+      .then(function(products) {
+        var numberProducts = products.length;
+        products.forEach(function(product, index, productsList) {
+          product.dataValues.type = 2;
+          sails.log.debug(path.resolve(sails.config.appPath + product.imageURI))
+          ImageDataURIService.encode(path.resolve(sails.config.appPath + product.imageURI))
+            .then((imageDataURI) => {
+              product.imageURI = imageDataURI;
+            })
+            .catch((err) => {
+              sails.log.debug(err)
+            })
+        })
+        setTimeout(function() {
+          // sails.log.debug(products);
+          res.ok(products);
+        }, 10);
+      })
+      .catch(function(err) {
+        sails.log.debug(err);
+        res.serverError(err);
+      })
   },
   /**
-  * Función para obtener los productos o servicios de una empresa.
-  * @param  {Object} req Request object
-  * @param  {Object} res Response object
-  */
+   * Función para obtener los productos o servicios de una empresa.
+   * @param  {Object} req Request object
+   * @param  {Object} res Response object
+   */
   getByCompany: function(req, res) {
     // Declaración de variables.
     var companyId = null;
@@ -529,93 +626,171 @@ module.exports = {
     isSignedIn = req.user ? true : false;
 
     Company.findOne({
-      where: {
-        id: companyId
-      }
-    })
-    .then((companyDB) => {
-      if (!companyDB) {
-        throw new Error("La empresa no existe");
-      } else if (!isSignedIn) {
-        return false;
-      }
-      company = companyDB;
-      // return company.hasClients(req.user.id);
-      return Company.findOne({
         where: {
-          userId: req.user.id
+          id: companyId
         }
       })
-      .then((userData) => {
-        return ClientSupplier.findOne({
+      .then((companyDB) => {
+        if (!companyDB) {
+          throw new Error("La empresa no existe");
+        } else if (!isSignedIn) {
+          return false;
+        }
+        company = companyDB;
+        // return company.hasClients(req.user.id);
+        return Company.findOne({
+            where: {
+              userId: req.user.id
+            }
+          })
+          .then((userData) => {
+            return ClientSupplier.findOne({
+              where: {
+                clientId: userData.id,
+                supplierId: company.id
+              }
+            })
+          })
+      })
+      .then((clientSupplier) => {
+        return Product.findAll({
+          include: [{
+            model: ElementData,
+            attributes: {
+              exclude: [clientSupplier ? '' : 'discount']
+            },
+            include: [{
+                model: Element,
+              },
+              clientSupplier ? {
+                model: ClientSupplier,
+                // where: {
+                //   id: clientSupplier.id,
+                // },
+                // required: false
+              } : {
+                model: User,
+                exclude: ['password']
+              }
+            ]
+          }],
           where: {
-            clientId: userData.id,
-            supplierId: company.id
+            companyId: companyId
           }
         })
       })
-    })
-    .then((clientSupplier) => {
-      return Product.findAll({
+      .then(function(products) {
+        products.forEach(function(product, index, productsList) {
+          ImageDataURIService.encode(path.resolve(sails.config.appPath + product.imageURI))
+            .then((imageDataURI) => {
+              product.imageURI = imageDataURI;
+            })
+            .catch((err) => {
+              sails.log.debug(err)
+            })
+        });
+
+        setTimeout(function() {
+          // sails.log.debug(products);
+          res.ok(products);
+        }, 10);
+      })
+      .catch(function(err) {
+        res.serverError(err);
+      })
+  },
+
+  /**
+   * Función para obtener los estados en los que se puede encontrar un productos.
+   * @param  {Object} req Request object
+   * @param  {Object} res Response object
+   */
+  getStates: function(req, res) {
+    State.findAll()
+      .then(function(states) {
+        return res.ok(states);
+      })
+      .catch(function(err) {
+        return res.serverError(err);
+      });
+  },
+
+  /**
+   * Función para pasar el portafolio a pdf.
+   * @param  {Object} req Request object
+   * @param  {Object} res Response object
+   */
+  portfolioToPDF: function(req, res) {
+    // Declaración de variables.
+    var user = null;
+    var elementsDataDiscounts = null;
+    var relativePathPortfolio = null;
+    var portfolioPathFile = null;
+
+    elementsDataDiscounts = req.param('elementsDataDiscounts');
+
+    // sails.log.debug(elementsDataDiscounts);
+
+    user = req.user;
+    relativePathPortfolio = '/resources/documents/portfolio/tmp/' + CriptoService.generateString(9) + '.pdf';
+    portfolioPathFile = sails.config.appPath + relativePathPortfolio;
+
+    if (!user) {
+      return res.forbidden();
+    }
+
+    Company.findOne({
+      where: {
+        userId: user.id
+      },
+      include: [{
+        model: Product,
+        where: {
+          enabled: true
+        },
         include: [{
           model: ElementData,
-          attributes: {
-            exclude: [clientSupplier ? '' : 'discount']
-          },
           include: [{
-            model: Element,
-          },
-          clientSupplier ? {
-            model: ClientSupplier,
-            // where: {
-            //   id: clientSupplier.id,
-            // },
-            // required: false
-          } : {
-            model: User,
-            exclude: ['password']
-          }
+            model: Element
+          }]
+        }],
+        order: [
+          [ElementData, Element, 'id', 'ASC']
         ]
-      }],
-      where: {
-        companyId: companyId
-      }
+      }]
     })
-  })
-  .then(function(products) {
-    products.forEach(function(product, index, productsList) {
-      ImageDataURIService.encode(path.resolve(sails.config.appPath + product.imageURI))
-      .then((imageDataURI) => {
-        product.imageURI = imageDataURI;
-      })
-      .catch((err) => {
-        sails.log.debug(err)
-      })
-    });
+      .then(function(company) {
+        var companyDataToPrint = {
+          imageURI: company.imageURI,
+          name: company.name,
+          businessOverview: company.businessOverview,
+        }
 
-    setTimeout(function() {
-      // sails.log.debug(products);
-      res.ok(products);
-    }, 10);
-  })
-  .catch(function(err) {
-    res.serverError(err);
-  })
-},
+        // Construye la configuración inicial para el documento.
+        PortfolioPDFService.builInitialConfig('LETTER', 20, 50, 35, 50);
 
-/**
-* Función para obtener los estados en los que se puede encontrar un productos.
-* @param  {Object} req Request object
-* @param  {Object} res Response object
-*/
-getStates: function(req, res) {
-  State.findAll()
-  .then(function(states) {
-    return res.ok(states);
-  })
-  .catch(function(err) {
-    return res.serverError(err);
-  });
-}
+        // Construye la primer sección con la información del proveedor.
+        PortfolioPDFService.buildContentSupplier(companyDataToPrint);
+
+        // Construye la tabla de productos.
+        PortfolioPDFService.buildTableProducts(company.Products, elementsDataDiscounts);
+
+        // Guarda el documento pdf en la ruta pasada como parametro.
+        PortfolioPDFService.saveDocument(portfolioPathFile);
+
+        setTimeout(function () {
+          res.sendfile(portfolioPathFile)
+          setTimeout(function () {
+            fs.unlink(portfolioPathFile, (err) => {
+              if (err) throw err;
+              sails.log.debug('Se borró el catálogo');
+            });
+          }, 2000);
+        }, 2000);
+      })
+      .catch(function(err) {
+        return res.serverError(err);
+      });
+  }
 
 };

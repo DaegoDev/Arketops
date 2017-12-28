@@ -60,7 +60,8 @@ module.exports.policies = {
     update: 'isAuthenticated',
     getByCompany: 'isValidToDiscounts',
     getMyProducts: 'isAuthenticated',
-    getMyProductsToQuote: 'isAuthenticated'
+    getMyProductsToQuote: 'isAuthenticated',
+    portfolioToPDF: 'isAuthenticated'
   },
 
   HeadquartersController: {
