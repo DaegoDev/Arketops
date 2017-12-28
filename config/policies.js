@@ -71,6 +71,10 @@ module.exports.policies = {
   QuotationController: {
     createToClient: 'isAuthenticated',
     requestToSupplier: 'isAuthenticated',
+  },
+
+  QuotationAuxController: {
+    createToUnregisteredClient: 'isAuthenticated'
   }
 
 

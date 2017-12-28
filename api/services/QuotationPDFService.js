@@ -429,7 +429,7 @@ module.exports = {
  */
 function createTableBodyProducts(productsQuery, objectProduct, elementsDiscountClient) {
   var totalQuotation = 0;
-  var elementsDiscountLenght = elementsDiscountClient.length
+  var elementsDiscountLenght = elementsDiscountClient ? elementsDiscountClient.length : 0;
   var contentTableProducts = [
     [{
       text: 'ITEM',

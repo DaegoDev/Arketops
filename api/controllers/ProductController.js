@@ -521,16 +521,6 @@ module.exports = {
         ]
       })
       .then(function(products) {
-        // products.forEach(function (product, index, productList) {
-        //   ImageDataURIService.encode(path.resolve(sails.config.appPath + product.imageURI))
-        //   .then((imageDataURI) => {
-        //     product.imageURI = imageDataURI;
-        //   })
-        //   .catch((err) => {
-        //     sails.log.debug(err)
-        //   })
-        // });
-        // setTimeout(function() {return res.ok(products);}, 10);
         return res.ok(products)
       })
       .catch(function(err) {

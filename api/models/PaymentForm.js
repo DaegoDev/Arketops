@@ -28,6 +28,13 @@ module.exports = {
         name: 'paymentFormId',
         allowNull: true
       }
+    });
+    // Asociación uno a muchos con el modelo Quotation.
+    PaymentForm.hasMany(QuotationAux, {
+      foreignKey: {
+        name: 'paymentFormId',
+        allowNull: true
+      }
     })
   },
   // Configuraciones y metodos del modelo.

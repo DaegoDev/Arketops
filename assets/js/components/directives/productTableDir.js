@@ -56,9 +56,9 @@ function productTableCtrl($scope, $log, $ngConfirm, AuthSvc, $state, StorageSvc,
   $scope.productsFiltered = orderBy($scope.products, $scope.propertyName, $scope.reverse);
 
   $scope.products.forEach(function (product, index, products) {
-    var brandValue = product.ElementData[$scope.elementsIndex.marca].name;
-    var categoryValue = product.ElementData[$scope.elementsIndex.categoria].name;
-    var lineValue = product.ElementData[$scope.elementsIndex.linea].name;
+    var brandValue = product.ElementData[$scope.elementsIndex.marca] ? product.ElementData[$scope.elementsIndex.marca].name : '';
+    var categoryValue = product.ElementData[$scope.elementsIndex.categoria] ? product.ElementData[$scope.elementsIndex.categoria].name : '';
+    var lineValue = product.ElementData[$scope.elementsIndex.linea] ? product.ElementData[$scope.elementsIndex.linea].name : '';
 
 
     var indexBrand = $scope.elementDataValuesPushed.indexOf(brandValue.toUpperCase())
@@ -153,7 +153,7 @@ function productTableCtrl($scope, $log, $ngConfirm, AuthSvc, $state, StorageSvc,
     productSelected.tax = tax;
     productSelected.totalDiscount = totalDiscount;
     productSelected.amount = amount;
-    productSelected.subtotal = ((amount * productSelected.price) * ((tax.discount / 100) + 1)) * (1 - (totalDiscount / 100));
+    productSelected.subtotal = ((amount * productSelected.price) * ((tax ? tax.discount : 0 / 100) + 1)) * (1 - (totalDiscount / 100));
 
     return productSelected;
   }

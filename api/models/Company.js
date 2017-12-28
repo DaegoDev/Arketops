@@ -91,6 +91,13 @@ module.exports = {
         allowNull: false
       }
     });
+    // Asociación muchos a muchos con el modelo QuotationAux.
+    Company.hasMany(QuotationAux, {
+      foreignKey: {
+        name: 'supplierId',
+        allowNull: false
+      }
+    });
   },
   // Configuraciones y metodos del modelo.
   options: {
