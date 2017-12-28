@@ -10,8 +10,8 @@ module.exports = {
     }, {
       to: correo,
       subject: "test Arketops"
-    }, function(err) {
-      sails.log.debug(err);
+    }, function(err, info) {
+      sails.log.debug(err || info);
     })
   },
 
@@ -28,8 +28,8 @@ module.exports = {
     }, {
       to: correo,
       subject: "Plataforma_Arketops"
-    }, function(err) {
-      sails.log.debug(err);
+    }, function(err, info) {
+      sails.log.debug(err || info);
     })
   },
 
@@ -46,7 +46,9 @@ module.exports = {
         to: user.email,
         subject: "Recuperación contraseña ARKETOPS"
       },
-      function(err) {sails.log.debug(err)});
+      function(err, info) {
+        sails.log.debug(err || info);
+      });
   },
   /**
    * Función para enviar un correo con la nueva contraseña a la empresa que solicitó
@@ -62,7 +64,9 @@ module.exports = {
         to: email,
         subject: "Recuperación contraseña ARKETOPS"
       },
-      function(err) {});
+      function(err, info) {
+        sails.log.debug(err || info);
+      });
   },
 
   /**
@@ -83,7 +87,9 @@ module.exports = {
       attachments: [{
         path: pathFile
       }]
-    },function (err) {})
+    },function (err, info) {
+      sails.log.debug(err || info);
+    })
   },
 
   /**
@@ -104,7 +110,8 @@ module.exports = {
       attachments: [{
         path: pathFile
       }]
-    },function (err) {})
+    },function (err, info) {
+      sails.log.debug(err || info);
+    })
   }
-
 }

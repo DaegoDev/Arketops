@@ -260,7 +260,7 @@ module.exports = {
     }
 
     discount = req.param('discount');
-    if (!discount) {
+    if (discount == null) {
       return res.badRequest('Descuento del elemento vacío');
     }
 
@@ -371,7 +371,7 @@ module.exports = {
     }
 
     discount = req.param('discount');
-    if (!discount) {
+    if (discount == null) {
       return res.badRequest('Descuento del elemento vacío');
     }
 
@@ -443,7 +443,7 @@ module.exports = {
     }
 
     discount = req.param('discount');
-    if (!discount) {
+    if (discount == null) {
       return res.badRequest('Descuento del elemento vacío');
     }
 
