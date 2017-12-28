@@ -688,6 +688,7 @@ module.exports = {
     // Declaración de variables.
     var name = null;
     var user = null;
+    var companyList = null;
 
     // Definición de variables y validaciones.
     name = req.param('name');
@@ -721,21 +722,25 @@ module.exports = {
       }
     })
     .then(function(companies) {
-      var numberCompanies = companies.length;
-      companies.forEach(function(company, index, companiesList) {
-        company.dataValues.type = 1;
-        ImageDataURIService.encode(path.resolve(sails.config.appPath + company.imageURI))
-        .then((imageDataURI) => {
-          company.imageURI = imageDataURI;
-        })
-        .catch((err) => {
-          sails.log.debug(err)
-        })
-      })
-      setTimeout(function() {
-        res.ok(companies);
-      }, 15);
+      companyList = companies;
+      var promises = [];
+      var promiseFunction = function(company) {
+        return ImageDataURIService.encode(path.resolve(sails.config.appPath + company.imageURI))
+          .then((imageDataURI) => {
+            company.imageURI = imageDataURI;
+          })
+          .catch((err) => {
+            sails.log.debug(err)
+          })
+      }
 
+      companyList.forEach(function(company, index) {
+        promises.push(promiseFunction(company));
+      });
+      return promise.all(promises);
+    })
+    .then((data) => {
+      return res.ok(companyList);
     })
     .catch(function(err) {
       sails.log.debug(err);
@@ -752,6 +757,7 @@ module.exports = {
     var keyword = null;
     var result = {};
     var products = [];
+    var companies = [];
     var user = null;
 
     // Definición de variables y validaciones.
@@ -789,16 +795,25 @@ module.exports = {
     })
     .then(function(productsQuery) {
       products = productsQuery;
-      products.forEach(function(product, index, productsList) {
-        product.dataValues.type = 2;
-        ImageDataURIService.encode(path.resolve(sails.config.appPath + product.imageURI))
-        .then((imageDataURI) => {
-          product.imageURI = imageDataURI;
-        })
-        .catch((err) => {
-          sails.log.debug(err)
-        })
-      })
+      var promises = [];
+      var promiseFunction = function(product) {
+        return ImageDataURIService.encode(path.resolve(sails.config.appPath + product.imageURI))
+          .then((imageDataURI) => {
+            product.dataValues.type = 2;
+            product.imageURI = imageDataURI;
+          })
+          .catch((err) => {
+            sails.log.debug(err)
+          })
+      }
+
+      products.forEach(function(product, index) {
+        promises.push(promiseFunction(product));
+      });
+
+      return promise.all(promises);
+    })
+    .then((dataProducts) => {
       return Company.findAll({
         include: [{
           model: Headquarters,
@@ -827,22 +842,31 @@ module.exports = {
         }
       })
     })
-    .then(function(companies) {
-      companies.forEach(function(company, index, companiesList) {
-        company.dataValues.type = 1;
-        ImageDataURIService.encode(path.resolve(sails.config.appPath + company.imageURI))
-        .then((imageDataURI) => {
-          company.imageURI = imageDataURI;
-        })
-        .catch((err) => {
-          sails.log.debug(err)
-        })
-      })
-      setTimeout(function() {
-        result.products = products;
-        result.companies = companies;
-        res.ok(result);
-      }, 10);
+    .then(function(companiesQuery) {
+      companies = companiesQuery;
+      var promises = [];
+      var promiseFunction = function(company) {
+        return ImageDataURIService.encode(path.resolve(sails.config.appPath + company.imageURI))
+          .then((imageDataURI) => {
+            company.dataValues.type = 1;
+            company.imageURI = imageDataURI;
+          })
+          .catch((err) => {
+            sails.log.debug(err)
+          })
+      }
+
+      companies.forEach(function(company, index) {
+        promises.push(promiseFunction(company));
+      });
+
+      return promise.all(promises);
+
+    })
+    .then((dataCompanies) => {
+      result.products = products;
+      result.companies = companies;
+      res.ok(result);
     })
     .catch(function(err) {
       sails.log.debug(err);
@@ -857,6 +881,7 @@ module.exports = {
   getClients: function(req, res) {
     // Declaración de variables.
     var user = null;
+    var clientList = [];
 
     user = req.user;
 
@@ -881,18 +906,26 @@ module.exports = {
       })
     })
     .then(function(clients) {
-      clients.forEach(function(client, index, clientsList) {
-        ImageDataURIService.encode(sails.config.appPath + client.imageURI)
-        .then((imageDataURI) => {
-          client.imageURI = imageDataURI;
-        })
-        .catch((err) => {
-          sails.log.debug(err)
-        })
-      })
-      setTimeout(function() {
-        res.ok(clients);
-      }, 15);
+      clientList = clients;
+      var promises = [];
+      var promiseFunction = function(client) {
+        return ImageDataURIService.encode(path.resolve(sails.config.appPath + client.imageURI))
+          .then((imageDataURI) => {
+            client.imageURI = imageDataURI;
+          })
+          .catch((err) => {
+            sails.log.debug(err)
+          })
+      }
+
+      clientList.forEach(function(client, index) {
+        promises.push(promiseFunction(client));
+      });
+      return promise.all(promises);
+
+    })
+    .then((data) => {
+      res.ok(clientList);
     })
     .catch(function(err) {
       res.serverError(err);
@@ -906,6 +939,7 @@ module.exports = {
   getSuppliers: function(req, res) {
     // Declaración de variables.
     var user = null;
+    var supplierList = [];
 
     user = req.user;
 
@@ -930,18 +964,25 @@ module.exports = {
       })
     })
     .then(function(suppliers) {
-      suppliers.forEach(function(supplier, index, suppliersList) {
-        ImageDataURIService.encode(sails.config.appPath + supplier.imageURI)
-        .then((imageDataURI) => {
-          supplier.imageURI = imageDataURI;
-        })
-        .catch((err) => {
-          sails.log.debug(err)
-        })
-      })
-      setTimeout(function() {
-        res.ok(suppliers);
-      }, 15);
+      supplierList = suppliers;
+      var promises = [];
+      var promiseFunction = function(supplier) {
+        return ImageDataURIService.encode(path.resolve(sails.config.appPath + supplier.imageURI))
+          .then((imageDataURI) => {
+            supplier.imageURI = imageDataURI;
+          })
+          .catch((err) => {
+            sails.log.debug(err)
+          })
+      }
+
+      supplierList.forEach(function(supplier, index) {
+        promises.push(promiseFunction(supplier));
+      });
+      return promise.all(promises);
+    })
+    .then((data) => {
+      res.ok(supplierList);
     })
     .catch(function(err) {
       sails.log.debug(err)

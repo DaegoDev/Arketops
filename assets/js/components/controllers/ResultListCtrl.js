@@ -84,37 +84,50 @@ arketops.controller('ResultListCtrl', ['$scope', '$log', '$state', '$stateParams
   }
 
   if ($scope.isCompanySearch()) {
+    $scope.isRequesting = true;
     CompanySvc.getByName({
         name: $scope.searchValue
       })
       .then((result) => {
+        $scope.isRequesting = false;
         console.log(result.data);
         $scope.result = result.data;
         $scope.total = $scope.result.length
         $scope.figureOutResultsToDisplay(1);
       })
+      .catch((err) => {
+        $scope.isRequesting = false;
+      })
   } else if ($scope.isProductSearch()) {
+    $scope.isRequesting = true;
     ProductSvc.getByName({
         name: $scope.searchValue
       })
       .then((result) => {
+        $scope.isRequesting = false;
         console.log(result.data);
         $scope.result = result.data;
         $scope.total = $scope.result.length
         $scope.figureOutResultsToDisplay(1);
       })
-
+      .catch((err) => {
+        $scope.isRequesting = false;
+      })
   } else if ($scope.isAllSearch()) {
+    $scope.isRequesting = true;
     CompanySvc.getCompaniesAndProducts({
         keyword: $scope.searchValue
       })
       .then((result) => {
-
+        $scope.isRequesting = false;
         $scope.result = result.data.companies;
         $scope.result.push('divider');
         $scope.result = $scope.result.concat(result.data.products);
         $scope.total = $scope.result.length
         $scope.figureOutResultsToDisplay(1);
+      })
+      .catch((err) => {
+        $scope.isRequesting = false;
       })
   }
 

@@ -535,6 +535,7 @@ module.exports = {
   getByName: function(req, res) {
     // Declaración de variables.
     var name = null;
+    var productList = [];
 
     // Definición de variables y validaciones.
     name = req.param('name');
@@ -571,22 +572,27 @@ module.exports = {
         }]
       })
       .then(function(products) {
-        var numberProducts = products.length;
-        products.forEach(function(product, index, productsList) {
-          product.dataValues.type = 2;
-          sails.log.debug(path.resolve(sails.config.appPath + product.imageURI))
-          ImageDataURIService.encode(path.resolve(sails.config.appPath + product.imageURI))
+        productList = products;
+        var promises = [];
+        var promiseFunction = function(product) {
+          return ImageDataURIService.encode(path.resolve(sails.config.appPath + product.imageURI))
             .then((imageDataURI) => {
+              product.dataValues.type = 2;
               product.imageURI = imageDataURI;
             })
             .catch((err) => {
               sails.log.debug(err)
             })
-        })
-        setTimeout(function() {
-          // sails.log.debug(products);
-          res.ok(products);
-        }, 10);
+        }
+
+        productList.forEach(function(product, index) {
+          promises.push(promiseFunction(product));
+        });
+
+        return promise.all(promises);
+      })
+      .then((data) => {
+        res.ok(productList);
       })
       .catch(function(err) {
         sails.log.debug(err);
@@ -603,6 +609,7 @@ module.exports = {
     var companyId = null;
     var isSignedIn = null;
     var company = null;
+    var productList = [];
 
     // Definición de variables y validaciones.
     companyId = parseInt(req.param('companyId'));
@@ -670,20 +677,27 @@ module.exports = {
         })
       })
       .then(function(products) {
-        products.forEach(function(product, index, productsList) {
-          ImageDataURIService.encode(path.resolve(sails.config.appPath + product.imageURI))
+        productList = products;
+        var promises = [];
+        var promiseFunction = function(product) {
+          return ImageDataURIService.encode(path.resolve(sails.config.appPath + product.imageURI))
             .then((imageDataURI) => {
+              product.dataValues.type = 2;
               product.imageURI = imageDataURI;
             })
             .catch((err) => {
               sails.log.debug(err)
             })
+        }
+
+        productList.forEach(function(product, index) {
+          promises.push(promiseFunction(product));
         });
 
-        setTimeout(function() {
-          // sails.log.debug(products);
-          res.ok(products);
-        }, 10);
+        return promise.all(promises);
+      })
+      .then((data) => {
+        res.ok(productList);
       })
       .catch(function(err) {
         res.serverError(err);
