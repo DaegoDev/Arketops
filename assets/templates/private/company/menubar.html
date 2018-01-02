@@ -31,6 +31,14 @@
           </span>
         </a>
       </li>
+
+      <li>
+        <a dropdown data-activates='externalClientOptions' data-hover="true" data-beloworigin="true" href="">Clientes externos
+          <span>
+            <ng-md-icon icon="keyboard_arrow_down" style="fill: black" size="30"></ng-md-icon>
+          </span>
+        </a>
+      </li>
     </ul>
   </div>
 </nav>
@@ -48,6 +56,11 @@
 <ul id='clientSupplierOptions' class='dropdown-content'>
   <li><a ui-sref="clientsList">Ver clientes</a></li>
   <li><a ui-sref="suppliersList">Ver proveedores</a></li>
+</ul>
+
+<ul id='externalClientOptions' class='dropdown-content'>
+  <li><a ui-sref="EQuotationCreate">Cotizar</a></li>
+  <li><a ui-sref="EQuotationList">Cotizaciones</a></li>
 </ul>
 
 <div class="fixed-action-btn ">

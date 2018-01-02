@@ -5,6 +5,8 @@
  * @help        :: See http://sailsjs.org/#!/documentation/concepts/Controllers
  */
 
+ var path = require('path');
+
 module.exports = {
   /**
    * Función para hacer una cotización para un cliente no registrado.
@@ -87,11 +89,6 @@ module.exports = {
       return res.badRequest('Contacto del cliente vacío');
     }
 
-    clientWebsite = req.param('clientWebsite');
-    if (!clientWebsite) {
-      return res.badRequest('sitio web del cliente vacío');
-    }
-
     products = req.param("products");
     if (products) {
       products.forEach(function(product, i, productsList) {
@@ -120,9 +117,9 @@ module.exports = {
       offset: -5
     }, null);
 
-    relativeFilePath = '/resources/documents/quotations/confirmed/' + clientId + date + '.pdf';
+    relativeFilePath = '/resources/documents/quotations/confirmed/' + clientNit + "-" + date.getTime() + '.pdf';
     // Ruta donde se guarda el pdf de la cotización en el servidor.
-    quotationFilePath = sails.config.appPath + relativeFilePath;
+    quotationFilePath = path.join(sails.config.appPath + relativeFilePath);
 
     // Se verifica que el usuario definido como proveedor exista. En caso de que exista se
     // es pasado a la variable supplier y se busca la vinculación con el cliente.
@@ -166,7 +163,6 @@ module.exports = {
         client = {
 					name: clientName,
 					nit: clientNit,
-					website: clientWebsite,
 					User: {
 						email: clientEmail
 					},
@@ -177,6 +173,7 @@ module.exports = {
 						phonenumber: clientPhonenumber,
 					}]
 				};
+
 
         // Construye la configuración inicial para el documento.
         QuotationPDFService.builInitialConfig('LETTER', 20, 50, 20, 50);
@@ -223,6 +220,7 @@ module.exports = {
           paymentFormId: paymentForm.id,
 					supplierId: supplier.id
         }
+
         return QuotationAux.create(quotationCredentials);
 
       })
@@ -237,5 +235,56 @@ module.exports = {
         res.serverError(err);
       })
 
+  },
+
+  getMyQuotations: function (req, res) {
+    var user = req.user;
+
+    QuotationAux.findAll({
+      attributes: ['id', 'clientEmail', 'clientNit', 'code', 'date'],
+      include: [
+        {
+          model: Company,
+          attributes: ['id'],
+          include: [
+            {
+              model: User,
+              attributes: ['id'],
+              where: {
+                id: user.id
+              }
+            }
+          ]
+        }
+      ]
+    })
+    .then(function (quotationList) {
+      return res.ok(quotationList);
+    })
+    .catch(function (err) {
+      return res.badRequest(err);
+    });
+  },
+
+  /**
+   * Function to get a quotation file.
+   * @param  {Object} req Request object
+   * @param  {Object} res Response object
+   */
+  getQuotationFile: function(req, res) {
+    var quotationId = null;
+
+    quotationId = parseInt(req.param('quotationId'));
+    if (!quotationId) {
+      return res.badRequest('Quotation id required.')
+    }
+
+    QuotationAux.findById(quotationId)
+      .then((quotation) => {
+        return res.sendfile(path.join(sails.config.appPath + quotation.fileURI));
+      })
+      .catch((err) => {
+        return res.serverError(err);
+      });
   },
 };

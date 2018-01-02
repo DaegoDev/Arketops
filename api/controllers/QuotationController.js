@@ -9,6 +9,7 @@
 var PdfPrinter = require('pdfmake/src/printer');
 var watermark = require('image-watermark');
 var fs = require('fs');
+var path = require('path');
 const Datauri = require('datauri');
 
 module.exports = {
@@ -82,9 +83,9 @@ module.exports = {
       offset: -5
     }, null);
 
-    relativeFilePath = '/resources/documents/quotations/confirmed/' + clientId + date + '.pdf';
+    relativeFilePath = '/resources/documents/quotations/confirmed/' + clientId + date.getTime() + '.pdf';
     // Ruta donde se guarda el pdf de la cotización en el servidor.
-    quotationFilePath = sails.config.appPath + relativeFilePath;
+    quotationFilePath =  path.join(sails.config.appPath, relativeFilePath);
 
     // Se verifica que el usuario definido como proveedor exista. En caso de que exista se
     // es pasado a la variable supplier y se busca la vinculación con el cliente.
@@ -211,6 +212,7 @@ module.exports = {
         res.created(quotation);
       })
       .catch(function(err) {
+        sails.log.debug(err);
         res.serverError(err);
       })
 
@@ -579,7 +581,7 @@ module.exports = {
       .then((quotation) => {
         if (quotation.state.toUpperCase() === 'PENDIENTE') {
           var tmpRelativePath = quotation.fileURI.replace("pending", "tmp");
-          var tmpFilePath = sails.config.appPath + tmpRelativePath;
+          var tmpFilePath = path.join(sails.config.appPath + tmpRelativePath);
           // var readStream = fs.createReadStream(sails.config.appPath + quotation.fileURI);
           // readStream.pipe(fs.createWriteStream(tmpFilePath));
           var options = {
@@ -599,10 +601,11 @@ module.exports = {
             }, 500);
           });
         } else {
-          res.sendfile(sails.config.appPath + quotation.fileURI)
+          res.sendfile(path.join(sails.config.appPath + quotation.fileURI));
         }
 
       })
+  },
 
-  }
+
 };

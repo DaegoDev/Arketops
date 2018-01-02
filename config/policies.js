@@ -74,7 +74,8 @@ module.exports.policies = {
   },
 
   QuotationAuxController: {
-    createToUnregisteredClient: 'isAuthenticated'
+    createToUnregisteredClient: 'isAuthenticated',
+    getMyQuotations: 'isAuthenticated',
   }
 
 

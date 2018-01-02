@@ -1,3 +1,5 @@
+var path = require('path');
+
 module.exports = {
   /**
    * Función test.
@@ -85,6 +87,7 @@ module.exports = {
       to: client.User.email,
       subject: "Cotización generada ARKETOPS",
       attachments: [{
+        filename: path.basename(pathFile),
         path: pathFile
       }]
     },function (err, info) {
@@ -108,6 +111,7 @@ module.exports = {
       to: supplier.User.email,
       subject: "Cotización generada ARKETOPS",
       attachments: [{
+        filename: path.basename(pathFile),
         path: pathFile
       }]
     },function (err, info) {
