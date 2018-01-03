@@ -19,6 +19,15 @@ angular.module('arketops')
           });
           return quotation;
         },
+        // Service to create a quotation for a client.
+        createToUnregisteredClient: function (params) {
+          var quotation = $http({
+            url: '/quotationAux/createToUnregisteredClient',
+            method: 'POST',
+            data: params
+          });
+          return quotation;
+        },
         // Service to request a quotation to a supplier.
         requestToSupplier: function (params) {
           var quotation = $http({
@@ -55,7 +64,26 @@ angular.module('arketops')
             data: params,
           });
           return confirmed;
+        },
+
+        getMyEQuotations: function () {
+          var quotations = $http({
+            url: '/quotationAux/getMyQuotations',
+            method: 'GET'
+          });
+          return quotations;
+        },
+
+        getEQuotationFile: function (params) {
+          var quotationFile = $http({
+            url: '/quotationAux/getQuotationFile',
+            method: 'GET',
+            params: params,
+            responseType: 'arraybuffer'
+          });
+          return quotationFile;
         }
+
       };
     }
   ]);

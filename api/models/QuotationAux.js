@@ -31,15 +31,13 @@ module.exports = {
       type: Sequelize.STRING(512),
       allowNull: false,
     },
-    ClientNit: {
+    clientNit: {
       type: Sequelize.STRING(32),
       allowNull: false,
-      unique: true,
     },
-    ClientEmail: {
+    clientEmail: {
       type: Sequelize.STRING(64),
       allowNull: false,
-      unique: true,
       validate: {
         isEmail: true
       }

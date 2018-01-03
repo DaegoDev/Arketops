@@ -19,8 +19,6 @@ arketops.controller('productTableCtrl', ['$scope', '$log', '$ngConfirm', 'AuthSv
 
 function productTableCtrl($scope, $log, $ngConfirm, AuthSvc, $state, StorageSvc, orderBy, $filter) {
 
-  console.log($scope.products);
-
   $scope.productsFiltered = $scope.products;
 
   $(".dropdown-button + .dropdown-content").on("click",function(event){
@@ -123,25 +121,25 @@ function productTableCtrl($scope, $log, $ngConfirm, AuthSvc, $state, StorageSvc,
     var tax = null;
     var amount = 1;
     productSelected.ElementData.forEach(function(elementData, index, elementDataList) {
-      if (elementData.ClientSuppliers.length === 0) {
+      if (!elementData.ClientSuppliers || elementData.ClientSuppliers.length === 0) {
         var discount = elementData.discount
       } else {
         var discount = elementData.ClientSuppliers[0].ClientDiscount.discount;
       }
-      switch (elementData.Element.name.toUpperCase()) {
-        case 'MARCA':
+      switch (elementData.Element.id) {
+        case 1:
           brand = elementData.name;
           totalDiscount += discount;
           break;
-        case 'CATEGORÍA':
+        case 2:
           category = elementData.name;
           totalDiscount += discount;
           break;
-        case 'LÍNEA':
+        case 3:
           line = elementData.name;
           totalDiscount += discount;
           break;
-        case 'IMPUESTO':
+        case 4:
           tax = {
             name: elementData.name,
             discount: discount
@@ -153,8 +151,7 @@ function productTableCtrl($scope, $log, $ngConfirm, AuthSvc, $state, StorageSvc,
     productSelected.tax = tax;
     productSelected.totalDiscount = totalDiscount;
     productSelected.amount = amount;
-    productSelected.subtotal = ((amount * productSelected.price) * ((tax ? tax.discount : 0 / 100) + 1)) * (1 - (totalDiscount / 100));
-
+    productSelected.subtotal = ((amount * productSelected.price) * (((tax ? tax.discount : 0) / 100) + 1)) * (1 - (totalDiscount / 100));
     return productSelected;
   }
 

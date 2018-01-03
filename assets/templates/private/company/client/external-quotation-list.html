@@ -1,0 +1,60 @@
+<div class="container">
+  <br>
+
+
+  <div class="row">
+    <div class="card-panel hoverable z-depth-3 element-create">
+      <label>
+        <h4>Cotizaciones</h4>
+      </label>
+
+      <div class="row">
+        <div class="input-field input-group">
+          <ng-md-icon icon="search" class="prefix" style="fill: black" size="30"></ng-md-icon>
+          <input type="text" id="searchInput" ng-model="searchText.$">
+          <label for="searchInput">Filtrar los resultados</label>
+        </div>
+      </div>
+
+      <table>
+        <thead>
+          <tr>
+            <th>CÓDIGO</th>
+            <th>NIT</th>
+            <th>CORREO</th>
+            <th>FECHA</th>
+            <th>PDF</th>
+          </tr>
+        </thead>
+
+        <tbody>
+          <tr ng-repeat="quotation in quotations | filter:searchText">
+            <td>{{quotation.code}}</td>
+            <td>{{quotation.clientNit}}</td>
+            <td>{{quotation.clientEmail}}</td>
+            <td>{{quotation.date | date}}</td>
+            <td><ng-md-icon ng-click="showQuotation(quotation)" icon="attach_file" style="fill: black; cursor: pointer;" size="30"
+              tooltipped data-position="top" data-delay="50" data-tooltip="Mostrar">
+            </ng-md-icon> </td>          </tr>
+        </tbody>
+      </table>
+
+    </div>
+  </div>
+</div>
+
+<div id="preloader-overlay" class="center" ng-show="quotations.loading">
+  <div id="preloader" class="preloader-wrapper active">
+    <div class="spinner-layer spinner-yellow-only">
+      <div class="circle-clipper left">
+        <div class="circle"></div>
+      </div>
+      <div class="gap-patch">
+        <div class="circle"></div>
+      </div>
+      <div class="circle-clipper right">
+        <div class="circle"></div>
+      </div>
+    </div>
+  </div>
+</div>

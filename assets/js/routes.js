@@ -148,5 +148,18 @@ arketops.config(['$stateProvider', '$urlRouterProvider',
         controller: 'ClientQuotationsListCtrl'
       })
 
+      .state('EQuotationCreate', {
+        url: '/EQuotationCreate',
+        templateUrl: 'templates/private/company/client/external-quotation-create.html',
+        controller: 'EQuotationCreateCtrl'
+      })
+
+      .state('EQuotationList', {
+        url: '/EQuotationList',
+        templateUrl: 'templates/private/company/client/external-quotation-list.html',
+        controller: 'EQuotationListCtrl'
+      })
+
+
 
   }]);

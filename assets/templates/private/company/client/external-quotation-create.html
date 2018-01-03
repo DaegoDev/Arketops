@@ -1,0 +1,129 @@
+<div class="container">
+  <br>
+  <div class="row">
+    <div class="card-panel hoverable z-depth-3 element-create">
+      <label>
+        <h4>Cotizar a un cliente externo.</h4>
+      </label>
+
+      <div class="row">
+        <div class="col s3">
+          <div input-field>
+            <input type="text" name="nit" ng-model="client.nit">
+            <label>NIT *</label>
+          </div>
+        </div>
+        <div class="col s3">
+          <div input-field>
+            <input type="text" name="name" ng-model="client.name">
+            <label>Cliente *</label>
+          </div>
+        </div>
+        <div class="col s3">
+          <div input-field>
+            <input type="text" name="contact" ng-model="mainHeadquarters.contact">
+            <label>Contacto *</label>
+          </div>
+        </div>
+        <div class="col s3">
+          <div input-field>
+            <input type="text" name="email" ng-model="client.email">
+            <label>Correo electrónico *</label>
+          </div>
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="col s3">
+          <div input-field>
+            <input type="text" name="nomenclature" ng-model="mainHeadquarters.nomenclature">
+            <label>Dirección *</label>
+          </div>
+        </div>
+        <div class="col s3">
+          <div input-field>
+            <input type="text" name="city" ng-model="mainHeadquarters.city">
+            <label>Ciudad *</label>
+          </div>
+        </div>
+        <div class="col s2">
+          <div input-field>
+            <input type="text" name="phonenumber" ng-model="mainHeadquarters.phonenumber">
+            <label>Teléfono *</label>
+          </div>
+        </div>
+
+        <div class="col s2">
+          <div input-field>
+            <select id="validityPeriod" ng-model="quotation.validityPeriod.selected" ng-options="validityPeriod for validityPeriod in quotation.validityPeriod.choices" material-select watch>
+              <option value="">Seleccionar</option>
+            </select>
+            <label>Validez (Días) *</label>
+          </div>
+        </div>
+        <div class="col s2">
+          <div input-field>
+            <select id="paymentForms" ng-model="quotation.paymentForms.selected" ng-options="paymentForm.name for paymentForm in quotation.paymentForms.choices" material-select watch>
+              <option value="">Seleccionar</option>
+            </select>
+            <label>Forma de pago *</label>
+          </div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-title">
+          <h5>Lista de productos</h5>
+        </div>
+        <div class="card-content">
+          <a class="waves-effect waves-light btn" ng-click="showPortfolio()">Mostrar portaforlio</a>
+        </div>
+        <table class="highlight bordered responsive-table centered">
+          <thead>
+            <tr>
+              <th>Código</th>
+              <th>Nombre</th>
+              <!-- <th>Marca</th> -->
+              <!-- <th>Categoría</th>
+              <th>Línea</th> -->
+              <th>Impuesto</th>
+              <th>Cantidad</th>
+              <th>Vr. Unitario</th>
+              <th>Vr. Descuento</th>
+              <th>Subtotal</th>
+            </tr>
+          </thead>
+
+          <tbody>
+            <tr ng-repeat="product in selectList" ng-init="calculateTotal()">
+              <td>{{product.code}}</td>
+              <td>{{product.name}}</td>
+              <!-- <td>{{product.brand}}</td> -->
+              <!-- <td>{{product.category}}</td>
+              <td>{{product.line}}</td> -->
+              <td>{{product.tax.name }} ({{product.tax.discount}}%) </td>
+              <td style="width:100px"><input style="text-align: center; margin-bottom: -17px; height: 2rem;" type="number" name="amount" ng-change="calculateSubtotal(product)" ng-model="product.amount"></td>
+              <td>{{product.price | currency: '$' : '0'}}</td>
+              <td>{{product.totalDiscount}}%</td>
+              <td>{{product.subtotal | currency: '$' : '0'}}</td>
+              <!-- <td>{{((product.amount * product.price) * ((product.tax.discount / 100) + 1)) * (1 - (product.totalDiscount / 100)) | currency: '$' : '0'}}</td> -->
+              <td>
+                <ng-md-icon ng-click="removeProductOfList(product.indexProductList, $index)" icon="remove_circle" style="fill: red; cursor: pointer; margin-top:-10px" size="30" tooltipped data-position="top" data-delay="50" data-tooltip="Remover"></ng-md-icon>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+        <div class="right total-quotation">
+          <label for="">Total: </label>
+          <span>{{total | currency : '$' : '0'}}</span>
+        </div>
+      </div>
+      <div class="center">
+        <button class="btn waves-effect waves-light" type="button" ng-click="showResumeQuotation()" name="button">Crear</button>
+      </div>
+
+    </div>
+  </div>
+</div>
+<br>
+<preloader ng-show="product.isRequesting"></preloader>
