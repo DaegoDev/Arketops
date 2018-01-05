@@ -133,7 +133,7 @@ module.exports = {
 
             // Se valida que el archivo tenga el formato y la resolución deseada.
             var dimensions = sizeOf(resUpload);
-            if (dimensions.type != "png" && dimensions.type != "jpeg" && dimensions.type != "jpg") {
+            if (dimensions.type.toLowerCase() != "png" && dimensions.type.toLowerCase() != "jpeg" && dimensions.type.toLowerCase() != "jpg") {
               sails.log.debug("Processing image error.")
               throw {
                 errResponse: res.wrongFormatUpload

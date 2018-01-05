@@ -184,7 +184,7 @@ module.exports = {
         var imageFile = fs.statSync(absolutePath)
         var fileSize = imageFile.size;
 
-        if (fileSize > maxSize || (dimensions.type != "png" && dimensions.type != "jpeg" && dimensions.type != "jpg")) {
+        if (fileSize > maxSize || (dimensions.type.toLowerCase() != "png" && dimensions.type.toLowerCase() != "jpeg" && dimensions.type.toLowerCase() != "jpg")) {
           fs.unlink(absolutePath, (err) => {
             sails.log.debug('Se borró la imagen');
           });
@@ -499,7 +499,7 @@ module.exports = {
         var imageFile = fs.statSync(resUpload)
         var fileSize = imageFile.size;
 
-        if (fileSize > maxSize || (dimensions.type != "png" && dimensions.type != "jpeg" && dimensions.type != "jpg")) {
+        if (fileSize > maxSize || (dimensions.type.toLowerCase() != "png" && dimensions.type.toLowerCase() != "jpeg" && dimensions.type.toLowerCase() != "jpg")) {
           fs.unlink(imageURI, (err) => {
             sails.log.debug('Se borró la imagen');
           });

@@ -480,7 +480,7 @@ module.exports = {
           throw "No se actualizó ningún registro";
         }
         // QuotationPDFService.modify(fileToModify);
-        // QuotationPDFService.modify(fileToModify, quotationValidityPeriod, paymentForm.name);
+        QuotationPDFService.modify(fileToModify, quotationValidityPeriod, paymentForm.name);
         return Quotation.findById(quotationId);
       })
       .then((quotation) => {
