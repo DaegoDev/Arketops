@@ -1,5 +1,5 @@
-<div class="container">
-  <div class="card company-summary">
+<div class="container section">
+  <div class="card-panel hoverable z-depth-3 company-summary">
     <div class="card-content">
       <div class="row card-company">
         <div class="col s2 image-profile">
@@ -7,7 +7,7 @@
         </div>
         <div class="col s10 company-data">
           <div class="col s7 business-overview-section">
-            <h5>{{company.name | capitalize}}</h5>
+            <h5><strong>{{company.name | capitalize}}</strong></h5>
             <p>{{company.businessOverview}}</p>
           </div>
           <div class="main-data-section col s5">
@@ -52,6 +52,9 @@
       </div>
     </div>
   </div>
-  <h5 class="center"><strong>Productos</strong></h5>
-  <product-list products="products" options="options"></product-list>
+
+  <div class="card-panel hoverable z-depth-3">
+    <h5 class="center"><strong>Productos</strong></h5>
+    <product-list products="products" options="options"></product-list>
+  </div>
 </div>

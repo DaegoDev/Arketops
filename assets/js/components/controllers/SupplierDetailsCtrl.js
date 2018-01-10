@@ -23,11 +23,11 @@ arketops.controller('SupplierDetailsCtrl', ['$scope', '$log', '$state', '$stateP
     }]
 
     $scope.goToState = function(option, index) {
-      console.log($scope.lastOption);
       if (typeof $scope.lastOption == 'number') {
         var lastOption = $scope.lastOption;
         $scope.options[lastOption].selected = false;
       }
+
       $scope.lastOption = index;
       $scope.options[index].selected = true;
       if (option.toUpperCase() == 'DATOS PERSONALES') {

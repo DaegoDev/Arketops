@@ -1,8 +1,7 @@
-<div class="container">
-  <div class="row">
-    <h5 class="center">Resultados de la busqueda</h5>
-  </div>
-  <div class="card-panel compProd-list">
+<br>
+<div class="container section">
+  <div class="card-panel hoverable z-depth-3 compProd-list">
+    <label><h3>Resultados de la busqueda</h3></label>
     <div class="row tool-bar">
       <div ng-if="isCompanySearch()" class="card-title">
         <div class="col s6">
@@ -49,4 +48,5 @@
     <pagination class="center" page="1" page-size="20" total="total" show-prev-next="true" use-simple-prev-next="true" dots="...." hide-if-empty="false" adjacent="2" scroll-top="false" pagination-action="changePage(page)" />
   </div>
 </div>
+<br>
 <preloader ng-show="isRequesting"></preloader>

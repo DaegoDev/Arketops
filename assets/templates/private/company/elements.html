@@ -1,4 +1,4 @@
-<div class="container element">
+<div class="container section element">
   <div class="section">
     <div class="row">
 
@@ -6,7 +6,7 @@
       <div class="col l2 s3">
         <div class="section">
           <div class="collection hoverable z-depth-3 element-type-list">
-            <a class="collection-item test" ng-repeat="element in elements" ng-click="selectElement(element)">
+            <a class="collection-item test" ng-repeat="element in elements" ng-click="selectElement(element)" ng-class="{active: element.selected}">
               {{element.name | capitalize}}
             </a>
           </div>
@@ -14,7 +14,7 @@
       </div>
 
       <!-- ELEMENT DATA SECTION -->
-      <div class="element-type col l8 s7 offset-l1 offset-s1">
+      <div class="element-type col l10 s9">
         <!-- SECTION FOR STANDARD ELEMENTS -->
         <div class="section" ng-show="currentElement || parentElement">
 
