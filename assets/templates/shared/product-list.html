@@ -58,7 +58,13 @@
             <img
               class="responsive-img section col s12 m12"
               data-caption="{{product.description}}"
-              ng-src="{{product.imageURI}}">
+              ng-src="{{product.imageURI}}"
+              ng-if="product.imageURI">
+            <img
+              class="responsive-img section col s12 m12"
+              data-caption="{{product.description}}"
+              src="./images/no-image.jpg"
+              ng-if="!product.imageURI">
             <button
               type="button"
               class="btn col s6 m12"

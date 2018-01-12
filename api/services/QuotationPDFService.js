@@ -51,9 +51,13 @@ module.exports = {
    * @param  {String} codePdf Código que llevará la cotización.
    */
   buildContentSupplier: function(supplier, codePdf) {
+    var imagePath = path.join(sails.config.appPath, "/assets/images/no-image.jpg");
+    if (supplier.imageURI) {
+      imagePath = path.join(sails.config.appPath, supplier.imageURI);
+    }
     var firstSection = [{
         columns: [{
-            image: path.join(sails.config.appPath, supplier.imageURI),
+            image: imagePath,
             width: 110,
             height: 90,
           },
@@ -487,7 +491,7 @@ function createTableBodyProducts(productsQuery, objectProduct, elementsDiscountC
       text: product.code,
       style: 'tableBody'
     }, {
-      text: product.name + " " + trademark,
+      text: product.name + " " + (trademark ? trademark: ''),
       style: 'tableBody'
     }, {
       text: amount,
@@ -499,7 +503,7 @@ function createTableBodyProducts(productsQuery, objectProduct, elementsDiscountC
       text: discount + "%",
       style: 'tableBody'
     }, {
-      text: taxName + " " + taxValue + "%",
+      text: (taxValue ? taxName + " " + taxValue : 0) + "%",
       style: 'tableBody'
     }, {
       text: "$ " + total.toLocaleString(),

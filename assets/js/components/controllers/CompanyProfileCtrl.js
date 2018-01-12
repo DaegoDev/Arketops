@@ -158,7 +158,7 @@ arketops.controller('CompanyProfileCtrl', ['$scope', '$timeout', '$log', '$state
     // Función que se llama cuando la imagen se carga.
     $scope.onLoad = function(e, reader, file, fileList, fileOjects, fileObj) {
       $scope.useWatch = true;
-      var type = fileObj.filename.split('.')[1];
+      var type = fileObj.filename.split('.')[1].toLowerCase();
       if (fileObj.filesize > maxSize) {
         $scope.fileSize = fileObj.filesize;
         return;

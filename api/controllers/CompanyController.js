@@ -183,8 +183,9 @@ module.exports = {
         var dimensions = sizeOf(absolutePath);
         var imageFile = fs.statSync(absolutePath)
         var fileSize = imageFile.size;
+        var type = dimensions.type.toLowerCase();
 
-        if (fileSize > maxSize || (dimensions.type.toLowerCase() != "png" && dimensions.type.toLowerCase() != "jpeg" && dimensions.type.toLowerCase() != "jpg")) {
+        if (fileSize > maxSize || (type != "png" && type != "jpeg" && type != "jpg")) {
           fs.unlink(absolutePath, (err) => {
             sails.log.debug('Se borró la imagen');
           });
@@ -498,8 +499,9 @@ module.exports = {
         var dimensions = sizeOf(imageURI);
         var imageFile = fs.statSync(resUpload)
         var fileSize = imageFile.size;
+        var type = dimensions.type.toLowerCase();
 
-        if (fileSize > maxSize || (dimensions.type.toLowerCase() != "png" && dimensions.type.toLowerCase() != "jpeg" && dimensions.type.toLowerCase() != "jpg")) {
+        if (fileSize > maxSize || (type != "png" && type != "jpeg" && type != "jpg")) {
           fs.unlink(imageURI, (err) => {
             sails.log.debug('Se borró la imagen');
           });
@@ -665,14 +667,19 @@ module.exports = {
       }
     })
     .then(function(company) {
-      ImageDataURIService.encode(path.resolve(sails.config.appPath + company.imageURI))
-      .then((imageDataURI) => {
-        company.imageURI = imageDataURI;
-        res.ok(company);
-      })
-      .catch((err) => {
-        sails.log.debug(err)
-      })
+      sails.log.debug(company.imageURI)
+      if (company.imageURI) {
+        ImageDataURIService.encode(path.resolve(sails.config.appPath + company.imageURI))
+        .then((imageDataURI) => {
+          company.imageURI = imageDataURI;
+          res.ok(company);
+        })
+        .catch((err) => {
+          sails.log.debug(err)
+        })
+      } else {
+          return res.ok(company);
+      }
     })
     .catch(function(err) {
       sails.log.debug(err);
@@ -725,6 +732,11 @@ module.exports = {
       companyList = companies;
       var promises = [];
       var promiseFunction = function(company) {
+        company.dataValues.type = 1;
+        if (!company.imageURI) {
+          return;
+        }
+
         return ImageDataURIService.encode(path.resolve(sails.config.appPath + company.imageURI))
           .then((imageDataURI) => {
             company.imageURI = imageDataURI;
@@ -797,9 +809,12 @@ module.exports = {
       products = productsQuery;
       var promises = [];
       var promiseFunction = function(product) {
+        product.dataValues.type = 2;
+        if (!product.imageURI) {
+          return;
+        }
         return ImageDataURIService.encode(path.resolve(sails.config.appPath + product.imageURI))
           .then((imageDataURI) => {
-            product.dataValues.type = 2;
             product.imageURI = imageDataURI;
           })
           .catch((err) => {
@@ -846,9 +861,12 @@ module.exports = {
       companies = companiesQuery;
       var promises = [];
       var promiseFunction = function(company) {
+        company.dataValues.type = 1;
+        if (!company.imageURI) {
+          return;
+        }
         return ImageDataURIService.encode(path.resolve(sails.config.appPath + company.imageURI))
           .then((imageDataURI) => {
-            company.dataValues.type = 1;
             company.imageURI = imageDataURI;
           })
           .catch((err) => {
@@ -909,6 +927,9 @@ module.exports = {
       clientList = clients;
       var promises = [];
       var promiseFunction = function(client) {
+        if (!client.imageURI) {
+          return;
+        }
         return ImageDataURIService.encode(path.resolve(sails.config.appPath + client.imageURI))
           .then((imageDataURI) => {
             client.imageURI = imageDataURI;
@@ -967,6 +988,9 @@ module.exports = {
       supplierList = suppliers;
       var promises = [];
       var promiseFunction = function(supplier) {
+        if (!supplier.imageURI) {
+          return;
+        }
         return ImageDataURIService.encode(path.resolve(sails.config.appPath + supplier.imageURI))
           .then((imageDataURI) => {
             supplier.imageURI = imageDataURI;

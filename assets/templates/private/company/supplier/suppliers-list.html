@@ -24,8 +24,10 @@
 
         <tbody>
           <tr class="row-link" ng-click="showDetails(supplier)" ng-repeat="supplier in suppliers | filter:searchText | orderBy: sortByProperty:sortReversed">
-            <td style="vertical-align:middle"><img ng-style="imgAvatarStyle" class="materialboxed"
-            ng-src="{{supplier.imageURI}}" height="40" width="40"></td>
+            <td style="vertical-align:middle">
+              <img ng-style="imgAvatarStyle" class="materialboxed" ng-src="{{supplier.imageURI}}" height="40" width="40" ng-if="supplier.imageURI">
+              <img ng-style="imgAvatarStyle" class="materialboxed" src="./images/no-image.jpg" height="40" width="40" ng-if="!supplier.imageURI">
+          </td>
             <td style="vertical-align:middle">{{supplier.name}}</td>
             <td style="vertical-align:middle">{{supplier.nit}}</td>
             <td style="vertical-align:middle">{{supplier.Headquarters[0].phonenumber}}</td>

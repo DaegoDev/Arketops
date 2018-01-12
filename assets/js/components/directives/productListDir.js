@@ -15,6 +15,8 @@ arketops.directive('productList', function() {
 arketops.controller('productListCtrl', ['$scope', '$log', '$ngConfirm', 'AuthSvc', '$state', 'StorageSvc', 'ProductSvc', 'ElementSvc', productListCtrl]);
 
 function productListCtrl($scope, $log, $ngConfirm, AuthSvc, $state, StorageSvc, ProductSvc, ElementSvc) {
+  const maxSize = 10000000;
+
   $scope.init = function() {
     if ($scope.options.mode.toUpperCase() === "OWNER") {
       // Gets all elements of the current User.
@@ -59,8 +61,7 @@ function productListCtrl($scope, $log, $ngConfirm, AuthSvc, $state, StorageSvc, 
     // });
   }
   $scope.init();
-  console.log($scope);
-  console.log($scope.products);
+
 
   // Flag function to know if the current elements belongs to the user.
   $scope.isPrivate = function() {
@@ -123,7 +124,6 @@ function productListCtrl($scope, $log, $ngConfirm, AuthSvc, $state, StorageSvc, 
 
   //Function to get the tax value.
   $scope.getTax = function (product) {
-    console.log(product);
     var taxValue = null;
     product.ElementData.forEach(function (elementData) {
       if (elementData.Element.name.toUpperCase() === 'IMPUESTO') {
@@ -133,16 +133,67 @@ function productListCtrl($scope, $log, $ngConfirm, AuthSvc, $state, StorageSvc, 
     return taxValue;
   }
 
+  // Función que se llama cuando la imagen se carga.
+  $scope.onLoad = function(e, reader, file, fileList, fileOjects, fileObj) {
+    $scope.useWatch = true;
+    var type = fileObj.filename.split('.')[1].toLowerCase();
+    if (fileObj.filesize > maxSize) {
+      $scope.fileSize = fileObj.filesize;
+      return;
+    }
+    if ((type != 'png' && type != 'jpeg' && type != 'jpg')) {
+      $scope.fileType = type;
+      return;
+    }
+    $scope.imgAvatarStyle = {
+      'background-image': 'none'
+    };
+    $scope.product.newImageURI = 'data:' + fileObj.filetype + ';base64,' + fileObj.base64;
+  };
+
+  $scope.$watch('fileSize', function(newValue, oldValue) {
+    if ($scope.useWatch) {
+      Materialize.toast('El tamaño del archivo supera el limite requerido.', 4000, 'red darken-1 rounded')
+    }
+  });
+
+  $scope.$watch('fileType', function(newValue, oldValue) {
+    if ($scope.useWatch) {
+      Materialize.toast('El formato del archivo es incorrecto.', 4000, 'red darken-1 rounded')
+    }
+  });
+
+  $scope.$watch('product.newImageURI', function(newValue, oldValue) {
+    if ($scope.useWatch) {
+      $scope.options.isRequesting = true;
+      ProductSvc.updateImage({
+          productId: $scope.product.id,
+          imageDataURI: newValue
+        })
+        .then((res) => {
+          $scope.options.isRequesting = false;
+          $scope.product.imageURI = $scope.product.newImageURI;
+          Materialize.toast('Se actualizó la imagen correctamente.', 4000, 'green darken-1 rounded')
+        })
+        .catch((err) => {
+          $scope.options.isRequesting = false;
+          Materialize.toast('No se pudo cambiar la imagen.', 4000, 'red darken-1 rounded');
+        })
+    }
+  });
+
   // Function to update a product.
   $scope.updateProduct = function(product) {
-    $scope.product = {
-      id: product.id,
-      name: product.name,
-      code: product.code,
-      description: product.description,
-      price: product.price,
-      imageURI: product.imageURI
-    };
+    // $scope.product = {
+    //   id: product.id,
+    //   name: product.name,
+    //   code: product.code,
+    //   description: product.description,
+    //   price: product.price,
+    //   imageURI: product.imageURI
+    // };
+
+    $scope.product = product;
 
     angular.forEach(product.ElementData, function (elementData, index) {
       for (var i in $scope.categories.ElementData) {

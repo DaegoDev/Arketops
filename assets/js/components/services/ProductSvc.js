@@ -147,6 +147,15 @@ angular.module('arketops')
             responseType: 'arraybuffer'
           });
           return portfolioPDFFile;
+        },
+
+        updateImage: function (params) {
+          var product = $http({
+            url: '/product/updateImage',
+            method: 'PUT',
+            data: params
+          });
+          return product;
         }
       };
     }

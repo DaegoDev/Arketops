@@ -10,6 +10,7 @@ var promise = require('bluebird');
 var fs = require('fs');
 var sizeOf = require('image-size');
 var path = require('path');
+const maxSize = 10000000; // Tamaño maximo en bytes
 
 module.exports = {
   /**
@@ -140,7 +141,7 @@ module.exports = {
               };
             }
           } else {
-            relativePath = relativePath + 'NOIMAGE.png';
+            relativePath = null;
           }
 
           // Creación de las credenciales para crear un producto.
@@ -452,6 +453,10 @@ module.exports = {
         productList = products;
         var promises = [];
         var promiseFunction = function(product) {
+          if (!product.imageURI) {
+            return;
+          }
+
           return ImageDataURIService.encode(path.resolve(sails.config.appPath + product.imageURI))
             .then((imageDataURI) => {
               product.imageURI = imageDataURI;
@@ -575,9 +580,12 @@ module.exports = {
         productList = products;
         var promises = [];
         var promiseFunction = function(product) {
+          product.dataValues.type = 2;
+          if (!product.imageURI) {
+            return Promise.resolve();
+          }
           return ImageDataURIService.encode(path.resolve(sails.config.appPath + product.imageURI))
             .then((imageDataURI) => {
-              product.dataValues.type = 2;
               product.imageURI = imageDataURI;
             })
             .catch((err) => {
@@ -592,11 +600,11 @@ module.exports = {
         return promise.all(promises);
       })
       .then((data) => {
-        res.ok(productList);
+        return res.ok(productList);
       })
       .catch(function(err) {
         sails.log.debug(err);
-        res.serverError(err);
+        return res.serverError(err);
       })
   },
   /**
@@ -795,6 +803,80 @@ module.exports = {
       .catch(function(err) {
         return res.serverError(err);
       });
-  }
+  },
+
+  updateImage: function(req, res) {
+    var productId = null;
+    var user = null;
+    var imageURI = null;
+    var imageURIDB = null;
+    var absolutePath = null;
+    // variables necesarias para cargar la imagen.
+    var imageDataURI = null;
+    // var tempLocation = null;
+
+    // Definición de las variables.
+    productId = req.param('productId');
+    if (!productId) {
+      return res.badRequest("productId de la imagen vacío.")
+    }
+
+    imageDataURI = req.param('imageDataURI');
+    if (!imageDataURI) {
+      return res.badRequest("DataURI de la imagen vacío.")
+    }
+    user = req.user;
+
+    var relativePath = "/resources/images/products/";
+    var appPath = sails.config.appPath;
+
+    promise.all([
+      Company.findOne({where: {id: user.id}}),
+      Product.findOne({where: {id: productId}})
+    ])
+    .spread(function(company, product) {
+      var newNameImage = null;
+      if (product.imageURI) {
+        imageURIDB = appPath + product.imageURI;
+      }
+      absolutePath = path.join(appPath, relativePath, company.nit + "-" + Date.now());
+      return Promise.all = [product, ImageDataURIService.decodeAndSave(imageDataURI, absolutePath)]
+    })
+    .spread((product, resUpload) => {
+      if (resUpload) {
+        imageURI = resUpload;
+        // Se valida que el archivo tenga el formato y la resolución deseada.
+        var dimensions = sizeOf(imageURI);
+        var imageFile = fs.statSync(resUpload)
+        var fileSize = imageFile.size;
+        var type = dimensions.type.toLowerCase();
+
+        if (fileSize > maxSize || (type != "png" && type != "jpeg" && type != "jpg")) {
+          fs.unlink(imageURI, (err) => {
+            sails.log.debug('Se borró la imagen');
+          });
+          throw new Error("La configuración del archivo no es valida");
+        }
+      }
+      relativePath = relativePath + path.basename(resUpload);
+      return product.update({imageURI: relativePath});
+    })
+    .then(function(AmountRowsAffected) {
+      if (imageURIDB) {
+        fs.unlink(imageURIDB, (err) => {
+          if (err) throw err;
+          sails.log.debug('Se borró la imagen vieja');
+        });
+      }
+      res.ok(imageURI);
+    })
+    .catch(function(err) {
+      fs.unlink(imageURI, (err) => {
+        if (err) throw err;
+        sails.log.debug('Se borró la imagen nueva');
+      });
+      res.serverError(err);
+    })
+  },
 
 };

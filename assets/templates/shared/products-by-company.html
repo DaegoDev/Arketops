@@ -3,10 +3,11 @@
     <div class="card-content">
       <div class="row card-company">
         <div class="col s2 image-profile">
-          <img id="image-avatar" ng-src="{{company.imageURI}}" height="85" width="85">
+          <img id="image-avatar" ng-src="{{company.imageURI}}" height="85" width="85" ng-if="company.imageURI">
+          <img id="image-avatar" src="./images/no-image.jpg" height="85" width="85" ng-if="!company.imageURI">
         </div>
         <div class="col s10 company-data">
-          <div class="col s7 business-overview-section">
+          <div class="col s7 business-overview-section"> 
             <h5><strong>{{company.name | capitalize}}</strong></h5>
             <p>{{company.businessOverview}}</p>
           </div>

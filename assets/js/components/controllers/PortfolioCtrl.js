@@ -1,7 +1,7 @@
 var arketops = angular.module('arketops');
-arketops.controller('PortfolioCtrl', ['$scope', '$log', '$state', '$stateParams',
+arketops.controller('PortfolioCtrl', ['$scope', '$log', '$state','$timeout', '$stateParams',
 '$ngConfirm', 'ProductSvc', 'ElementSvc', '$sce',
-function($scope, $log, $state, $stateParams, $ngConfirm, ProductSvc, ElementSvc, $sce) {
+function($scope, $log, $state, $timeout, $stateParams, $ngConfirm, ProductSvc, ElementSvc, $sce) {
 
   $scope.elementDataDiscounts = [];
   $scope.elementDataDiscountParam = {};
@@ -48,7 +48,6 @@ function($scope, $log, $state, $stateParams, $ngConfirm, ProductSvc, ElementSvc,
 
   // Function to get the elementData of the elements Object.
   $scope.getElementData = function (value, indexDefault) {
-    console.log(value);
     if (value.name.toUpperCase() === 'LÍNEA') {
       $scope.isLineSelected = true;
       var elementsLength = $scope.resElements.length
@@ -164,11 +163,9 @@ function($scope, $log, $state, $stateParams, $ngConfirm, ProductSvc, ElementSvc,
   }
 
   $scope.generatePDFPreview = function () {
-    console.log($scope.elementDataDiscountParam["0"]);
     $scope.options.isRequesting = true;
     ProductSvc.portfolioToPDF({elementsDataDiscounts: $scope.elementDataDiscountParam})
     .then(function (res) {
-      console.log(res.data);
       $scope.options.isRequesting = false;
       var file = new Blob([res.data], {type: 'application/pdf'});
       var fileURL = URL.createObjectURL(file);
@@ -187,5 +184,4 @@ function($scope, $log, $state, $stateParams, $ngConfirm, ProductSvc, ElementSvc,
       $scope.options.isRequesting = false;
     })
   }
-
 }]);

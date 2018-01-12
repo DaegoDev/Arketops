@@ -79,8 +79,10 @@
               </div>
             </div>
             <div class="col s4 image-upload">
-              <input type="file" id="file-input" name="imageFile" ng-model="imageFile" maxsize="10000" do-not-parse-if-oversize base-sixty-four-input required onloadend="onLoad" ng-click="setFlagImageDataURI()" accept="image/jpg, image/jpeg, image/png">
-              <img class="image-avatar" ng-style="imgAvatarStyle" id="image-avatar" ng-src="{{user.imageDataURI}}" height="300" width="300">
+              <input type="file" id="file-input" name="imageFile" ng-model="imageFile" maxsize="10000" do-not-parse-if-oversize
+              base-sixty-four-input required onloadend="onLoad" ng-click="setFlagImageDataURI()" accept="image/jpg, image/jpeg, image/png">
+              <img class="image-avatar" ng-style="imgAvatarStyle" id="image-avatar" src="./images/no-image.jpg" height="300" width="300"  ng-if="!user.imageDataURI">
+              <img class="image-avatar" ng-style="imgAvatarStyle" id="image-avatar" ng-src="{{user.imageDataURI}}" height="300" width="300" ng-if="user.imageDataURI">
               <div class="icon-upload">
                 <label for="file-input">
                     <img class="add-image" id="add-image" ng-src="../../images/uploadIcon.png" >
@@ -259,7 +261,7 @@
 
           <div class="container">
             <div class="row ">
-              <input type="checkbox" class="filled-in" id="filled-in-box" checked="termsAndConditions" ng-model="termsAndConditions" ng-click="switchValueCheckbox()" />
+              <input type="checkbox" class="filled-in" id="filled-in-box" name="termsAndConditions" ng-model="user.termsAndConditions"/>
               <label for="filled-in-box">Aceptar terminos y condiciones.</label>
             </div>
 

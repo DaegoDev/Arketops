@@ -155,7 +155,8 @@ arketops.controller('EQuotationCreateCtrl', ['$scope', '$filter', '$log', '$stat
         }
         var productToAdd = {
           id: $scope.selectList[i].id,
-          amount: $scope.selectList[i].amount
+          amount: $scope.selectList[i].amount,
+          price: $scope.selectList[i].price
         }
         products.push(productToAdd);
       }
@@ -283,7 +284,7 @@ arketops.controller('EQuotationCreateCtrl', ['$scope', '$filter', '$log', '$stat
         }
       }
 
-      var priceWithTax = (product.amount * product.price) * ((product.tax.discount / 100) + 1);
+      var priceWithTax = (product.amount * product.price) * ((product.tax ? (product.tax.discount / 100) : 0) + 1);
       var discountPercent = (1 - (product.totalDiscount / 100))
       product.subtotal = priceWithTax * discountPercent;
       $scope.calculateTotal();
