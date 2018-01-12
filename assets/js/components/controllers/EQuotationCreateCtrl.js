@@ -283,6 +283,7 @@ arketops.controller('EQuotationCreateCtrl', ['$scope', '$filter', '$log', '$stat
         }
       }
 
+      console.log(product.price)
       var priceWithTax = (product.amount * product.price) * ((product.tax.discount / 100) + 1);
       var discountPercent = (1 - (product.totalDiscount / 100))
       product.subtotal = priceWithTax * discountPercent;
