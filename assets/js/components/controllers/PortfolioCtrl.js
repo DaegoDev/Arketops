@@ -129,10 +129,10 @@ function($scope, $log, $state, $timeout, $stateParams, $ngConfirm, ProductSvc, E
       return;
     }
 
-    if (!discount) {
-      Materialize.toast('Debe ingresar el descuento', 4000, 'red darken-1 rounded');
-      return;
-    }
+    // if (!discount) {
+    //   Materialize.toast('Debe ingresar el descuento', 4000, 'red darken-1 rounded');
+    //   return;
+    // }
 
     elementDataDiscount = {
       id: elementData.id,
@@ -171,7 +171,7 @@ function($scope, $log, $state, $timeout, $stateParams, $ngConfirm, ProductSvc, E
       var fileURL = URL.createObjectURL(file);
       $scope.pdfUrl = $sce.trustAsResourceUrl(fileURL);
       $ngConfirm({
-        title: 'Cotización',
+        title: 'Portafolio',
         content: '<p>Desde esta ventana puede descargar el portafolio yendo a la barra de ' +
         'herramientas y seleccionando la opción "Download".</p>' +
         '<embed type="application/pdf" ng-src="{{pdfUrl}}" width="100%" height="600">',
@@ -181,7 +181,15 @@ function($scope, $log, $state, $timeout, $stateParams, $ngConfirm, ProductSvc, E
 
     })
     .catch(function (err) {
+      console.log(err);
       $scope.options.isRequesting = false;
+      $ngConfirm({
+        title: 'Error',
+        content: 'No se obtuvo ningún producto con los elementos seleccionados.',
+        type: 'red',
+        useBootstrap: false,
+        width: '60%',
+      })
     })
   }
 }]);

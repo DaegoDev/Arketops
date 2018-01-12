@@ -1,8 +1,8 @@
 <div class="card discounts-section">
   <div class="card-content">
     <p>
-    Puede seleccionar los elementos que tendrán descuentos al generar el catálogo.
-    Todos los productos que tengan estos elementos se les asignará el descuento.
+    Puede seleccionar los elementos con un descuento opcional.
+    Todos los productos que tengan estos elementos son los que irán en el catálogo y se verá reflejado el descuento ingresado.
     </p>
     <hr>
     <div class="row">
@@ -45,7 +45,7 @@
             <td style="vertical-align:middle">{{elementDataDiscount.id}}</td>
             <td style="vertical-align:middle">{{elementDataDiscount.elementName | capitalize}}</td>
             <td style="vertical-align:middle">{{elementDataDiscount.name | capitalize}}</td>
-            <td style="vertical-align:middle">{{elementDataDiscount.discount}}%</td>
+            <td style="vertical-align:middle">{{elementDataDiscount.discount ? elementDataDiscount.discount : 0}}%</td>
             <td style="vertical-align:middle" ng-click="removeDiscount(elementDataDiscount)">
               <ng-md-icon tooltipped icon="delete" class="prefix" style="fill: black"
               size="20" data-position="top" data-delay="50" data-tooltip="Eliminar"></ng-md-icon></td>
