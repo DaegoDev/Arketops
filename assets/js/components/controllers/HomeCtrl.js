@@ -77,7 +77,7 @@
 
       // Función que se llama cuanto la imagen se carga.
       $scope.onLoad = function(e, reader, file, fileList, fileOjects, fileObj) {
-        var type = fileObj.filename.split('.')[1];
+        var type = fileObj.filename.split('.')[1].toLowerCase();
         $scope.useWatch = true;
         if (fileObj.filesize > maxSize) {
           $scope.fileSize = fileObj.filesize;
@@ -91,7 +91,6 @@
           'background-image': 'none'
         };
         if ($scope.flagImageDataURI) {
-          console.log('flagImageDataURI');
           $scope.user.imageDataURI = 'data:' + fileObj.filetype + ';base64,' + fileObj.base64;
         }
       };
@@ -153,11 +152,9 @@
         phonenumber = $scope.user.phonenumber;
         contact = $scope.user.contact;
         contactPhonenumber = $scope.user.contactPhonenumber;
-        termsAndConditions = $scope.termsAndConditions;
+        termsAndConditions = $scope.user.termsAndConditions;
         imageFile = $scope.user.imageFile;
         imageDataURI = $scope.user.imageDataURI;
-        console.log(city);
-        console.log(department);
 
         // Validación de los datos ingresados.
         // department.adminCode1 == -1
@@ -211,7 +208,7 @@
             $scope.imgAvatarStyle = {
               'background-image': '../../../images/no-image.jpg'
             };
-            $scope.switchValueCheckbox();
+            $scope.termsAndConditions = false;
             $scope.forms.formSignup.$setPristine();
             $scope.forms.formSignup.$setUntouched();
             $ngConfirm({

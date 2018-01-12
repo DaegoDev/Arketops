@@ -64,7 +64,13 @@ arketops.controller('ElementCtrl', ['$scope', '$log', '$state', '$stateParams',
         }
       }
 
+      if ($scope.currentElement) {
+        $scope.currentElement.selected = false;
+      }
+      
+      element.selected = true;
       $scope.currentElement = element;
+
     }
 
     // Function to create a new data element.

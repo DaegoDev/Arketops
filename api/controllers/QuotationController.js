@@ -272,9 +272,9 @@ module.exports = {
       offset: -5
     }, null);
 
-    relativeFilePath = '/resources/documents/quotations/pending/' + date + '.pdf';
+    relativeFilePath = '/resources/documents/quotations/pending/' + date.getTime() + '.pdf';
     // Ruta donde se guarda el pdf de la cotización en el servidor.
-    quotationFilePath = sails.config.appPath + relativeFilePath;
+    quotationFilePath = path.join(sails.config.appPath, relativeFilePath);
 
     // Se verifica que el cliente y proveedor existan. En caso de que exista
     // es pasado a la variable supplier y se busca la vinculación con el cliente.
@@ -393,7 +393,6 @@ module.exports = {
         return Quotation.create(quotationCredentials);
       })
       .then(function(quotation) {
-        res.created(quotation);
         // Guarda el documento pdf en la ruta pasada como parametro.
         QuotationPDFService.saveDocument(quotationFilePath);
         var tmpFilePath = quotationFilePath.replace("pending", "tmp");
@@ -406,18 +405,27 @@ module.exports = {
           'resize': '100%',
           'font': '/assets/fonts/ALGERIA.TTF'
         };
+        sails.log.debug(quotationFilePath);
+        sails.log.debug(tmpFilePath);
+        sails.log.debug(options);
         setTimeout(function () {
           watermark.embedWatermarkWithCb(quotationFilePath, options, function() {
+            sails.log.debug(quotationFilePath);
+            sails.log.debug(tmpFilePath);
+
             MailService.sendQuotationToClient(supplier, client, tmpFilePath);
             MailService.sendQuotationToSupplier(supplier, client, tmpFilePath);
+
             setTimeout(function() {
               fs.unlink(tmpFilePath, (err) => {
                 if (err) throw err;
                 sails.log.debug('Se borró el archivo de pendiente');
               });
             }, 10000);
+
           });
-        }, 500);
+        }, 5000);
+        return res.created(quotation);
       })
       .catch(function(err) {
         res.serverError(err);
@@ -464,7 +472,7 @@ module.exports = {
           throw "Cotización no encontrada"
         }
         relativeOutPath = quotation.fileURI.replace("pending", "confirmed");
-        fileToModify = sails.config.appPath + quotation.fileURI;
+        fileToModify = path.join(sails.config.appPath, quotation.fileURI);
         return Promise.all = [quotation, PaymentForm.findById(paymentFormId)];
       })
       .spread((quotation, paymentFormRaw) => {
@@ -579,10 +587,12 @@ module.exports = {
 
     Quotation.findById(quotationId)
       .then((quotation) => {
+        sails.log.debug("GETQUOTATIONFILE");
         if (quotation.state.toUpperCase() === 'PENDIENTE') {
           var tmpRelativePath = quotation.fileURI.replace("pending", "tmp");
-          var tmpFilePath = path.join(sails.config.appPath + tmpRelativePath);
-          // var readStream = fs.createReadStream(sails.config.appPath + quotation.fileURI);
+          var tmpFilePath = path.join(sails.config.appPath, tmpRelativePath);
+          var imagePath = path.join(sails.config.appPath, quotation.fileURI);
+          // var readStream = fs.createReadStream(path.join(sails.config.appPath + quotation.fileURI));
           // readStream.pipe(fs.createWriteStream(tmpFilePath));
           var options = {
             'text': 'SIN CONFIRMAR',
@@ -591,7 +601,7 @@ module.exports = {
             'resize': '100%',
             'font': '/assets/fonts/ALGERIA.TTF'
           };
-          watermark.embedWatermarkWithCb(sails.config.appPath + quotation.fileURI, options, function() {
+          watermark.embedWatermarkWithCb(imagePath, options, function() {
             res.sendfile(tmpFilePath)
             setTimeout(function() {
               fs.unlink(tmpFilePath, (err) => {
@@ -601,10 +611,13 @@ module.exports = {
             }, 500);
           });
         } else {
-          res.sendfile(path.join(sails.config.appPath + quotation.fileURI));
+          res.sendfile(path.join(sails.config.appPath, quotation.fileURI));
         }
 
       })
+      .catch(function (err) {
+        return res.serverError(err);
+      });
   },
 
 

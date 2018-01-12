@@ -1,4 +1,4 @@
-<div class="container">
+<div class="container section">
   <div class="card">
     <div class="card-content">
       <form ng-submit="updateData()" name="forms.formUpdate" novalidate>
@@ -93,7 +93,8 @@
               <input class="hide" type="file" id="file-input" name="imageFile" ng-model="imageFile" maxsize="10000" do-not-parse-if-oversize
               base-sixty-four-input required onloadend="onLoad" accept="image/jpg, image/jpeg, image/png">
               <label for="file-input">
-                <img ng-style="imgAvatarStyle" id="image-avatar" ng-src="{{user.imageURI}}" height="200" width="200" style="cursor: pointer;">
+                <img ng-style="imgAvatarStyle" id="image-avatar" ng-src="{{user.imageURI}}" height="200" width="200" style="cursor: pointer;" ng-if="user.imageURI">
+                <img ng-style="imgAvatarStyle" id="image-avatar2" src="./images/no-image.jpg" height="200" width="200" style="cursor: pointer;" ng-if="!user.imageURI">
               </label>
             </div>
             <div class="row">

@@ -19,7 +19,6 @@ module.exports = {
     code: {
       type: Sequelize.STRING(32),
       allowNull: false,
-      unique: true
     },
     date: {
       type: Sequelize.DATE,

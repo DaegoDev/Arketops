@@ -120,3 +120,17 @@ body {
 #menubar {
   z-index: 1000;
 }
+
+.tabs .tab a{
+    color:#000000;
+}
+.tabs .tab a:hover,.tabs .tab a.active {
+	background-color:transparent;
+	color: @theme-input-color - 10;
+}
+.tabs .tab.disabled a,.tabs .tab.disabled a:hover {
+	color:rgba(102,147,153,0.7);
+}
+.tabs .indicator {
+	background-color: @theme-input-color - 30;
+}

@@ -90,7 +90,6 @@ arketops.controller('ResultListCtrl', ['$scope', '$log', '$state', '$stateParams
       })
       .then((result) => {
         $scope.isRequesting = false;
-        console.log(result.data);
         $scope.result = result.data;
         $scope.total = $scope.result.length
         $scope.figureOutResultsToDisplay(1);
@@ -105,7 +104,6 @@ arketops.controller('ResultListCtrl', ['$scope', '$log', '$state', '$stateParams
       })
       .then((result) => {
         $scope.isRequesting = false;
-        console.log(result.data);
         $scope.result = result.data;
         $scope.total = $scope.result.length
         $scope.figureOutResultsToDisplay(1);
@@ -125,6 +123,7 @@ arketops.controller('ResultListCtrl', ['$scope', '$log', '$state', '$stateParams
         $scope.result = $scope.result.concat(result.data.products);
         $scope.total = $scope.result.length
         $scope.figureOutResultsToDisplay(1);
+        console.log(result.data);
       })
       .catch((err) => {
         $scope.isRequesting = false;

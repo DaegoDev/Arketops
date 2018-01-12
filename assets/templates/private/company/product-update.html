@@ -124,10 +124,14 @@
         </div>
 
         <div class="col s12 m4">
-          <img
-            class="responsive-img section col s12"
-            ng-style="imgAvatarStyle"
-            ng-src="{{product.imageURI}}">
+          <input class="hide" type="file" id="file-input" name="imageFile" ng-model="imageFile" maxsize="10000" do-not-parse-if-oversize
+          base-sixty-four-input required onloadend="onLoad" accept="image/jpg, image/jpeg, image/png">
+          <label for="file-input">
+            <img ng-style="imgAvatarStyle" id="image-product" ng-src="{{product.imageURI}}" height="200" width="200" style="cursor: pointer;" ng-if="product.imageURI">
+            <img ng-style="imgAvatarStyle" id="image-product" src="./images/no-image.jpg" height="200" width="200" style="cursor: pointer;" ng-if="!product.imageURI">
+          </label>
+          <p>De click en la imagen para seleccionar una imagen nueva.</p>
+
         </div>
       </div>
 

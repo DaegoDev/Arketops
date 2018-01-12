@@ -1,10 +1,7 @@
-<div class="container">
-  <br>
+<div class="container section">
   <div class="row">
     <div class="card-panel hoverable z-depth-3 element-create">
-      <label>
-        <h4>Cotizar a un cliente externo.</h4>
-      </label>
+      <h5 class="center"><strong>Cotizar a un cliente externo</strong></h5>
 
       <div class="row">
         <div class="col s3">
@@ -103,8 +100,7 @@
               <td>{{product.line}}</td> -->
               <td>{{product.tax.name }} ({{product.tax.discount}}%) </td>
               <td style="width:100px"><input style="text-align: center; margin-bottom: -17px; height: 2rem;" type="number" name="amount" ng-change="calculateSubtotal(product)" ng-model="product.amount"></td>
-              <td style="width:100px"><input style="text-align: center; margin-bottom: -17px; height: 2rem;" type="number" name="price" ng-change="calculateSubtotal(product)" ng-model="product.price"></td>
-              <!-- {{product.price | currency: '$' : '0'}} -->
+              <td style="width:150px">$<input style="width: 120px ;text-align: center; margin-bottom: -17px; height: 2rem;" type="text" name="" ng-model="product.price" ng-change="calculateSubtotal(product)"></td>
               <td>{{product.totalDiscount}}%</td>
               <td>{{product.subtotal | currency: '$' : '0'}}</td>
                 <ng-md-icon ng-click="removeProductOfList(product.indexProductList, $index)" icon="remove_circle" style="fill: red; cursor: pointer; margin-top:-10px" size="30" tooltipped data-position="top" data-delay="50" data-tooltip="Remover"></ng-md-icon>

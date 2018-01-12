@@ -58,6 +58,7 @@ module.exports.policies = {
     create: 'isAuthenticated',
     delete: 'isAuthenticated',
     update: 'isAuthenticated',
+    updateImage: 'isAuthenticated',
     getByCompany: 'isValidToDiscounts',
     getMyProducts: 'isAuthenticated',
     getMyProductsToQuote: 'isAuthenticated',
