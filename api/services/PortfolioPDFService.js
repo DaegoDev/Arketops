@@ -164,7 +164,7 @@ module.exports = {
  * @param  {Object} objectProduct Contiene la información de los productos ingresada por el usuario, como cantidad a cotizar.
  */
 function createTableBodyProducts(productsQuery, elementsDataDiscounts) {
-  var elementsDataDiscountsObject = JSON.parse(elementsDataDiscounts);
+  var elementsDataDiscountsObject = elementsDataDiscounts;
   var objectDiscountsEmpty = _.isEmpty(elementsDataDiscountsObject);
   sails.log.debug(elementsDataDiscountsObject);
   var contentTableProducts = [
@@ -226,7 +226,7 @@ function createTableBodyProducts(productsQuery, elementsDataDiscounts) {
 
           for (var j = 0; j < elementDataDiscountLength; j++) {
             if (elementData[i].id == elementDataDiscount[j].id) {
-              discount += elementDataDiscount[j].discount;
+              discount += elementDataDiscount[j].discount ? elementDataDiscount[j].discount : 0;
             }
           }
         }

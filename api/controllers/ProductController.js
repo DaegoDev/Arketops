@@ -726,10 +726,19 @@ module.exports = {
     var elementsDataDiscounts = null;
     var relativePathPortfolio = null;
     var portfolioPathFile = null;
+    var elementDataIds = [];
+    var queryJSON = {};
 
-    elementsDataDiscounts = req.param('elementsDataDiscounts');
+    elementsDataDiscounts = JSON.parse(req.param('elementsDataDiscounts'));
 
-    // sails.log.debug(elementsDataDiscounts);
+    sails.log.debug(elementsDataDiscounts);
+    for (var key in elementsDataDiscounts){
+      elementsDataDiscounts[key].forEach((elementData) => {
+        elementDataIds.push(elementData.id);
+      })
+    }
+
+    sails.log.debug(elementDataIds)
 
     user = req.user;
     relativePathPortfolio = '/resources/documents/portfolio/tmp/' + CriptoService.generateString(9) + '.pdf';
@@ -739,14 +748,14 @@ module.exports = {
       return res.forbidden();
     }
 
-    Company.findOne({
+    queryJSON = {
       where: {
         userId: user.id
       },
       include: [{
         model: Product,
         where: {
-          enabled: true
+          enabled: true,
         },
         include: [{
           model: ElementData,
@@ -758,8 +767,20 @@ module.exports = {
           [ElementData, Element, 'id', 'ASC']
         ]
       }]
-    })
+    }
+
+    if (elementDataIds.length > 0) {
+      queryJSON.include[0].include[0].where = {
+        id: elementDataIds
+      }
+    }
+
+    Company.findOne(queryJSON)
       .then(function(company) {
+        sails.log.debug(company);
+        if (!company) {
+          return res.notFound();
+        }
         var companyDataToPrint = {
           imageURI: company.imageURI,
           name: company.name,
