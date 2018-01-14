@@ -156,7 +156,8 @@ arketops.controller('EQuotationCreateCtrl', ['$scope', '$filter', '$log', '$stat
         var productToAdd = {
           id: $scope.selectList[i].id,
           amount: $scope.selectList[i].amount,
-          price: $scope.selectList[i].price
+          price: $scope.selectList[i].price,
+          discount: $scope.selectList[i].totalDiscount
         }
         products.push(productToAdd);
       }
@@ -282,6 +283,14 @@ arketops.controller('EQuotationCreateCtrl', ['$scope', '$filter', '$log', '$stat
         if (product.amount.toString() == '0') {
           product.amount = 1;
         }
+      }
+
+      if (product.price < 0 || isNaN(parseFloat(product.price)) && !isFinite(product.price)) {
+        product.price = 0;
+      }
+
+      if (product.totalDiscount < 0 || isNaN(parseFloat(product.totalDiscount)) && !isFinite(product.totalDiscount)) {
+        product.totalDiscount = 0;
       }
 
       var priceWithTax = (product.amount * product.price) * ((product.tax ? (product.tax.discount / 100) : 0) + 1);

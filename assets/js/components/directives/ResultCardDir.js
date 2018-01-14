@@ -38,7 +38,7 @@ var arketops = angular.module('arketops');
       })
       .catch((err) => {
         console.log(err);
-      })
+      });
     }
 
     function setFollowingValue() {

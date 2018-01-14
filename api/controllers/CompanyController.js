@@ -1252,6 +1252,10 @@ module.exports = {
 
     user = req.user;
 
+    if (user.id == companyId) {
+      return res.ok(true);
+    }
+
     Company.findOne({
       where: {
         id: companyId

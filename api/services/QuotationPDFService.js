@@ -438,6 +438,7 @@ function createTableBodyProducts(productsQuery, objectProduct, elementsDiscountC
     var specialDiscount = 0;
 
     // sails.log.debug(elementsDiscountClient)
+
     for (var i = 0; i < amountElements; i++) {
       var isSpecialDiscount = false;
       if (elementData[i].Element.name.toUpperCase() == "MARCA") {
@@ -477,6 +478,11 @@ function createTableBodyProducts(productsQuery, objectProduct, elementsDiscountC
       // }
 
     }
+
+    if (product.discount != null && product.discount != undefined) {
+      discount = product.discount
+    }
+
     // sails.log.debug(discount);
     amount = objectProduct[product.id].amount;
     price = product.price;
@@ -510,7 +516,8 @@ function createTableBodyProducts(productsQuery, objectProduct, elementsDiscountC
       style: 'tableBody'
     }];
     contentTableProducts.push(productToPdf);
-  })
+  });
+
   var lastColumn = [{
     text: "",
     colSpan: 6
