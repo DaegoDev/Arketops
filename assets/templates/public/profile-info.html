@@ -2,9 +2,10 @@
   <div class="card-panel hoverable z-depth-3 company-summary">
     <div class="card-content">
       <div class="row card-company">
-        <div class="col s2 image-profile">
+        <div ng-cloak class="col s2 image-profile">
           <img id="image-avatar" ng-src="{{company.imageURI}}" height="85" width="85" ng-if="company.imageURI">
           <img id="image-avatar" src="./images/no-image.jpg" height="85" width="85" ng-if="!company.imageURI">
+          <a  ng-hide="options.isFollowing" ng-click="followCompany()" class="waves-effect waves-light btn" style="width: 85px; padding: 2px">Seguir</a>
         </div>
         <div class="col s10 company-data">
           <div class="col s7 business-overview-section">

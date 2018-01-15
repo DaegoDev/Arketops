@@ -185,6 +185,15 @@ module.exports = {
           throw "Los productos no pertenecen al proveedor"
         }
 
+        productsQuery.forEach(function (productQuery, i) {
+          products.forEach(function (product, j) {
+            if (productQuery.id == product.id) {
+              productQuery.price = product.price;
+              productQuery.discount = product.discount;
+            }
+          });
+        });
+
         // Construye la tabla de productos para la cotización.
         QuotationPDFService.buildTableProducts(productsQuery, objectProduct, elementsDiscountClient);
 

@@ -152,7 +152,17 @@
               id="image-avatar"
               ng-src="data:{{fileObject.filetype}};base64,{{fileObject.base64}}"
               height="300"
-              width="300">
+              width="300"
+              ng-if="product.imageFile">
+
+            <img
+              class="image-avatar"
+              ng-style="imgAvatarStyle"
+              id="image-avatar"
+              src="./images/no-image.jpg"
+              height="300"
+              width="300"
+              ng-if="!product.imageFile">
 
             <div class="icon-upload">
               <label for="file-input">

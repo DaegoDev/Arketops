@@ -134,7 +134,9 @@ arketops.controller('ClientQuotationCreateCtrl', ['$scope', '$filter', '$log', '
         }
         var productToAdd = {
           id: $scope.selectList[i].id,
-          amount: $scope.selectList[i].amount
+          amount: $scope.selectList[i].amount,
+          price: $scope.selectList[i].price,
+          discount: $scope.selectList[i].totalDiscount
         }
         products.push(productToAdd);
       }
@@ -180,7 +182,6 @@ arketops.controller('ClientQuotationCreateCtrl', ['$scope', '$filter', '$log', '
       $scope.quotation.loading = true;
       QuotationSvc.createToClient(params)
         .then((res) => {
-          console.log(res.data);
           $scope.quotation.loading = false;
           $ngConfirm({
             title: 'Cotización creada exitosamente',
@@ -242,16 +243,25 @@ arketops.controller('ClientQuotationCreateCtrl', ['$scope', '$filter', '$log', '
     }
 
     $scope.calculateSubtotal = function(product) {
-      console.log(product.amount);
       if (product.amount < 0 || isNaN(parseFloat(product.amount)) && !isFinite(product.amount)) {
         product.amount = 1;
       }
+
       if (product.amount != null) {
         if (product.amount.toString() == '0') {
           product.amount = 1;
         }
       }
-      var priceWithTax = (product.amount * product.price) * ((product.tax.discount / 100) + 1);
+
+      if (product.price < 0 || isNaN(parseFloat(product.price)) && !isFinite(product.price)) {
+        product.price = 0;
+      }
+
+      if (product.totalDiscount < 0 || isNaN(parseFloat(product.totalDiscount)) && !isFinite(product.totalDiscount)) {
+        product.totalDiscount = 0;
+      }
+
+      var priceWithTax = (product.amount * product.price) * ((product.tax ? (product.tax.discount / 100) : 0) + 1);
       var discountPercent = (1 - (product.totalDiscount / 100))
       product.subtotal = priceWithTax * discountPercent;
       $scope.calculateTotal();

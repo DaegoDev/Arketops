@@ -121,7 +121,7 @@ arketops.controller('ResultListCtrl', ['$scope', '$log', '$state', '$stateParams
         $scope.result = result.data.companies;
         $scope.result.push('divider');
         $scope.result = $scope.result.concat(result.data.products);
-        $scope.total = $scope.result.length
+        $scope.total = $scope.result.length - 1;
         $scope.figureOutResultsToDisplay(1);
         console.log(result.data);
       })

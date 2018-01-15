@@ -16,6 +16,7 @@ var arketops = angular.module('arketops');
 
   function resultCardCtrl($scope, $log, $ngConfirm, AuthSvc, $state, StorageSvc, CompanySvc) {
 
+    console.log($scope.compProd);
     if ($scope.type == 1) {
       $scope.isCompany = true;
     } else if ($scope.type == 2) {
@@ -38,7 +39,7 @@ var arketops = angular.module('arketops');
       })
       .catch((err) => {
         console.log(err);
-      })
+      });
     }
 
     function setFollowingValue() {

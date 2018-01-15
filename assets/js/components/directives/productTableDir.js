@@ -47,7 +47,7 @@ function productTableCtrl($scope, $log, $ngConfirm, AuthSvc, $state, StorageSvc,
       default:
 
     }
-  })
+  });
 
   $scope.propertyName = 'code';
   $scope.reverse = true;
