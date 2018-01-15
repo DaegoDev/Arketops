@@ -1,5 +1,6 @@
 
 var imageDataURIModule = require('image-data-uri');
+var path = require('path');
 
 module.exports = {
   /**
@@ -19,5 +20,9 @@ module.exports = {
   */
   encode: function (pathImage) {
     return imageDataURIModule.encodeFromFile(pathImage);
+  },
+
+  getLogo: function () {
+    return imageDataURIModule.encodeFromFile(path.join(sails.config.appPath, '/api/emailTemplates/logo.png'));
   }
 }
