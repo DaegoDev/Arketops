@@ -56,6 +56,8 @@ var jsFilesToInject = [
   'bower_components/angular-pdf/dist/angular-pdf.min.js',
   'bower_components/pdfjs-dist/build/pdf.worker.js',
   'bower_components/pdfjs-dist/build/pdf.js',
+  'bower_components/json-export-excel/dest/json-export-excel.js',
+  'bower_components/file-saver/FileSaver.min.js',
   // All of the rest of your client-side js files
   // will be injected here in no particular order.
   'js/main.js',

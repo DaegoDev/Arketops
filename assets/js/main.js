@@ -3,7 +3,7 @@
 (function() {
   var arketops = angular.module('arketops', ['ui.router', 'permission', 'permission.ui',
   'ngCookies', 'ui.materialize', 'ngMdIcons', 'ngMessages', 'cp.ngConfirm', 'ngPassword',
-  'naif.base64', 'ngAnimate', 'pdf'
+  'naif.base64', 'ngAnimate', 'pdf', 'ngJsonExportExcel'
   ]);
 
   // Inicializacion de la configuracion principal al ingresar al dominio.
@@ -104,6 +104,39 @@
       });
       console.log(output);
       return output;
+    }
+  });
+
+  arketops.filter('actionFilter', function() {
+    return function(input) {
+      if (input == 1) {
+        return 'Actualización';
+      }
+      return 'Creación';
+    }
+  });
+
+  arketops.filter('elementsFilter', function() {
+    return function(input) {
+      var stringElements = '';
+      input.forEach((elementId, index) => {
+        switch (elementId) {
+          case 1:
+            index == (input.length - 1) ? stringElements += 'Marca ' : stringElements += 'Marca, ';
+            break;
+          case 2:
+            index == (input.length - 1) ? stringElements += 'Categoría ' : stringElements += 'Categoría, ';
+            break;
+          case 3:
+            index == (input.length - 1) ? stringElements += 'Línea ' : stringElements += 'Línea, ';
+            break;
+          case 4:
+            index == (input.length - 1) ? stringElements += 'Impuesto ' : stringElements += 'Impuesto, ';
+            break;
+          default:
+        }
+      })
+      return stringElements;
     }
   });
 

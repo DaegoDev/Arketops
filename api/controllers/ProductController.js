@@ -10,6 +10,9 @@ var promise = require('bluebird');
 var fs = require('fs');
 var sizeOf = require('image-size');
 var path = require('path');
+var cv2json = require('convert-json');
+var node_xj = require("xls-to-json");
+var excel = require('node-excel-export');
 const maxSize = 10000000; // Tamaño maximo en bytes
 
 module.exports = {
@@ -443,6 +446,9 @@ module.exports = {
             where: {
               userId: user.id
             }
+          },
+          {
+            model: State,
           }
         ],
         order: [
@@ -744,13 +750,11 @@ module.exports = {
     elementsDataDiscounts = JSON.parse(req.param('elementsDataDiscounts'));
 
     sails.log.debug(elementsDataDiscounts);
-    for (var key in elementsDataDiscounts){
+    for (var key in elementsDataDiscounts) {
       elementsDataDiscounts[key].forEach((elementData) => {
         elementDataIds.push(elementData.id);
       })
     }
-
-    sails.log.debug(elementDataIds)
 
     user = req.user;
     relativePathPortfolio = '/resources/documents/portfolio/tmp/' + CriptoService.generateString(9) + '.pdf';
@@ -811,9 +815,9 @@ module.exports = {
         // Guarda el documento pdf en la ruta pasada como parametro.
         PortfolioPDFService.saveDocument(portfolioPathFile);
 
-        setTimeout(function () {
+        setTimeout(function() {
           res.sendfile(portfolioPathFile)
-          setTimeout(function () {
+          setTimeout(function() {
             fs.unlink(portfolioPathFile, (err) => {
               if (err) throw err;
               sails.log.debug('Se borró el catálogo');
@@ -852,52 +856,372 @@ module.exports = {
     var appPath = sails.config.appPath;
 
     promise.all([
-      Company.findOne({where: {id: user.id}}),
-      Product.findOne({where: {id: productId}})
-    ])
-    .spread(function(company, product) {
-      var newNameImage = null;
-      if (product.imageURI) {
-        imageURIDB = appPath + product.imageURI;
-      }
-      absolutePath = path.join(appPath, relativePath, company.nit + "-" + Date.now());
-      return Promise.all = [product, ImageDataURIService.decodeAndSave(imageDataURI, absolutePath)]
-    })
-    .spread((product, resUpload) => {
-      if (resUpload) {
-        imageURI = resUpload;
-        // Se valida que el archivo tenga el formato y la resolución deseada.
-        var dimensions = sizeOf(imageURI);
-        var imageFile = fs.statSync(resUpload)
-        var fileSize = imageFile.size;
-        var type = dimensions.type.toLowerCase();
-
-        if (fileSize > maxSize || (type != "png" && type != "jpeg" && type != "jpg")) {
-          fs.unlink(imageURI, (err) => {
-            sails.log.debug('Se borró la imagen');
-          });
-          throw new Error("La configuración del archivo no es valida");
+        Company.findOne({
+          where: {
+            id: user.id
+          }
+        }),
+        Product.findOne({
+          where: {
+            id: productId
+          }
+        })
+      ])
+      .spread(function(company, product) {
+        var newNameImage = null;
+        if (product.imageURI) {
+          imageURIDB = appPath + product.imageURI;
         }
-      }
-      relativePath = relativePath + path.basename(resUpload);
-      return product.update({imageURI: relativePath});
-    })
-    .then(function(AmountRowsAffected) {
-      if (imageURIDB) {
-        fs.unlink(imageURIDB, (err) => {
-          if (err) throw err;
-          sails.log.debug('Se borró la imagen vieja');
+        absolutePath = path.join(appPath, relativePath, company.nit + "-" + Date.now());
+        return Promise.all = [product, ImageDataURIService.decodeAndSave(imageDataURI, absolutePath)]
+      })
+      .spread((product, resUpload) => {
+        if (resUpload) {
+          imageURI = resUpload;
+          // Se valida que el archivo tenga el formato y la resolución deseada.
+          var dimensions = sizeOf(imageURI);
+          var imageFile = fs.statSync(resUpload)
+          var fileSize = imageFile.size;
+          var type = dimensions.type.toLowerCase();
+
+          if (fileSize > maxSize || (type != "png" && type != "jpeg" && type != "jpg")) {
+            fs.unlink(imageURI, (err) => {
+              sails.log.debug('Se borró la imagen');
+            });
+            throw new Error("La configuración del archivo no es valida");
+          }
+        }
+        relativePath = relativePath + path.basename(resUpload);
+        return product.update({
+          imageURI: relativePath
         });
+      })
+      .then(function(AmountRowsAffected) {
+        if (imageURIDB) {
+          fs.unlink(imageURIDB, (err) => {
+            if (err) throw err;
+            sails.log.debug('Se borró la imagen vieja');
+          });
+        }
+        res.ok(imageURI);
+      })
+      .catch(function(err) {
+        fs.unlink(imageURI, (err) => {
+          if (err) throw err;
+          sails.log.debug('Se borró la imagen nueva');
+        });
+        res.serverError(err);
+      })
+  },
+  /**
+   * Función para cargar multiples productos desde un archivo.
+   * @param  {Object} req Request object
+   * @param  {Object} res Response object
+   */
+  createProductsFromfile: function(req, res) {
+    // Declaration of variables.
+    var fileBase64 = null;
+    var filePortfolio = null;
+    var user = null;
+    var relativePathFilePortfolio = null;
+    var absolutePathFilePortfolio = null;
+    var companyId = null;
+    var stateDB = null;
+    var products = {} // Products in the excel file.
+    var productsNotAdded = []; // Products not added for restriction.
+    var codes = [];
+
+
+    fileBase64 = req.param('filePortfolio');
+    if (!fileBase64) {
+      return res.badRequest("Campo file vacío.");
+    }
+
+    user = req.user;
+    relativePathFilePortfolio = '/resources/documents/portfolio/tmp/' + CriptoService.generateString(9) + '.xls';
+    absolutePathFilePortfolio = sails.config.appPath + relativePathFilePortfolio;
+
+    /**
+     * Convert string base64 to file xls.
+     */
+    var bitmap = new Buffer(fileBase64, 'base64');
+    // write buffer to file
+    fs.writeFileSync(absolutePathFilePortfolio, bitmap);
+
+
+    /**
+     * Convert the excel file to JSON Object.
+     */
+    node_xj({
+      input: absolutePathFilePortfolio, // input xls
+      output: null, // output json
+      sheet: "portafolio" // specific sheetname
+    }, function(err, result) {
+      if (err) {
+        return res.serverError();
+        sails.log.error(err);
+      } else {
+        // sails.log.debug(Object.keys(result[0]).length);
+        if (Object.keys(result[0]).length == 0) {
+          return res.serverError();
+        }
+        // Organize the products array in an object.
+        result.forEach((product, index, productList) => {
+          !products[product.Código] ? products[product.Código] = {} : null;
+          // Data concerning to a product.
+          products[product.Código].productData = {
+            code: product.Código,
+            name: product.Nombre,
+            description: product.Descripción,
+            price: product.Precio,
+          }
+          // Data concerning to a product's state.
+          products[product.Código].stateData = {
+            name: product.Estado
+          }
+          // Data concerning to a product's elements.
+          products[product.Código].elementsData = {
+            1: product.Marca,
+            2: product.Categoría,
+            3: product.Línea,
+            4: product.Impuesto
+          }
+          codes.push(product.Código);
+        })
+
+        // Get the company by user id.
+        Company.findOne({
+            where: {
+              userId: user.id
+            }
+          })
+          .then((company) => {
+            companyId = company.id;
+            // Get the products existing in the database.
+            return Product.findAll({
+              where: {
+                code: codes,
+                companyId: companyId,
+              }
+            })
+          })
+          .then((productsDB) => {
+            // If there are one or more products in the database is necessary update them.
+            if (productsDB.length > 0) {
+              var promisesUpdate = [];
+              var promiseFunction = function(productDB, productExcel, index) {
+                // Verify if the state with name present in excel exist in the database.
+                return State.findOne({
+                    where: {
+                      name: {
+                        $iLike: productExcel.stateData.name
+                      }
+                    }
+                  })
+                  .then((state) => {
+                    if (!state) {
+                      var productNotAdded = {
+                        productCode: productExcel.productData.code,
+                        errorCode: 2,
+                        actionCode: 1,
+                      }
+                      productsNotAdded.push(productNotAdded);
+                      throw new Error('Error disparado por estado al actualizar.');
+                    }
+                    stateDB = state;
+                    return ElementData.findAll({
+                      where: {
+                        name: [productExcel.elementsData[1], productExcel.elementsData[2], productExcel.elementsData[3], productExcel.elementsData[4]]
+                      }
+                    })
+                  })
+                  .then((elementsData) => {
+                    // Verify if the elements with name present in excel exist in the database.
+                    var elementsIds = [];
+                    var elementsDataIds = [];
+                    var categoryElement = null;
+                    var lineElement = null;
+                    elementsData.forEach((elementData, index) => {
+                      elementsIds.push(elementData.elementId);
+                      elementsDataIds.push(elementData.id);
+                      if (elementData.elementId == 2) {
+                        categoryElement = elementData;
+                      } else if (elementData.elementId == 3) {
+                        lineElement = elementData;
+                      }
+                    })
+
+                    var elementsNotAvailables = [];
+                    for (var i = 1; i <= 4; i++) {
+                      var index = elementsIds.indexOf(i);
+                      if (index == -1 && productExcel.elementsData[i]) {
+                        elementsNotAvailables.push(i);
+                      }
+                    }
+                    // Add the products which the elements' names doesn't exist in the database.
+                    if (elementsNotAvailables.length > 0) {
+                      var productNotAdded = {
+                        productCode: productDB.code,
+                        elements: elementsNotAvailables,
+                        errorCode: 1,
+                        actionCode: 1,
+                      }
+                      productsNotAdded.push(productNotAdded);
+                      throw new Error('Error disparado por elementos al actualizar.');
+                    }
+
+                    if (categoryElement && lineElement) {
+                      return Promise.all = [categoryElement.hasElementChildren([lineElement.id]), elementsDataIds];
+                    } else {
+                      return Promise.all = [true, elementsDataIds];
+                    }
+                  })
+                  .spread((isValidElementLink, elementsDataIds) => {
+                    if (!isValidElementLink) {
+                      var productNotAdded = {
+                        productCode: productExcel.productData.code,
+                        errorCode: 3,
+                        actionCode: 1,
+                      }
+                      productsNotAdded.push(productNotAdded);
+                      throw new Error('Error disparado por elementLink al actualizar.');
+                    }
+                    // Update data of the product and its state.
+                    return Promise.all = [productDB.update(productExcel.productData), elementsDataIds, productDB.setState(stateDB.id)]
+                  })
+                  .spread((resultUpdate, elementsDataIds, stateUpdated) => {
+                    // Update the elements of the product.
+                    return productDB.setElementData(elementsDataIds);
+                  })
+                  .catch(function(err) {
+                    sails.log.error(err);
+                    // sails.log.debug('Catch error update');
+                  });
+              }
+
+              productsDB.forEach(function(productDB, index) {
+                var productExcel = products[productDB.code];
+                delete products[productDB.code];
+                promisesUpdate.push(promiseFunction(productDB, productExcel, index));
+
+              });
+              return promise.all(promisesUpdate);
+            }
+
+          })
+          .then(() => {
+            // If the products dont exist in the database is necessary create them.
+            sails.log.debug(products);
+            var promisesCreate = [];
+            var promiseFunction = function(productToCreate) {
+              return State.findOne({
+                  where: {
+                    name: {
+                      $iLike: productToCreate.stateData.name
+                    }
+                  }
+                })
+                .then((state) => {
+                  if (!state) {
+                    var productNotAdded = {
+                      productCode: productToCreate.productData.code,
+                      errorCode: 2,
+                      actionCode: 2,
+                    }
+                    productsNotAdded.push(productNotAdded);
+                    throw new Error('Error disparado por estado al crear.');
+                  }
+                  stateDB = state;
+                  return ElementData.findAll({
+                    where: {
+                      name: [productToCreate.elementsData[1], productToCreate.elementsData[2], productToCreate.elementsData[3], productToCreate.elementsData[4]]
+                    }
+                  })
+                })
+                .then((elementsData) => {
+                  var elementsIds = [];
+                  var elementsDataIds = [];
+                  var categoryElement = null;
+                  var lineElement = null;
+
+                  elementsData.forEach((elementData, index) => {
+                    elementsIds.push(elementData.elementId);
+                    elementsDataIds.push(elementData.id);
+                    if (elementData.elementId == 2) {
+                      categoryElement = elementData;
+                    } else if (elementData.elementId == 3) {
+                      lineElement = elementData;
+                    }
+                  })
+                  var elementsNotAvailables = [];
+                  for (var i = 1; i <= 4; i++) {
+                    var index = elementsIds.indexOf(i);
+                    if (index == -1 && productToCreate.elementsData[i]) {
+                      elementsNotAvailables.push(i);
+                    }
+                  }
+                  if (elementsNotAvailables.length > 0) {
+                    var productNotAdded = {
+                      productCode: productToCreate.productData.code,
+                      elements: elementsNotAvailables,
+                      errorCode: 1,
+                      actionCode: 2,
+                    }
+                    productsNotAdded.push(productNotAdded);
+                    throw new Error('Error disparado por elementos al crear.')
+                  }
+                  productToCreate.productData.companyId = companyId;
+                  productToCreate.productData.stateId = stateDB.id;
+                  if (categoryElement && lineElement) {
+                    return Promise.all = [categoryElement.hasElementChildren([lineElement.id]), elementsDataIds];
+                  } else {
+                    return Promise.all = [true, elementsDataIds];
+                  }
+                })
+                .spread((isValidElementLink, elementsDataIds) => {
+                  if (!isValidElementLink) {
+                    var productNotAdded = {
+                      productCode: productToCreate.productData.code,
+                      errorCode: 3,
+                      actionCode: 2,
+                    }
+                    productsNotAdded.push(productNotAdded);
+                    throw new Error('Error disparado por elementLink al crear.');
+                  } else {
+                    return Promise.all = [Product.create(productToCreate.productData), elementsDataIds]
+                  }
+                })
+                .spread((productCreated, elementsDataIds) => {
+                  return productCreated.setElementData(elementsDataIds);
+                })
+                .catch(function(err) {
+                  sails.log.error(err);
+                  // sails.log.debug('Catch error create');
+                });
+            }
+            if (Object.keys(products).length == 0) {
+              for (var productToCreate in products) {
+                if (products.hasOwnProperty(productToCreate)) {
+                  promisesCreate.push(promiseFunction(products[productToCreate]));
+                }
+              }
+              return promise.all(promisesCreate);
+            }
+          })
+          .then((newProducts) => {
+            if (absolutePathFilePortfolio) {
+              fs.unlink(absolutePathFilePortfolio, (err2) => {
+                if (err2) {
+                  throw err2;
+                }
+                sails.log.debug('Se borró el archivo con portafolio.');
+              });
+            }
+            sails.log.debug(productsNotAdded);
+            res.ok(productsNotAdded);
+          })
       }
-      res.ok(imageURI);
-    })
-    .catch(function(err) {
-      fs.unlink(imageURI, (err) => {
-        if (err) throw err;
-        sails.log.debug('Se borró la imagen nueva');
-      });
-      res.serverError(err);
-    })
+    });
   },
 
 };

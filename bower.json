@@ -34,10 +34,11 @@
     "ng-materialize": "^0.1.2",
     "angular-animate": "~1.6.x",
     "angular-pdf": "^2.0.0",
-    "pdfjs-dist": "^2.0.112"
+    "pdfjs-dist": "^2.0.112",
+    "json-export-excel": "ng-json-export-excel#^1.0.2"
   },
   "resolutions": {
-    "angular": "1.6.7",
+    "angular": "1.6.8",
     "materialize": "^0.99.0",
     "angular-animate": "~1.6.x",
     "pdfjs-dist": "^2.0.112"

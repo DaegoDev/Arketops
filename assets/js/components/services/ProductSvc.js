@@ -156,6 +156,25 @@ angular.module('arketops')
             data: params
           });
           return product;
+        },
+
+        createProductsFromfile: function (params) {
+          var products = $http({
+            url: '/product/createProductsFromfile',
+            method: 'POST',
+            data: params
+          });
+          return products;
+        },
+
+        getPortfolioFile: function () {
+          var portfolioFile = $http({
+            url: '/product/buildPortfolioFile',
+            method: 'GET',
+            params: params,
+            responseType: 'arraybuffer'
+          });
+          return portfolioFile;
         }
       };
     }

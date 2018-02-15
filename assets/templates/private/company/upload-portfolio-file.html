@@ -1,0 +1,29 @@
+<div class="">
+  <div >
+    <!-- <div class="card-content"> -->
+      <p>
+        Las columnas del portafolio deberán llamarse como se muestra a continuación.
+      </p>
+      <img src="./images/header-excel-portfolio.png" alt="">
+      <p>
+          La hoja donde se listan los productos deberá llamarse "portafolio".
+      </p>
+      <img src="./images/sheet-excel-portfolio.png" alt="">
+      <p>
+          Para descargar el formato de Excel seleccione <span><a href="./docs/portafolio.xls" download="portafolio.xls">aqui</a></span>
+      </p>
+    <!-- </div> -->
+  </div>
+  <div class="file-field input-field">
+    <div class="btn">
+      <span>Subir archivo</span>
+      <!-- accept=".csv, application/vnd.openxmlformats-officedocument.spreadsheetml.sheet, application/vnd.ms-excel" -->
+      <input type="file" accept=".csv, application/vnd.openxmlformats-officedocument.spreadsheetml.sheet, application/vnd.ms-excel"
+      ng-model="filePortfolio" do-not-parse-if-oversize base-sixty-four-input>
+      <!-- onloadend="onLoadFile" -->
+    </div>
+    <div class="file-path-wrapper">
+      <input class="file-path validate" type="text">
+    </div>
+  </div>
+</div>

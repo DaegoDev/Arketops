@@ -1,0 +1,27 @@
+<div class="">
+  <p>
+  A continuación se muestra un resumen con los productos que no pudieron ser creados o actualizados y la razón de esto.
+  </p>
+  <div>
+    <table class="highlight bordered responsive-table">
+      <thead>
+        <tr>
+          <th width="70" class="center-align">Código</th>
+          <th class="center-align">Acción rechazada</th>
+          <th class="center-align">Detalles</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr ng-repeat="product in productsWithIssues | orderBy: productCode">
+          <td class="center-align">{{product.productCode}}</td>
+          <td class="center-align">{{product.actionCode | actionFilter}}</td>
+          <td>
+            <div ng-if="product.errorCode == 1">Los valores de {{product.elements | elementsFilter}} no han sido creados en la plataforma.</div>
+            <div ng-if="product.errorCode == 2">El estado del producto debe ser nuevo o usado.</div>
+            <div ng-if="product.errorCode == 3">La línea debe corresponder a la categoría ingresada.</div>
+          </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+</div>
