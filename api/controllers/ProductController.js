@@ -938,11 +938,11 @@ module.exports = {
     }
 
     user = req.user;
-    relativePathFilePortfolio = '/resources/documents/portfolio/tmp/' + CriptoService.generateString(9) + '.xls';
+    relativePathFilePortfolio = '/resources/documents/portfolio/tmp/' + CriptoService.generateString(9) + '.xlsx';
     absolutePathFilePortfolio = sails.config.appPath + relativePathFilePortfolio;
 
     /**
-     * Convert string base64 to file xls.
+     * Convert string base64 to file xlsx.
      */
     var bitmap = new Buffer(fileBase64, 'base64');
     // write buffer to file
@@ -958,12 +958,12 @@ module.exports = {
       sheet: "portafolio" // specific sheetname
     }, function(err, result) {
       if (err) {
-        return res.serverError();
         sails.log.error(err);
+        return res.serverError(err);
       } else {
         // sails.log.debug(Object.keys(result[0]).length);
         if (Object.keys(result[0]).length == 0) {
-          return res.serverError();
+          return res.serverError("Excel vacío");
         }
         // Organize the products array in an object.
         result.forEach((product, index, productList) => {
@@ -1002,6 +1002,7 @@ module.exports = {
               where: {
                 code: codes,
                 companyId: companyId,
+                enabled: true
               }
             })
           })
@@ -1112,94 +1113,96 @@ module.exports = {
           .then(() => {
             // If the products dont exist in the database is necessary create them.
             sails.log.debug(products);
-            var promisesCreate = [];
-            var promiseFunction = function(productToCreate) {
-              return State.findOne({
-                  where: {
-                    name: {
-                      $iLike: productToCreate.stateData.name
-                    }
-                  }
-                })
-                .then((state) => {
-                  if (!state) {
-                    var productNotAdded = {
-                      productCode: productToCreate.productData.code,
-                      errorCode: 2,
-                      actionCode: 2,
-                    }
-                    productsNotAdded.push(productNotAdded);
-                    throw new Error('Error disparado por estado al crear.');
-                  }
-                  stateDB = state;
-                  return ElementData.findAll({
+            sails.log.debug(Object.keys(products).length != 0);
+            if (Object.keys(products).length != 0) {
+              var promisesCreate = [];
+              var promiseFunction = function(productToCreate) {
+                return State.findOne({
                     where: {
-                      name: [productToCreate.elementsData[1], productToCreate.elementsData[2], productToCreate.elementsData[3], productToCreate.elementsData[4]]
+                      name: {
+                        $iLike: productToCreate.stateData.name
+                      }
                     }
                   })
-                })
-                .then((elementsData) => {
-                  var elementsIds = [];
-                  var elementsDataIds = [];
-                  var categoryElement = null;
-                  var lineElement = null;
+                  .then((state) => {
+                    if (!state) {
+                      var productNotAdded = {
+                        productCode: productToCreate.productData.code,
+                        errorCode: 2,
+                        actionCode: 2,
+                      }
+                      productsNotAdded.push(productNotAdded);
+                      throw new Error('Error disparado por estado al crear.');
+                    }
+                    stateDB = state;
+                    return ElementData.findAll({
+                      where: {
+                        name: [productToCreate.elementsData[1], productToCreate.elementsData[2], productToCreate.elementsData[3], productToCreate.elementsData[4]]
+                      }
+                    })
+                  })
+                  .then((elementsData) => {
+                    var elementsIds = [];
+                    var elementsDataIds = [];
+                    var categoryElement = null;
+                    var lineElement = null;
 
-                  elementsData.forEach((elementData, index) => {
-                    elementsIds.push(elementData.elementId);
-                    elementsDataIds.push(elementData.id);
-                    if (elementData.elementId == 2) {
-                      categoryElement = elementData;
-                    } else if (elementData.elementId == 3) {
-                      lineElement = elementData;
+                    elementsData.forEach((elementData, index) => {
+                      elementsIds.push(elementData.elementId);
+                      elementsDataIds.push(elementData.id);
+                      if (elementData.elementId == 2) {
+                        categoryElement = elementData;
+                      } else if (elementData.elementId == 3) {
+                        lineElement = elementData;
+                      }
+                    })
+                    var elementsNotAvailables = [];
+                    for (var i = 1; i <= 4; i++) {
+                      var index = elementsIds.indexOf(i);
+                      if (index == -1 && productToCreate.elementsData[i]) {
+                        elementsNotAvailables.push(i);
+                      }
+                    }
+                    if (elementsNotAvailables.length > 0) {
+                      var productNotAdded = {
+                        productCode: productToCreate.productData.code,
+                        elements: elementsNotAvailables,
+                        errorCode: 1,
+                        actionCode: 2,
+                      }
+                      productsNotAdded.push(productNotAdded);
+                      throw new Error('Error disparado por elementos al crear.')
+                    }
+                    productToCreate.productData.companyId = companyId;
+                    productToCreate.productData.stateId = stateDB.id;
+                    if (categoryElement && lineElement) {
+                      return Promise.all = [categoryElement.hasElementChildren([lineElement.id]), elementsDataIds];
+                    } else {
+                      return Promise.all = [true, elementsDataIds];
                     }
                   })
-                  var elementsNotAvailables = [];
-                  for (var i = 1; i <= 4; i++) {
-                    var index = elementsIds.indexOf(i);
-                    if (index == -1 && productToCreate.elementsData[i]) {
-                      elementsNotAvailables.push(i);
+                  .spread((isValidElementLink, elementsDataIds) => {
+                    if (!isValidElementLink) {
+                      var productNotAdded = {
+                        productCode: productToCreate.productData.code,
+                        errorCode: 3,
+                        actionCode: 2,
+                      }
+                      productsNotAdded.push(productNotAdded);
+                      throw new Error('Error disparado por elementLink al crear.');
+                    } else {
+                      return Promise.all = [Product.create(productToCreate.productData), elementsDataIds]
                     }
-                  }
-                  if (elementsNotAvailables.length > 0) {
-                    var productNotAdded = {
-                      productCode: productToCreate.productData.code,
-                      elements: elementsNotAvailables,
-                      errorCode: 1,
-                      actionCode: 2,
-                    }
-                    productsNotAdded.push(productNotAdded);
-                    throw new Error('Error disparado por elementos al crear.')
-                  }
-                  productToCreate.productData.companyId = companyId;
-                  productToCreate.productData.stateId = stateDB.id;
-                  if (categoryElement && lineElement) {
-                    return Promise.all = [categoryElement.hasElementChildren([lineElement.id]), elementsDataIds];
-                  } else {
-                    return Promise.all = [true, elementsDataIds];
-                  }
-                })
-                .spread((isValidElementLink, elementsDataIds) => {
-                  if (!isValidElementLink) {
-                    var productNotAdded = {
-                      productCode: productToCreate.productData.code,
-                      errorCode: 3,
-                      actionCode: 2,
-                    }
-                    productsNotAdded.push(productNotAdded);
-                    throw new Error('Error disparado por elementLink al crear.');
-                  } else {
-                    return Promise.all = [Product.create(productToCreate.productData), elementsDataIds]
-                  }
-                })
-                .spread((productCreated, elementsDataIds) => {
-                  return productCreated.setElementData(elementsDataIds);
-                })
-                .catch(function(err) {
-                  sails.log.error(err);
-                  // sails.log.debug('Catch error create');
-                });
-            }
-            if (Object.keys(products).length == 0) {
+                  })
+                  .spread((productCreated, elementsDataIds) => {
+                    return productCreated.setElementData(elementsDataIds);
+                  })
+                  .catch(function(err) {
+                    sails.log.error(err);
+                    // sails.log.debug('Catch error create');
+                  });
+              }
+
               for (var productToCreate in products) {
                 if (products.hasOwnProperty(productToCreate)) {
                   promisesCreate.push(promiseFunction(products[productToCreate]));

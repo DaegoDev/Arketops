@@ -5,7 +5,8 @@
         <ul class="left hide-on-med-and-down">
           <li><a ng-click="openFormToPrint()"><ng-md-icon class="icon-toolbar" icon="print" style="fill: black" size="25"></ng-md-icon>Imprimir</a></li>
           <li><a ng-click="showUploadFileModal()"><ng-md-icon class="icon-toolbar" icon="file_upload" style="fill: black" size="25"></ng-md-icon>Subir portafolio</a></li>
-          <li><a ng-json-export-excel data="portfolioToDownload" report-fields="{code: 'Código', name: 'Nombre', description: 'Descripción', trademark: 'Marca', category: 'Categoría', line: 'Línea', tax: 'Impuesto', state: 'Estado', price: 'Precio'}" filename =" 'portafolio' " class="css-class"><ng-md-icon class="icon-toolbar" icon="file_download" style="fill: black" size="25"></ng-md-icon>Descargar portafolio</a></li>
+          <!-- <li><a ng-json-export-excel data="portfolioToDownload" report-fields="{code: 'Código', name: 'Nombre', description: 'Descripción', trademark: 'Marca', category: 'Categoría', line: 'Línea', tax: 'Impuesto', state: 'Estado', price: 'Precio'}" filename =" 'portafolio' " class="css-class"><ng-md-icon class="icon-toolbar" icon="file_download" style="fill: black" size="25"></ng-md-icon>Descargar portafolio</a></li> -->
+          <li><div excel-export export-data="portfolioToDownload" file-name="{{fileName}}"></div></li>
         </ul>
       </div>
     </nav>

@@ -35,7 +35,8 @@
     "angular-animate": "~1.6.x",
     "angular-pdf": "^2.0.0",
     "pdfjs-dist": "^2.0.112",
-    "json-export-excel": "ng-json-export-excel#^1.0.2"
+    "json-export-excel": "ng-json-export-excel#^1.0.2",
+    "js-xlsx": "^0.12.1"
   },
   "resolutions": {
     "angular": "1.6.8",

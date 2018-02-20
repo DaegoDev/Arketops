@@ -12,22 +12,42 @@ arketops.controller('PortfolioCtrl', ['$scope', '$log', '$state', '$timeout', '$
           $scope.portfolio = res.data;
           console.log($scope.portfolio);
           $scope.options.isRequesting = false;
+
+          // Prepare Excel data:
+          $scope.fileName = "portafolio";
           $scope.portfolioToDownload = [];
-          $scope.portfolio.forEach((product, index, portfolioList) => {
-            console.log(product.code);
-            var productToDownload = {
-              code: product.code,
-              name: product.name,
-              description: product.description,
-              trademark: product.ElementData[0] ? product.ElementData[0].name : '',
-              category: product.ElementData[1] ? product.ElementData[1].name : '',
-              line: product.ElementData[2] ? product.ElementData[2].name : '',
-              tax: product.ElementData[3] ? product.ElementData[3].name : '',
-              state: product.State.name,
-              price: product.price,
-            }
-            $scope.portfolioToDownload.push(productToDownload);
-          })
+          // Headers:
+          $scope.portfolioToDownload.push(["Código", "Nombre", "Descripción", "Marca", "Categoría", "Línea", "Impuesto", "Estado", "Precio"]);
+          // Data:
+          angular.forEach($scope.portfolio, function(product, key) {
+            var code = product.code;
+            var name = product.name;
+            var description = product.description;
+            var trademark = product.ElementData[0] ? product.ElementData[0].name : '';
+            var category = product.ElementData[1] ? product.ElementData[1].name : '';
+            var line = product.ElementData[2] ? product.ElementData[2].name : '';
+            var tax = product.ElementData[3] ? product.ElementData[3].name : '';
+            var state = product.State.name;
+            var price = product.price;
+            $scope.portfolioToDownload.push([code, name, description, trademark, category, line, tax, state, price]);
+          });
+          // $scope.portfolioToDownload = [];
+          // $scope.portfolio.forEach((product, index, portfolioList) => {
+          //   console.log(product.code);
+          //   var productToDownload = {
+          //     code: product.code,
+          //     name: product.name,
+          //     description: product.description,
+          //     trademark: product.ElementData[0] ? product.ElementData[0].name : '',
+          //     category: product.ElementData[1] ? product.ElementData[1].name : '',
+          //     line: product.ElementData[2] ? product.ElementData[2].name : '',
+          //     tax: product.ElementData[3] ? product.ElementData[3].name : '',
+          //     state: product.State.name,
+          //     price: product.price,
+          //   }
+          //   $scope.portfolioToDownload.push(productToDownload);
+          // })
+
         })
         .catch(function(err) {
           $scope.options.isRequesting = false;

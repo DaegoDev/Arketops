@@ -58,6 +58,7 @@ var jsFilesToInject = [
   'bower_components/pdfjs-dist/build/pdf.js',
   'bower_components/json-export-excel/dest/json-export-excel.js',
   'bower_components/file-saver/FileSaver.min.js',
+  'bower_components/js-xlsx/dist/xlsx.full.min.js',
   // All of the rest of your client-side js files
   // will be injected here in no particular order.
   'js/main.js',
